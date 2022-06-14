@@ -1,0 +1,163 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "vendor/glfw/tests/timeout.exe"
+		},
+		{
+			"path" : "vendor/glfw/tests/timeout.pdb"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"vendor/glfw/tests/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 52,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 4,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g"
+				},
+				{
+					"fragment" : "-std=gnu99"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 2,
+					"path" : "D:/cppprograme/objectorintedproject/project/SymoCraft/vendor/glfw/deps"
+				},
+				{
+					"backtrace" : 1,
+					"path" : "D:/cppprograme/objectorintedproject/project/SymoCraft/vendor/glfw/include"
+				}
+			],
+			"language" : "C",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "99"
+			},
+			"sourceIndexes" : 
+			[
+				0,
+				2
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 1,
+			"id" : "glfw::@31bd9730e6b8c71cc656"
+		}
+	],
+	"folder" : 
+	{
+		"name" : "GLFW3/Tests"
+	},
+	"id" : "timeout::@585ed6df5948d684cbf0",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-mwindows",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 1,
+				"fragment" : "vendor\\glfw\\src\\libglfw3.a",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32",
+				"role" : "libraries"
+			}
+		],
+		"language" : "C"
+	},
+	"name" : "timeout",
+	"nameOnDisk" : "timeout.exe",
+	"paths" : 
+	{
+		"build" : "vendor/glfw/tests",
+		"source" : "vendor/glfw/tests"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				2
+			]
+		},
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				1
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "vendor/glfw/tests/timeout.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "vendor/glfw/deps/glad/gl.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "vendor/glfw/deps/glad_gl.c",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}
