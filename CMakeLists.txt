@@ -4,7 +4,7 @@ project(SymoCraft)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(MemoryAllocator include/MemoryAllocator/AmoMemoryBase.cpp
+set(MemoryAllocator include/MemoryAllocator/AmoBase.cpp
                     src/MemoryAllocator/MemoryAllocator.cpp)
 
 add_executable(SymoCraft src/main.cpp

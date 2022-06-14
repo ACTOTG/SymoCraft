@@ -4,9 +4,11 @@
 
 #ifndef SYMOCRAFT_RAWMEMORY_H
 #define SYMOCRAFT_RAWMEMORY_H
+
+
 struct RawMemory
 {
-    uint8* data;        // data location
+    uint8_t * data;        // data location
     size_t size;        // data size
     size_t offset;      // Read Write Cursor's offset
 
@@ -16,20 +18,20 @@ struct RawMemory
     void ResetReadWriteCursor();        // set the offset to 0
     void SetCursor(size_t offset);      // set Cursor's offset to offset
 
-    void WriteDangerous( const uint8* data, size_t data_size);      // a dangerous writing to memory that may cause a memory leak
+    void WriteDangerous( const uint8_t * data, size_t data_size);      // a dangerous writing to memory that may cause a memory leak
                                                                     // if the data_size does not match the data
-    void ReadDangerouse( uint8* data, size_t data_size);            // a dangerous reading of memory
+    void ReadDangerous( uint8_t * data, size_t data_size);            // a dangerous reading of memory
 
     template<typename T>
     void Write(const T* data)           // a safer writing to memory
     {
-        WriteDangerous((uint8*)data, sizeof(T));
+        WriteDangerous((uint8_t *)data, sizeof(T));
     }
 
     template<typename T>
     void Read(T* data)
     {
-        ReadDangerouse((uint8*)data, sizeof(T));
+        ReadDangerous((uint8_t *)data, sizeof(T));
     }
 
 };

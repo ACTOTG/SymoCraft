@@ -56,9 +56,9 @@
 #include <stb/stb_image_resize.h>
 
 // Amo Memory Allocator
-#include <MemoryAllocator/AmoMemoryBase.h>
+#include <MemoryAllocator/AmoBase.h>
 #include <MemoryAllocator/RawMemory.h>
-
+#include <MemoryAllocator/MemoryHelper.h>
 
 
 #endif //SYMOCRAFT_CORE_H
