@@ -6,28 +6,32 @@
 #define SYMOCRAFT_KEYBINDINGS_H
 #include "core.h"
 
-enum class KeyBind
+namespace SymoCraft
 {
-    Exit,
-    Escape
-};
 
-namespace keybindings
-{
-    // KeyBindings Initializing
-    void Init();
+    enum class KeyBind
+    {
+        Exit,
+        Escape
+    };
 
-    // Set key bindings
-    // Parameters: Key, Value
-    void SetKeyBinding( KeyBind key, uint32_t value);
+    namespace KeyBindings
+    {
+        // KeyBindings Initializing
+        void Init();
 
-    // Get key bindings
-    // Parameters: Key
-    uint32_t GetKeyBinding( KeyBind key);
+        // Set key bindings
+        // Parameters: Key, Value
+        void SetKeyBinding( KeyBind key, uint32_t value);
 
-    // Is key begin pressed
-    // Parameters: Key
-    bool IsKeyBeginPressed( KeyBind key);
+        // Get key bindings
+        // Parameters: Key
+        uint32_t GetKeyBinding( KeyBind key);
+
+        // Is key begin pressed
+        // Parameters: Key
+        bool IsKeyBeginPressed( KeyBind key);
+    }
+
 }
-
 #endif //SYMOCRAFT_KEYBINDINGS_H

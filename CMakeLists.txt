@@ -15,7 +15,8 @@ file(GLOB SOURCE_FILE
         "src/Camera/Camera.cpp"
         "vendor/yaml-cpp/src/*.cpp"
         "vendor/yaml-cpp/src/*.h"
-        "include/renderer/batch.hpp")
+        "include/renderer/batch.hpp"
+        "src/Input/*.cpp")
 
 add_executable(SymoCraft src/main.cpp
                          vendor/glad/glad.c

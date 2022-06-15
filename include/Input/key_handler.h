@@ -5,9 +5,12 @@
 #ifndef SYMOCRAFT_KEYHANDLER_H
 #define SYMOCRAFT_KEYHANDLER_H
 
-namespace keyhandler
+namespace SymoCraft
 {
-    void Update();
+    namespace KeyHandler
+    {
+        void Update();
+    }
 }
 
 #endif //SYMOCRAFT_KEYHANDLER_H
