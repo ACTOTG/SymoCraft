@@ -4,7 +4,7 @@
 
 #ifndef SYMOCRAFT_INPUT_H
 #define SYMOCRAFT_INPUT_H
-#include "Core.h"
+#include "core.h"
 
 namespace SymoCraft
 {

@@ -12,7 +12,7 @@ enum class ShaderType : uint8
 struct Shader
 {
 	uint32 shaderId;
-	ShaderType type;
+	ShaderType m_type;
 
 	bool compile(ShaderType type, std::string_view shaderFilepath);
 	void destroy();

@@ -1,6 +1,6 @@
 #include "renderer/renderer.h"
 #include "Core/application.h"
-#include "Core/window.h"
+#include "Core/Window.h"
 
 namespace SymoCraft{
 
@@ -48,8 +48,8 @@ namespace SymoCraft{
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             // Initialize shaders
-            block_shader.CompileAndLink("assets/shaders/vs_BlockShader.glsl",
-                                        "assets/shaders/fs_BlockShader.glsl");
+            block_shader.CompileAndLink("../assets/shaders/vs_BlockShader.glsl",
+                                        "../assets/shaders/fs_BlockShader.glsl");
 
             // Initialize batches
             block_batch.init(

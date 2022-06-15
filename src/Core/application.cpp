@@ -5,7 +5,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Core/application.h"
 #include "core.h"
-#include "Core/window.h"
+#include "Core/Window.h"
 #include "Core/global_thread_pool.h"
 #include "renderer/renderer.h"
 #include "renderer/texture.h"
@@ -41,8 +41,7 @@ namespace SymoCraft
             Window& window = GetWindow();
             double previous_frame_time = glfwGetTime();
             TextureArray texture_array;
-            texture_array = texture_array.CreateAtlasSlice("assets/textures/texture.png", true);
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            texture_array = texture_array.CreateAtlasSlice("../assets/textures/texture.png", true);
 
             // -------------------------------------------------------------------
             // Render Loop
@@ -50,9 +49,6 @@ namespace SymoCraft
             {
                 double current_frame_time = glfwGetTime();
                 delta_time = (float)(current_frame_time - previous_frame_time);
-
-                glClear(GL_COLOR_BUFFER_BIT);
-
 
                 //Add blocks, play as you want
                 for( float i = 0.0f; i < 6; )
@@ -65,12 +61,11 @@ namespace SymoCraft
                     i += 1.0f;
                 }
 
-                SymoCraft::Renderer::ReportStatus();
+                // SymoCraft::Renderer::ReportStatus();
                 glEnable(GL_DEPTH_TEST);
                 glBindTextureUnit(0, texture_array.m_texture_Id);
                 SymoCraft::Renderer::ClearBuffers();
                 SymoCraft::Renderer::Render();
-
 
                 window.SwapBuffers();
                 window.PollInt();

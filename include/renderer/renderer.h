@@ -1,6 +1,6 @@
 #pragma once
 #include "core.h"
-#include "shaderProgram.h"
+#include "shader_program.h"
 #include "batch.hpp"
 #include "Camera/camera.h"
 

@@ -1,4 +1,4 @@
-#include "renderer/shaderProgram.h"
+#include "renderer/shader_program.h"
 
 // Internal Structures
 struct ShaderVariable

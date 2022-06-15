@@ -4,7 +4,7 @@
 
 #ifndef SYMOCRAFT_KEYBINDINGS_H
 #define SYMOCRAFT_KEYBINDINGS_H
-#include "Core.h"
+#include "core.h"
 
 enum class KeyBind
 {

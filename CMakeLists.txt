@@ -19,9 +19,9 @@ file(GLOB SOURCE_FILE
 
 add_executable(SymoCraft src/main.cpp
                          vendor/glad/glad.c
+                         ${SOURCE_FILE}
                          ${MemoryAllocator}
-                         ${Core}
-                         ${SOURCE_FILE})
+                         ${Core})
 
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/glfw)
