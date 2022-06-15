@@ -13,7 +13,6 @@ int main() {
     TextureArray texture_array;
     texture_array = texture_array.CreateAtlasSlice("assets/textures/texture.png", true);
 
-
     // Render Loop
     // =========================================================
     for (;!first_window->ShouldClose();)
