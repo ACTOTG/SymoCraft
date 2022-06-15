@@ -1,7 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "Core.h"
+#include "core.h"
 
 enum class ShaderType : uint8
 {

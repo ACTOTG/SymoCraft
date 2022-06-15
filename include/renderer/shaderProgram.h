@@ -1,7 +1,7 @@
 #ifndef SHADER_PROGRAM_H
 #define SHADER_PROGRAM_H
 
-#include "Core.h"
+#include "core.h"
 #include "renderer/shader.h"
 
 struct ShaderProgram

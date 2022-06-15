@@ -53,11 +53,8 @@
 #include <MemoryAllocator/RawMemory.h>
 #include <MemoryAllocator/MemoryHelper.h>
 
-// Core
-#include <Core/GlobalThreadPool.h>
-#include <Core/Window.h>
 
-
+// yaml
 #include <yaml-cpp/yaml.h>
 
 

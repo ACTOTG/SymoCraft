@@ -1,4 +1,6 @@
 #include "renderer/renderer.h"
+#include "Core/application.h"
+#include "Core/window.h"
 
 namespace SymoCraft{
 
@@ -21,7 +23,8 @@ namespace SymoCraft{
 
         void Init()
         {
-            camera = new Camera();
+            Window &window = Application::GetWindow();
+            camera = new Camera(window.width, window.height);
 
             // Load OpenGL functions using Glad
             if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))

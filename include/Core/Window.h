@@ -5,66 +5,72 @@
 #ifndef SYMOCRAFT_WINDOW_H
 #define SYMOCRAFT_WINDOW_H
 
-enum class CursorMode : uint8_t
+#include "core.h"
+
+namespace SymoCraft
 {
-    Hidden = 0,
-    Lock,
-    Normal
-};
 
-class Window
-{
-public:
-    // public data members
-    int width;
-    int height;
-    const char* title;
-    void* window_ptr;
+    enum class CursorMode : uint8_t
+    {
+        Hidden = 0,
+        Lock,
+        Normal
+    };
 
-    // GLFW function interface
-    void MakeContextCurrent();
-    void PollInt();
-    void SwapBuffers();     // swap buffer
-    bool ShouldClose();     // return shouldClose
+    class Window
+    {
+    public:
+        // public data members
+        int width;
+        int height;
+        const char* title;
+        void* window_ptr;
 
-    // Close the window
-    void Close();
+        // GLFW function interface
+        void MakeContextCurrent();
+        void PollInt();
+        void SwapBuffers();     // swap buffer
+        bool ShouldClose();     // return shouldClose
 
-    // Destroy the window
-    void Destroy();
+        // Close the window
+        void Close();
 
-    // Set Cursor Mode of the window
-    // Parameters: Cursor Mode
-    void SetCursorMode(CursorMode cursorMode);
+        // Destroy the window
+        void Destroy();
 
-    // Set Vsync
-    // Parameters: On or Off
-    void SetVsync(bool on);
+        // Set Cursor Mode of the window
+        // Parameters: Cursor Mode
+        void SetCursorMode(CursorMode cursorMode);
 
-    // Set Title
-    // Parameters: Title
-    void SetTitle(const char* new_title);
+        // Set Vsync
+        // Parameters: On or Off
+        void SetVsync(bool on);
 
-    // Set the size of the window
-    // Parameters: width, height
-    void SetSize(int width, int height);
+        // Set Title
+        // Parameters: Title
+        void SetTitle(const char* new_title);
 
-    // Get Aspect ratio of the window
-    float GetAspectRatio() const;
+        // Set the size of the window
+        // Parameters: width, height
+        void SetSize(int width, int height);
 
-    // Creat a window
-    // Static
-    // Parameters: Window title
-    static Window* Create(const char* window_title);
+        // Get Aspect ratio of the window
+        float GetAspectRatio() const;
 
-    // Initialize glfw
-    // Static
-    static void Init();
+        // Creat a window
+        // Static
+        // Parameters: Window title
+        static Window* Create(const char* window_title);
 
-    // Free window
-    // Static
-    static void Free();
+        // Initialize glfw
+        // Static
+        static void Init();
 
-};
+        // Free window
+        // Static
+        static void Free();
+
+    };
+}
 
 #endif //SYMOCRAFT_WINDOW_H

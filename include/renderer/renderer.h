@@ -1,8 +1,8 @@
 #pragma once
-#include "Core.h"
-#include "ShaderProgram.h"
-#include "Batch.hpp"
-#include "Camera/Camera.h"
+#include "core.h"
+#include "shaderProgram.h"
+#include "batch.hpp"
+#include "Camera/camera.h"
 
 namespace SymoCraft{
     struct Framebuffer;
