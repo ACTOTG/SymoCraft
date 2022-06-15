@@ -24,7 +24,7 @@ namespace SymoCraft{
         void Init()
         {
             Window &window = Application::GetWindow();
-            camera = new Camera(window.width, window.height);
+            camera = Application::GetCamera();
 
             // Load OpenGL functions using Glad
             if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
