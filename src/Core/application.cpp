@@ -69,12 +69,9 @@ namespace SymoCraft
                         j += 1.0f;
                     }
                     i += 1.0f;
-                }
+                } SymoCraft::Renderer::ReportStatus();
 
-                // SymoCraft::Renderer::ReportStatus();
-                glEnable(GL_DEPTH_TEST);
                 glBindTextureUnit(0, texture_array.m_texture_Id);
-                SymoCraft::Renderer::ClearBuffers();
                 SymoCraft::Renderer::Render();
 
                 window.SwapBuffers();

@@ -46,8 +46,8 @@ namespace SymoCraft{
         // 3D Rendering stuff
         // void draw3DModel(const glm::vec3& position, const glm::vec3& scale, float rotation, const VoxelVertex* vertices, int verticesLength);
         // void drawLine(const glm::vec3& start, const glm::vec3& end, const Style& style);
-        // void drawBox(const glm::vec3& center, const glm::vec3& size, const Style& style);
-        void AddBlocksToBatch(const glm::vec3 &center, const uint16 &side_tex, const uint16 &top_tex, const uint16 &bottom_tex);
+        // void drawBox(const glm::vec3& block_center_coord, const glm::vec3& size, const Style& style);
+        void AddBlocksToBatch(const glm::vec3 &block_center_coord, const uint16 &side_tex, const uint16 &top_tex, const uint16 &bottom_tex);
 
         void ReportStatus();
     }
