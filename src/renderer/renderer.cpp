@@ -6,7 +6,7 @@ namespace SymoCraft{
     {
         static Batch<Vertex3D> block_batch;
 
-        const static Camera* camera;
+        static Camera* camera;
         static ShaderProgram block_shader;
 
         static uint16 vertex_count{0};
@@ -120,9 +120,9 @@ namespace SymoCraft{
             block_shader.Unbind();
         }
 
-        void setCamera(const Camera& cameraRef)
+        void setCamera(const Camera &cameraRef)
         {
-            camera = cameraRef;
+            *camera = cameraRef;
         }
 
         void ClearBuffers()
