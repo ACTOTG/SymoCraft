@@ -5,11 +5,15 @@
 
 int main() {
     AmoBase::AmoMemory_Init( true);
-    SizedMemory test;
-    int test_flags = 35;
-    test = Pack( test_flags);
-    int test_result;
-    Unpack<int>( test, &test_result);
-    std::cout << test_result;
+    Window::Init();
+    Window* first_window = Window::Create("Hello World");
+
+
+    for (;!first_window->ShouldClose();)
+    {
+
+    }
+
+    Window::Free();
     return 0;
 }

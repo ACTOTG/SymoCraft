@@ -6,9 +6,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(MemoryAllocator include/MemoryAllocator/AmoBase.cpp)
 
-set(Core src/Core/GlobalThreadPool.cpp)
+set(Core src/Core/GlobalThreadPool.cpp
+         src/Core/Window.cpp)
 
 add_executable(SymoCraft src/main.cpp
+                         vendor/glad/glad.c
                          ${MemoryAllocator}
                          ${Core})
 

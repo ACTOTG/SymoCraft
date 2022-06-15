@@ -62,6 +62,6 @@
 
 // Core
 #include <Core/GlobalThreadPool.h>
-
+#include <Core/Window.h>
 
 #endif //SYMOCRAFT_CORE_H
