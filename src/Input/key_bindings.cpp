@@ -2,8 +2,8 @@
 // Created by Amo on 2022/6/15.
 //
 
-#include "Input/key_bindings.h"
-#include "Input/input.h"
+#include "input/key_bindings.h"
+#include "input/input.h"
 
 namespace SymoCraft
 {

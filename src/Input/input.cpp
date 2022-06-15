@@ -2,7 +2,7 @@
 // Created by Amo on 2022/6/15.
 //
 
-#include "Input/input.h"
+#include "input/input.h"
 #include "core.h"
 
 namespace SymoCraft

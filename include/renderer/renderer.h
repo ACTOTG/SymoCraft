@@ -2,7 +2,7 @@
 #include "core.h"
 #include "shader_program.h"
 #include "batch.hpp"
-#include "Camera/camera.h"
+#include "camera/camera.h"
 
 namespace SymoCraft{
     struct Framebuffer;

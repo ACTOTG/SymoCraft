@@ -1,10 +1,8 @@
 #include "renderer/renderer.h"
-#include "Core/application.h"
-#include "Core/Window.h"
+#include "core/application.h"
+#include "core/window.h"
 
-namespace SymoCraft {
-
-    namespace Renderer {
+namespace SymoCraft::Renderer {
         static Batch<Vertex3D> block_batch;
         static Camera *camera;
         static ShaderProgram block_shader;
@@ -12,9 +10,9 @@ namespace SymoCraft {
         constexpr static GLfloat depth_value = 1.0f;
         constexpr static std::array<float, 4> clear_color = {0.2f, 0.3f, 0.3f, 1.0f};
 
-        glm::mat4 projection_mat;
-        glm::mat4 view_mat;
-        glm::mat4 combo_mat;
+        glm::mat4 g_projection_mat;
+        glm::mat4 g_view_mat;
+        glm::mat4 g_combo_mat;
 
         // Internal functions
         static void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
@@ -32,10 +30,8 @@ namespace SymoCraft {
             std::cout << "GLAD initialized.\n";
             std::cout << "Hello OpenGL " << GLVersion.major << '.' << GLVersion.minor << '\n';
 
-#ifdef _DEBUG
-            glEnable(GL_DEBUG_OUTPUT);
-            glDebugMessageCallback(messageCallback, 0);
-#endif
+            // glEnable(GL_DEBUG_OUTPUT);
+            // glDebugMessageCallback(messageCallback, 0);
 
             // Enable render parameters
             glEnable(GL_DEPTH_TEST);
@@ -49,13 +45,10 @@ namespace SymoCraft {
                                         "../assets/shaders/fs_BlockShader.glsl");
 
             // Initialize batches
-            block_batch.init(
-                    {
-                            {0, 3, offsetof(Vertex3D, pos_coord)},
-                            {1, 3, offsetof(Vertex3D, tex_coord)},
-                            {2, 3, offsetof(Vertex3D, normal)}
-                    });
-
+            block_batch.init({
+                        {0, 3, offsetof(Vertex3D, pos_coord)},
+                        {1, 3, offsetof(Vertex3D, tex_coord)},
+                        {2, 3, offsetof(Vertex3D, normal)}     });
         }
 
         void Free() {
@@ -92,11 +85,11 @@ namespace SymoCraft {
         void FlushBatches3D() {
             block_shader.Bind();
 
-            projection_mat = camera->GetCameraProjMat();
-            view_mat = camera->GetCameraViewMat();
-            combo_mat = projection_mat * view_mat;
+            g_projection_mat = camera->GetCameraProjMat();
+            g_view_mat = camera->GetCameraViewMat();
+            g_combo_mat = g_projection_mat * g_view_mat;
 
-            block_shader.UploadMat4("u_combo_mat", combo_mat);
+            block_shader.UploadMat4("u_combo_mat", g_combo_mat);
             block_batch.Flush();
 
             block_shader.Unbind();
@@ -106,8 +99,8 @@ namespace SymoCraft {
         void FlushBatches3D(const glm::mat4 &projection_mat, const glm::mat4 &view_mat) {
             block_shader.Bind();
 
-            combo_mat = projection_mat * view_mat;
-            block_shader.UploadMat4("u_combo_mat", combo_mat);
+            g_combo_mat = projection_mat * view_mat;
+            block_shader.UploadMat4("u_combo_mat", g_combo_mat);
             block_batch.Flush();
 
             block_shader.Unbind();
@@ -127,28 +120,26 @@ namespace SymoCraft {
         // Draw 3D Functions
         // =========================================================
 
-        // BlockVertices
-
-        constexpr std::array<glm::vec3, 8> pos_coords{      // (0, 0, 0) is at the center of the block
-                glm::vec3(-0.5f, 0.5f, 0.5f), // v0
-                glm::vec3(0.5f, 0.5f, 0.5f), // v1
-                glm::vec3(-0.5f, -0.5f, 0.5f), // v2
-                glm::vec3(0.5f, -0.5f, 0.5f), // v3
-                glm::vec3(-0.5f, 0.5f, -0.5f), // v4
-                glm::vec3(0.5f, 0.5f, -0.5f), // v5
-                glm::vec3(-0.5f, -0.5f, -0.5f), // v6
-                glm::vec3(0.5f, -0.5f, -0.5f), // v7
+        constexpr std::array<glm::vec3, 8> pos_coords{    // (0, 0, 0) is at the center of the block
+                glm::vec3(-0.5f,  0.5f,  0.5f),  // v0
+                glm::vec3( 0.5f,  0.5f,  0.5f),  // v1
+                glm::vec3(-0.5f, -0.5f,  0.5f),  // v2
+                glm::vec3( 0.5f, -0.5f,  0.5f),  // v3
+                glm::vec3(-0.5f,  0.5f, -0.5f),  // v4
+                glm::vec3( 0.5f,  0.5f, -0.5f),  // v5
+                glm::vec3(-0.5f, -0.5f, -0.5f),  // v6
+                glm::vec3( 0.5f, -0.5f, -0.5f),  // v7
         };
 
         // The 8 vertices will look like this:
         //   v4 ----------- v5
-        //   /|            /|      Axis orientation
-        //  / |           / |
-        // v0 --------- v1  |      y
-        // |  |         |   |      |
-        // |  v6 -------|-- v7     +--- x
-        // | /          |  /      /
-        // |/           | /      z
+        //   /|            /|
+        //  / |           / |      Axis orientation
+        // v0 --------- v1  |            y
+        // |  |         |   |            |
+        // |  v6 -------|-- v7           +--- x
+        // | /          |  /            /
+        // |/           | /            z
         // v2 --------- v3
         //
         // Where v0, v4, v5, v1 is the top face
@@ -213,31 +204,29 @@ namespace SymoCraft {
         }
 
         void ReportStatus() {
-            if (sin(glfwGetTime()) == 1) {
+            if (sin(glfwGetTime()) == 1)
                 AmoLogger_Log("%d vertices, %d blocks in total loaded\n", vertex_count, block_count);
-            }
-
-            // =========================================================
-            // Internal Functions
-            // =========================================================
-            // static void GLAPIENTRY
-            // messageCallback(GLenum source, GLenum type, GLuint id,
-            //                 GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
-            // {
-            //     if (type == GL_DEBUG_TYPE_ERROR)
-            //     {
-            //         std::cerr << "GL CALLBACK: " << (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "")
-            //                   << "type = 0x" << type
-            //                   << "severity = 0x" << severity
-            //                   << "message = " << message;
-            //
-            //         GLenum err;
-            //         while ((err = glGetError()) != GL_NO_ERROR)
-            //         {
-            //             std::cerr << "Error Code: " << err;
-            //         }
-            //     }
-            // }
         }
+
+        // =========================================================
+        // Internal Functions
+        // =========================================================
+        // static void GLAPIENTRY
+        // messageCallback(GLenum source, GLenum type, GLuint id,
+        //                 GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+        // {
+        //     if (type == GL_DEBUG_TYPE_ERROR)
+        //     {
+        //         std::cerr << "GL CALLBACK: " << (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "")
+        //                   << "type = 0x" << type
+        //                   << "severity = 0x" << severity
+        //                   << "message = " << message;
+        //
+        //         GLenum err;
+        //         while ((err = glGetError()) != GL_NO_ERROR)
+        //         {
+        //             std::cerr << "Error Code: " << err;
+        //         }
+        //     }
+        // }
     }
-}

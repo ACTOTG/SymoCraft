@@ -2,7 +2,7 @@
 // Created by Amo on 2022/6/15.
 //
 
-#include "Core/window.h"
+#include "core/window.h"
 #include "core.h"
 
 namespace SymoCraft

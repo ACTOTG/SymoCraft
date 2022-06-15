@@ -12,11 +12,11 @@ set(Core src/Core/global_thread_pool.cpp
 
 file(GLOB SOURCE_FILE
         "src/renderer/*.cpp"
-        "src/Camera/Camera.cpp"
+        "src/camera/camera.cpp"
         "vendor/yaml-cpp/src/*.cpp"
         "vendor/yaml-cpp/src/*.h"
         "include/renderer/batch.hpp"
-        "src/Input/*.cpp")
+        "src/input/*.cpp")
 
 add_executable(SymoCraft src/main.cpp
                          vendor/glad/glad.c

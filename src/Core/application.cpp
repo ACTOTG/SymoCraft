@@ -3,10 +3,10 @@
 //
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "Core/application.h"
+#include "core/application.h"
 #include "core.h"
-#include "Core/Window.h"
-#include "Core/global_thread_pool.h"
+#include "core/window.h"
+#include "core/global_thread_pool.h"
 #include "renderer/renderer.h"
 #include "renderer/texture.h"
 
@@ -69,8 +69,9 @@ namespace SymoCraft
                         j += 1.0f;
                     }
                     i += 1.0f;
-                } SymoCraft::Renderer::ReportStatus();
+                }
 
+                SymoCraft::Renderer::ReportStatus();
                 glBindTextureUnit(0, texture_array.m_texture_Id);
                 SymoCraft::Renderer::Render();
 

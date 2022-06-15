@@ -1,6 +1,6 @@
 #include <MemoryAllocator/AmoBase.h>
-#include "Core/application.h"
-#include "Core/global_thread_pool.h"
+#include "core/application.h"
+#include "core/global_thread_pool.h"
 
 int main()
 {
