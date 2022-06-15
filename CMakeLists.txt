@@ -4,11 +4,13 @@ project(SymoCraft)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(MemoryAllocator include/MemoryAllocator/AmoBase.cpp
-                    src/MemoryAllocator/MemoryAllocator.cpp)
+set(MemoryAllocator include/MemoryAllocator/AmoBase.cpp)
+
+set(Core src/Core/GlobalThreadPool.cpp)
 
 add_executable(SymoCraft src/main.cpp
-                         ${MemoryAllocator})
+                         ${MemoryAllocator}
+                         ${Core})
 
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/glfw)

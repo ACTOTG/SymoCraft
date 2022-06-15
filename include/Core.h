@@ -60,5 +60,8 @@
 #include <MemoryAllocator/RawMemory.h>
 #include <MemoryAllocator/MemoryHelper.h>
 
+// Core
+#include <Core/GlobalThreadPool.h>
+
 
 #endif //SYMOCRAFT_CORE_H

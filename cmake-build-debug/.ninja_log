@@ -2,10 +2,10 @@
 49	1108	6769163128563063	vendor/glfw/src/CMakeFiles/glfw.dir/win32_time.c.obj	da7214d63750115f
 11	1119	6769163128573053	vendor/glfw/src/CMakeFiles/glfw.dir/vulkan.c.obj	e235eb49eedb676c
 14	1125	6769163128642983	vendor/glfw/src/CMakeFiles/glfw.dir/init.c.obj	a265d26426d43055
-28	1131	6769163128751841	vendor/glfw/src/CMakeFiles/glfw.dir/win32_joystick.c.obj	44d04324cc6e166d
-1485	1587	6769165555870290	SymoCraft.exe	5ac6511c367287b1
-33	1140	6769163128761821	vendor/glfw/src/CMakeFiles/glfw.dir/win32_init.c.obj	e1683c3147399c47
 44	1152	6769163128981589	vendor/glfw/src/CMakeFiles/glfw.dir/win32_monitor.c.obj	1f60291fe33acb
+1509	1612	6769566349056497	SymoCraft.exe	5ac6511c367287b1
+33	1140	6769163128761821	vendor/glfw/src/CMakeFiles/glfw.dir/win32_init.c.obj	e1683c3147399c47
+28	1131	6769163128751841	vendor/glfw/src/CMakeFiles/glfw.dir/win32_joystick.c.obj	44d04324cc6e166d
 8	1150	6769163128791790	vendor/glfw/src/CMakeFiles/glfw.dir/context.c.obj	a299871f94d03d33
 24	1151	6769163128831749	vendor/glfw/src/CMakeFiles/glfw.dir/monitor.c.obj	9b8266622becd5d4
 38	1184	6769163129311239	vendor/glfw/src/CMakeFiles/glfw.dir/window.c.obj	f72deebe0fa4e7cd
@@ -14,7 +14,9 @@
 1119	1878	6769163136271125	vendor/glfw/src/CMakeFiles/glfw.dir/osmesa_context.c.obj	ed1aa852c13dbeb8
 1125	1891	6769163136400986	vendor/glfw/src/CMakeFiles/glfw.dir/wgl_context.c.obj	f67a5d292d971046
 1140	1932	6769163136818625	vendor/glfw/src/CMakeFiles/glfw.dir/egl_context.c.obj	694f30bdc47f05b3
+10	1568	6769561551905715	CMakeFiles/SymoCraft.dir/src/MemoryAllocator/MemoryAllocator.cpp.obj	5810775ce4602000
 1132	1988	6769163137375347	vendor/glfw/src/CMakeFiles/glfw.dir/win32_window.c.obj	732a10ad203a513c
 1989	2078	6769163138284503	vendor/glfw/src/libglfw3.a	6ed21e5064aa6ec0
-5	1485	6769165554863271	CMakeFiles/SymoCraft.dir/src/main.cpp.obj	24307b9bc142ba86
+4	1509	6769566348041475	CMakeFiles/SymoCraft.dir/src/main.cpp.obj	24307b9bc142ba86
 1	2470	6769163142189078	CMakeFiles/SymoCraft.dir/include/MemoryAllocator/AmoBase.cpp.obj	1d45b54bca009f78
+1	393	6769576378321756	build.ninja	80d739224f1e20a8

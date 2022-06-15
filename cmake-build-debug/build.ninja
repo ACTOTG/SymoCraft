@@ -63,12 +63,12 @@ build CMakeFiles/SymoCraft.dir/include/MemoryAllocator/AmoBase.cpp.obj: CXX_COMP
   OBJECT_DIR = CMakeFiles\SymoCraft.dir
   OBJECT_FILE_DIR = CMakeFiles\SymoCraft.dir\include\MemoryAllocator
 
-build CMakeFiles/SymoCraft.dir/src/MemoryAllocator/MemoryAllocator.cpp.obj: CXX_COMPILER__SymoCraft_Debug D$:/cppprograme/objectorintedproject/project/SymoCraft/src/MemoryAllocator/MemoryAllocator.cpp || cmake_object_order_depends_target_SymoCraft
-  DEP_FILE = CMakeFiles\SymoCraft.dir\src\MemoryAllocator\MemoryAllocator.cpp.obj.d
+build CMakeFiles/SymoCraft.dir/src/Core/GlobalThreadPool.cpp.obj: CXX_COMPILER__SymoCraft_Debug D$:/cppprograme/objectorintedproject/project/SymoCraft/src/Core/GlobalThreadPool.cpp || cmake_object_order_depends_target_SymoCraft
+  DEP_FILE = CMakeFiles\SymoCraft.dir\src\Core\GlobalThreadPool.cpp.obj.d
   FLAGS = -g -std=gnu++20
   INCLUDES = -ID:/cppprograme/objectorintedproject/project/SymoCraft/vendor -ID:/cppprograme/objectorintedproject/project/SymoCraft/include -ID:/cppprograme/objectorintedproject/project/SymoCraft/vendor/glfw/include
   OBJECT_DIR = CMakeFiles\SymoCraft.dir
-  OBJECT_FILE_DIR = CMakeFiles\SymoCraft.dir\src\MemoryAllocator
+  OBJECT_FILE_DIR = CMakeFiles\SymoCraft.dir\src\Core
 
 
 # =============================================================================
@@ -78,7 +78,7 @@ build CMakeFiles/SymoCraft.dir/src/MemoryAllocator/MemoryAllocator.cpp.obj: CXX_
 #############################################
 # Link the executable SymoCraft.exe
 
-build SymoCraft.exe: CXX_EXECUTABLE_LINKER__SymoCraft_Debug CMakeFiles/SymoCraft.dir/src/main.cpp.obj CMakeFiles/SymoCraft.dir/include/MemoryAllocator/AmoBase.cpp.obj CMakeFiles/SymoCraft.dir/src/MemoryAllocator/MemoryAllocator.cpp.obj | vendor/glfw/src/libglfw3.a || vendor/glfw/src/libglfw3.a
+build SymoCraft.exe: CXX_EXECUTABLE_LINKER__SymoCraft_Debug CMakeFiles/SymoCraft.dir/src/main.cpp.obj CMakeFiles/SymoCraft.dir/include/MemoryAllocator/AmoBase.cpp.obj CMakeFiles/SymoCraft.dir/src/Core/GlobalThreadPool.cpp.obj | vendor/glfw/src/libglfw3.a || vendor/glfw/src/libglfw3.a
   FLAGS = -g
   LINK_LIBRARIES = vendor/glfw/src/libglfw3.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\SymoCraft.dir
