@@ -5,4 +5,6 @@
 #ifndef SYMOCRAFT_POOL_H
 #define SYMOCRAFT_POOL_H
 
+
+
 #endif //SYMOCRAFT_POOL_H

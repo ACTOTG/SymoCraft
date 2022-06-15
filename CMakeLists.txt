@@ -8,7 +8,8 @@ set(MemoryAllocator include/MemoryAllocator/AmoBase.cpp)
 
 set(Core src/core/global_thread_pool.cpp
         src/core/window.cpp
-        src/core/application.cpp)
+        src/core/application.cpp
+        src/core/pool.cpp)
 
 file(GLOB SOURCE_FILE
         "src/renderer/*.cpp"
