@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(MemoryAllocator include/MemoryAllocator/AmoBase.cpp)
 
-set(Core src/Core/global_thread_pool.cpp
-        src/Core/window.cpp
-        src/Core/application.cpp)
+set(Core src/core/global_thread_pool.cpp
+        src/core/window.cpp
+        src/core/application.cpp)
 
 file(GLOB SOURCE_FILE
         "src/renderer/*.cpp"
