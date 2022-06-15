@@ -3,6 +3,7 @@
 
 #include "core.h"
 
+
 enum class ShaderType : uint8
 {
 	Vertex,

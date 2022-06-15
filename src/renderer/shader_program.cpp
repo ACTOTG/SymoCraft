@@ -4,8 +4,8 @@
 struct ShaderVariable
 {
 	std::string name;
-	GLint var_location;
-	uint32 shaderProgramId;
+	GLint var_location{};
+	uint32 shaderProgramId{};
 
 	bool operator==(const ShaderVariable& other) const
 	{
@@ -30,7 +30,7 @@ static auto allShaderVariableLocations = robin_hood::unordered_set<ShaderVariabl
 // Forward Declarations
 static GLint getVariableLocation(const ShaderProgram& shader, const char* varName);
 
-bool ShaderProgram::CompileAndLink(const char* vertexShaderFile, const char* fragmentShaderFile)
+bool ShaderProgram::CompileAndLink(std::string_view vertexShaderFile, std::string_view fragmentShaderFile)
 {
 	// Create the shader program
 	GLuint program = glCreateProgram();
@@ -40,7 +40,7 @@ bool ShaderProgram::CompileAndLink(const char* vertexShaderFile, const char* fra
 	if (!vertexShader.compile(ShaderType::Vertex, vertexShaderFile))
 	{
 		vertexShader.destroy();
-		std::cerr << ("Failed to compile vertex shader.");
+		AmoLogger_Error("Failed to compile vertex shader.");
 		return false;
 	}
 
@@ -48,7 +48,7 @@ bool ShaderProgram::CompileAndLink(const char* vertexShaderFile, const char* fra
 	if (!fragmentShader.compile(ShaderType::Fragment, fragmentShaderFile))
 	{
 		fragmentShader.destroy();
-		std::cerr << ("Failed to compile fragment shader.");
+        AmoLogger_Error("Failed to compile fragment shader.");
 		return false;
 	}
 
@@ -76,7 +76,7 @@ bool ShaderProgram::CompileAndLink(const char* vertexShaderFile, const char* fra
 		vertexShader.destroy();
 		fragmentShader.destroy();
 
-		printf("Shader linking failed:\n%s", infoLog.data());
+        AmoLogger_Error("Shader linking failed:\n%s", infoLog.data());
 		programId = UINT32_MAX;
 		return false;
 	}
@@ -111,10 +111,11 @@ bool ShaderProgram::CompileAndLink(const char* vertexShaderFile, const char* fra
 		}
 
 		delete[] charBuffer;
+        charBuffer = nullptr;
 	}
 
 	programId = program;
-	printf("Shader compilation and linking succeeded <Vertex:%s>:<Fragment:%s>\n", vertexShaderFile, fragmentShaderFile);
+	AmoLogger_Log("Shader compilation and linking succeeded\n<Vertex:%s>\n<Fragment:%s>\n", vertexShaderFile.data(), fragmentShaderFile.data());
 	return true;
 }
 
@@ -229,6 +230,7 @@ static GLint getVariableLocation(const ShaderProgram& shader, const char* varNam
 		0,
 		shader.programId
 	};
+
 	auto iter = allShaderVariableLocations.find(match);
 	if (iter != allShaderVariableLocations.end())
 	{

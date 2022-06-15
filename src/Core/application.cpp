@@ -61,9 +61,9 @@ namespace SymoCraft
                 processInput((GLFWwindow*)GetWindow().window_ptr);
 
                 //Add blocks, play as you want
-                for( float i = 0.0f; i < 6; )
+                for( float i = 0.0f; i < 10; )
                 {
-                    for( float j = 0.0f; j < 6;)
+                    for( float j = 0.0f; j < 10;)
                     {
                         Renderer::AddBlocksToBatch( glm::vec3(i, 0.0f, j), 16, 32, 0);
                         j += 1.0f;

@@ -8,7 +8,7 @@ struct ShaderProgram
 {
 	uint32 programId;
 
-	bool CompileAndLink(const char* vertexShaderFile, const char* fragmentShaderFile);
+	bool CompileAndLink(std::string_view vertexShaderFile, std::string_view fragmentShaderFile);
 	void Bind() const;
 	void Unbind() const;
 	void Destroy();

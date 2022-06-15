@@ -24,9 +24,9 @@ namespace SymoCraft{
     };
 
     struct VertexAttribute{
-        int attribute_slot;
-        int element_amount;
-        uint32 offset;
+        uint16 attribute_slot;
+        uint16 element_amount;
+        uint16 offset;
     };
 
     constexpr uint32 kMaxBatchSize = 10000;
@@ -66,15 +66,15 @@ namespace SymoCraft{
         void AddVertex(const T& vertex)
         {
             if(!data)
-                std::cerr << "Invalid batch.\n";
+                AmoLogger_Error("Invalid batch.\n");
             if (!hasRoom())
             {
-                std::cerr << "Batch ran out of room. I have " << m_vertex_amount << '/' << kMaxBatchSize << " vertices.\n";
+                AmoLogger_Error("Batch ran out of room. I have %d/%d vertices.\n", m_vertex_amount, kMaxBatchSize);
                 return;
             }
             if (m_vertex_amount < 0)
             {
-                std::cerr << "Invalid vertex number.\n";
+                AmoLogger_Error("Invalid vertex number.\n");
                 return;
             }
 
@@ -125,9 +125,9 @@ namespace SymoCraft{
     private:
         uint32 m_vao;
         uint32 m_vbo;
+        uint32 m_data_size;
         uint32 m_vertex_amount;
         int32 zIndex;
-        uint32 m_data_size;
         T* data;
     };
 

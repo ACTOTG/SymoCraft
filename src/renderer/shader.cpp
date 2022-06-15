@@ -3,38 +3,36 @@
 bool Shader::compile(ShaderType type, std::string_view shaderFilepath)
 {
 	// Report compilation
-	std::cout << "Compiling shader : " << shaderFilepath << '\n';
+    AmoLogger_Log("Compiling shader: %s\n", shaderFilepath);
 
 	// Read the shader source code from the file
 	std::ifstream shader_file(shaderFilepath.data(), std::ios::in | std::ios::binary);
 	std::stringstream shader_stream;
 	std::string shader_source_code;
+
 	if( shader_file )
 	{
 		shader_stream << shader_file.rdbuf();
 		shader_source_code = shader_stream.str();
 	}
 	else
-	{
-		std::cout << "Could not open file: " << shaderFilepath << '\n';
-	}
+        AmoLogger_Error("Could not open file: %s\n",  shaderFilepath);
 
 
 	GLenum shaderType = toGlShaderType(type);
 	if (shaderType == GL_INVALID_ENUM) {
-		std::cerr << ("ShaderType is unknown");
+		AmoLogger_Error("ShaderType is unknown\n");
 		return false;
 	}
 
 	// Create an empty shader handle
 	shaderId = glCreateShader(shaderType);
 
-	// Send the shader source code to GL
-	const GLchar* sourceCStr = shader_source_code.c_str();
-	glShaderSource(shaderId, 1, &sourceCStr, nullptr);
-
-	// Compile the shader
+	// Send the shader source code to GL, and compile the shader
+	const char* source_c_str = shader_source_code.c_str();
+	glShaderSource(shaderId, 1, &source_c_str, nullptr);
 	glCompileShader(shaderId);
+
 
 	// Check if the compilation succeeded
 	GLint isCompiled = 0;
@@ -52,7 +50,7 @@ bool Shader::compile(ShaderType type, std::string_view shaderFilepath)
 		// We don't need the shader anymore if compilation failed
 		glDeleteShader(shaderId);
 
-		printf("Shader Compilation failed: \n%s", infoLog.data());
+		AmoLogger_Error("Shader Compilation failed: \n%s", infoLog.data());
 
 		shaderId = UINT32_MAX;
 		return false;

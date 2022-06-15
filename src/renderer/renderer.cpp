@@ -3,16 +3,19 @@
 #include "core/window.h"
 
 namespace SymoCraft::Renderer {
+
         static Batch<Vertex3D> block_batch;
-        static Camera *camera;
         static ShaderProgram block_shader;
+        static Camera *camera;
 
-        constexpr static GLfloat depth_value = 1.0f;
-        constexpr static std::array<float, 4> clear_color = {0.2f, 0.3f, 0.3f, 1.0f};
+        static glm::mat4 g_projection_mat;
+        static glm::mat4 g_view_mat;
+        static glm::mat4 g_combo_mat;
+        static glm::mat4 g_model_mat;
+        static glm::vec3 g_normal;
 
-        glm::mat4 g_projection_mat;
-        glm::mat4 g_view_mat;
-        glm::mat4 g_combo_mat;
+        constexpr float depth_value = 1.0f;
+        constexpr std::array<float, 4> clear_color = {0.2f, 0.3f, 0.3f, 1.0f};
 
         // Internal functions
         static void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
@@ -24,7 +27,7 @@ namespace SymoCraft::Renderer {
 
             // Load OpenGL functions using Glad
             if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
-                std::cerr << "Failed to initialize glad.\n";
+                AmoLogger_Error("Failed to initialize glad.\n");
                 return;
             }
             std::cout << "GLAD initialized.\n";
@@ -75,6 +78,7 @@ namespace SymoCraft::Renderer {
             // line3DShader.destroy();
             block_shader.Destroy();
             // batch3DVoxelsShader.destroy();
+
             // shader2D.compile("assets/shaders/DebugShader2D.glsl");
             // line3DShader.compile("assets/shaders/DebugShader3D.glsl");
             block_shader.CompileAndLink("assets/shaders/vs_BlockShader.glsl",
@@ -120,7 +124,7 @@ namespace SymoCraft::Renderer {
         // Draw 3D Functions
         // =========================================================
 
-        constexpr std::array<glm::vec3, 8> pos_coords{    // (0, 0, 0) is at the center of the block
+        constexpr std::array<glm::vec3, 8> k_pos_coords{  // (0, 0, 0) is the center of the block
                 glm::vec3(-0.5f,  0.5f,  0.5f),  // v0
                 glm::vec3( 0.5f,  0.5f,  0.5f),  // v1
                 glm::vec3(-0.5f, -0.5f,  0.5f),  // v2
@@ -145,14 +149,14 @@ namespace SymoCraft::Renderer {
         // Where v0, v4, v5, v1 is the top face
 
         // Tex-coords always loop with the triangle going:
-        constexpr std::array<glm::vec2, 4> tex_coords{
+        constexpr std::array<glm::vec2, 4> k_tex_coords{
                 glm::vec2(0.0f, 1.0f), // top-left
                 glm::vec2(1.0f, 1.0f), // top-right
                 glm::vec2(0.0f, 0.0f), // bottom-left
                 glm::vec2(1.0f, 0.0f), // bottom-right
         };
 
-        constexpr std::array<uint16, 24> vertex_indices = {
+        constexpr std::array<uint16, 24> k_vertex_indices = {
                 // Each set of 6 indices represents one quad
                 1, 0, 2, 3, // Front face
                 5, 1, 3, 7, // Right face
@@ -162,10 +166,9 @@ namespace SymoCraft::Renderer {
                 3, 2, 6, 7  // Bottom face
         };
 
-        std::array<std::array<Vertex3D, 4>, 6> block_faces{}; // Each block contains 6 faces, which contains 4 vertices
+        static std::array<std::array<Vertex3D, 4>, 6> block_faces{}; // Each block contains 6 faces, which contains 4 vertices
 
-        uint16 index;
-
+        static uint16 index;
         static uint16 vertex_count{0};
         static uint16 block_count{0};
 
@@ -174,17 +177,17 @@ namespace SymoCraft::Renderer {
             index = 0;
             // Let Amo decide what value should the normal have...
             // glm::vec3 normal = glm::vec3(offset.x, offset.y, offset.z);
-            glm::vec3 normal = glm::vec3();
-            glm::mat4 model_mat = glm::translate(glm::mat4(1.0f), block_center_coord);
+            g_normal = glm::vec3();
+            g_model_mat = glm::translate(glm::mat4(1.0f), block_center_coord);
 
             for (auto &face: block_faces) {
                 for (auto &vertex: face) {
-                    vertex.pos_coord = (model_mat * glm::vec4(pos_coords[vertex_indices[index]], 1.0f)).xyz();
-                    vertex.tex_coord = {tex_coords[vertex_indices[index % 4]], // Set uv coords
+                    vertex.pos_coord = (g_model_mat * glm::vec4(k_pos_coords[k_vertex_indices[index]], 1.0f)).xyz();
+                    vertex.tex_coord = {k_tex_coords[k_vertex_indices[index % 4]], // Set uv coords
                                         (index >= 16) ? // Set layer index, sides first, the top second, the bottom last
                                         ((index >= 20) ? bottom_tex : top_tex) // if 16 <= index < 20, assign top_tex
                                                       : side_tex}; // if index < 16, assign side_tex
-                    vertex.normal = normal;
+                    vertex.normal = g_normal;
                     index++;
                 }
 

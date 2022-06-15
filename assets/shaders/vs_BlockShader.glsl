@@ -6,7 +6,7 @@ layout (location = 2) in vec3 i_normal;
 
 out vec3 o_tex_coord;
 
-uniform mat4 u_combo_mat; // u_combo_mat = u_projection_mat * u_view_mat
+uniform mat4 u_combo_mat; // combo_mat = projection_mat * view_mat
 
 void main()
 {
