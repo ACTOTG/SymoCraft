@@ -79,6 +79,7 @@ Window* Window::Create(const char *window_title)
 
     res->SetVsync(true);
 
+    glViewport(0, 0, res->width, res->height);
 // --------------------------------------------------------------------------------------------
     // glad : load all GLFW function pointers
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))

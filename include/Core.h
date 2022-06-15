@@ -27,13 +27,11 @@
 //#include <unordered_map>
 
 // Glm
+#define GLM_FORCE_SWIZZLE
 #define GLM_EXT_INCLUDED
 #define GLM_ENABLE_EXPERIMENTAL
+#include <glm/glm.hpp>
 #include <glm/gtx/hash.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/integer.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -50,11 +48,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-// stb
-#include <stb/stb_image.h>
-#include <stb/stb_image_write.h>
-#include <stb/stb_image_resize.h>
-
 // Amo Memory Allocator
 #include <MemoryAllocator/AmoBase.h>
 #include <MemoryAllocator/RawMemory.h>
@@ -63,5 +56,19 @@
 // Core
 #include <Core/GlobalThreadPool.h>
 #include <Core/Window.h>
+
+
+#include <yaml-cpp/yaml.h>
+
+
+typedef uint64_t uint64;
+typedef uint32_t uint32;
+typedef uint16_t uint16;
+typedef uint8_t uint8;
+
+typedef int64_t int64;
+typedef int32_t int32;
+typedef int16_t int16;
+typedef int8_t int8;
 
 #endif //SYMOCRAFT_CORE_H
