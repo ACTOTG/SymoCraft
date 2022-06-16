@@ -8,8 +8,9 @@ set(MemoryAllocator include/MemoryAllocator/AmoBase.cpp)
 
 set(Core src/core/global_thread_pool.cpp
         src/core/window.cpp
-        src/core/application.cpp
-        src/core/pool.cpp)
+        src/core/application.cpp)
+
+set(ECS src/core/ECS/family_type_id.cpp)
 
 file(GLOB SOURCE_FILE
         "src/renderer/*.cpp"
@@ -23,7 +24,8 @@ add_executable(SymoCraft src/main.cpp
                          vendor/glad/glad.c
                          ${SOURCE_FILE}
                          ${MemoryAllocator}
-                         ${Core})
+                         ${Core}
+                         ${ECS})
 
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/glfw)

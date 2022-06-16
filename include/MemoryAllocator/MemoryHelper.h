@@ -7,8 +7,8 @@
 
 struct SizedMemory
 {
-    uint8_t* memory;
-    size_t size;
+    uint8_t* memory;        // memory cursor
+    size_t size;            // data size
 };
 
 namespace MemoryHelper {

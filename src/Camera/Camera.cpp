@@ -2,10 +2,10 @@
 // Created by Amo on 2022/6/12.
 //
 
-#include "Camera/camera.h"
+#include "camera/camera.h"
 #include "core.h"
-#include "Core/application.h"
-#include "Core/window.h"
+#include "core/application.h"
+#include "core/window.h"
 
 namespace SymoCraft
 {
