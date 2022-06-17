@@ -53,10 +53,8 @@
 #include <MemoryAllocator/RawMemory.h>
 #include <MemoryAllocator/MemoryHelper.h>
 
-
 // yaml
 #include <yaml-cpp/yaml.h>
-
 
 typedef uint64_t uint64;
 typedef uint32_t uint32;

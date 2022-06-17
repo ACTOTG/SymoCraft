@@ -1,22 +1,10 @@
 #include "world/chunk.h"
+#include "renderer/batch.hpp"
+#include "renderer/renderer.h"
 
 namespace SymoCraft {
 
     extern Batch<Vertex3D> block_batch;
-    Block NULL_BLOCK;
-    Block AIR_BLOCK;
-
-    struct SubChunk
-    {
-        Vertex3D *data;
-        uint32 first;
-        uint32 drawCommandIndex;
-        uint8 subChunkLevel;
-        glm::ivec2 chunkCoordinates;
-        std::atomic<bool> isBlendable;
-        std::atomic<uint32> vertex_amount;
-        std::atomic<SubChunkState> state;
-    };
 
     constexpr std::array<glm::ivec3, 8> k_pos_coords{
             glm::ivec3(0, 0, 0),  // v0
@@ -63,124 +51,94 @@ namespace SymoCraft {
 
     static std::array<std::array<Vertex3D, 4>, 6> block_faces{}; // Each block contains 6 faces, which contains 4 vertices
 
-    Block Chunk::GetLocalBlock(int x, int y, int z)
-    {
-        if (x >= k_chunk_length || x < 0 || z >= k_chunk_width || z < 0)
-        {
-            if (x >= k_chunk_length)
-            {
+    Block Chunk::GetLocalBlock(int x, int y, int z) {
+        if (x >= k_chunk_length || x < 0 || z >= k_chunk_width || z < 0) {
+            if (x >= k_chunk_length) {
                 return front_neighbor->GetLocalBlock(x - k_chunk_length, y, z);
-            }
-            else if (x < 0)
-            {
-                return bottom_neighbor->GetLocalBlock(k_chunk_length + x, y, z);
+            } else if (x < 0) {
+                return back_neighbor->GetLocalBlock(k_chunk_length + x, y, z);
             }
 
-            if (z >= k_chunk_width)
-            {
+            if (z >= k_chunk_width) {
                 return right_neighbor->GetLocalBlock(x, y, z - k_chunk_width);
-            }
-            else if (z < 0)
-            {
+            } else if (z < 0) {
                 return left_neighbor->GetLocalBlock(x, y, k_chunk_width + z);
             }
-        }
-        else if (y >= k_chunk_height || y < 0)
-        {
+        } else if (y >= k_chunk_height || y < 0) {
             return NULL_BLOCK;
         }
 
         int index = GetLocalBlockIndex(x, y, z);
-        return data[index];
+        return local_blocks[index];
     };
 
-    Block Chunk::GetWorldBlock(const glm::vec3& worldPosition)
-    {
-        glm::ivec3 localPosition = glm::floor(worldPosition - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
+    Block Chunk::GetWorldBlock(const glm::vec3 &worldPosition) {
+        glm::ivec3 localPosition = glm::floor(
+                worldPosition - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
         return GetLocalBlock(localPosition.x, localPosition.y, localPosition.z);
     }
 
-    bool Chunk::SetLocalBlock(int x, int y, int z, Block newBlock)
-    {
-        if (x >= k_chunk_length || x < 0 || z >= k_chunk_width || z < 0)
-        {
-            if (x >= k_chunk_length)
-            {
+    bool Chunk::SetLocalBlock(int x, int y, int z, Block newBlock) {
+        if (x >= k_chunk_length || x < 0 || z >= k_chunk_width || z < 0) {
+            if (x >= k_chunk_length) {
                 return front_neighbor->SetLocalBlock(x - k_chunk_length, y, z, newBlock);
-            }
-            else if (x < 0)
-            {
-                return bottom_neighbor->SetLocalBlock( k_chunk_length + x, y, z, newBlock);
+            } else if (x < 0) {
+                return back_neighbor->SetLocalBlock(k_chunk_length + x, y, z, newBlock);
             }
 
-            if (z >= k_chunk_width)
-            {
-                return right_neighbor->SetLocalBlock( x, y, z - k_chunk_width, newBlock);
+            if (z >= k_chunk_width) {
+                return right_neighbor->SetLocalBlock(x, y, z - k_chunk_width, newBlock);
+            } else if (z < 0) {
+                return left_neighbor->SetLocalBlock(x, y, k_chunk_width + z, newBlock);
             }
-            else if (z < 0)
-            {
-                return left_neighbor->SetLocalBlock( x, y, k_chunk_width + z, newBlock);
-            }
-        }
-        else if (y >= k_chunk_height || y < 0)
-        {
+        } else if (y >= k_chunk_height || y < 0) {
             return false;
         }
 
         int index = GetLocalBlockIndex(x, y, z);
         BlockFormat blockFormat = get_block(newBlock.block_id);
-        data[index].block_id = newBlock.block_id;
-        data[index].setTransparent(blockFormat.m_is_transparent);
-        data[index].setIsLightSource(blockFormat.m_is_lightSource);
+        local_blocks[index].block_id = newBlock.block_id;
+        local_blocks[index].setTransparent(blockFormat.m_is_transparent);
+        local_blocks[index].setIsLightSource(blockFormat.m_is_lightSource);
 
         return true;
     };
 
-    bool Chunk::SetWorldBlock(const glm::vec3 &worldPosition, Block newBlock)
-    {
-        glm::ivec3 localPosition = glm::floor(worldPosition - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
+    bool Chunk::SetWorldBlock(const glm::vec3 &worldPosition, Block newBlock) {
+        glm::ivec3 localPosition = glm::floor(
+                worldPosition - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
         return SetLocalBlock(localPosition.x, localPosition.y, localPosition.z, newBlock);
     }
 
-    bool Chunk::RemoveLocalBlock(int x, int y, int z)
-    {
-        if (x >= k_chunk_length || x < 0 || z >= k_chunk_width || z < 0)
-        {
-            if (x >= k_chunk_length)
-            {
+    bool Chunk::RemoveLocalBlock(int x, int y, int z) {
+        if (x >= k_chunk_length || x < 0 || z >= k_chunk_width || z < 0) {
+            if (x >= k_chunk_length) {
                 return front_neighbor->RemoveLocalBlock(x - k_chunk_length, y, z);
-            }
-            else if (x < 0)
-            {
-                return bottom_neighbor->RemoveLocalBlock(k_chunk_length + x, y, z);
+            } else if (x < 0) {
+                return back_neighbor->RemoveLocalBlock(k_chunk_length + x, y, z);
             }
 
-            if (z >= k_chunk_width)
-            {
+            if (z >= k_chunk_width) {
                 return right_neighbor->RemoveLocalBlock(x, y, z - k_chunk_width);
-            }
-            else if (z < 0)
-            {
+            } else if (z < 0) {
                 return left_neighbor->RemoveLocalBlock(x, y, k_chunk_width + z);
             }
-        }
-        else if (y >= k_chunk_height || y < 0)
-        {
+        } else if (y >= k_chunk_height || y < 0) {
             return false;
         }
 
         int index = SymoCraft::Chunk::GetLocalBlockIndex(x, y, z);
-        data[index].block_id = AIR_BLOCK.block_id;
-        data[index].setLightColor(glm::ivec3(255, 255, 255));
-        data[index].setTransparent(true);
-        data[index].setIsLightSource(false);
+        local_blocks[index].block_id = AIR_BLOCK.block_id;
+        local_blocks[index].setLightColor(glm::ivec3(255, 255, 255));
+        local_blocks[index].setTransparent(true);
+        local_blocks[index].setIsLightSource(false);
 
         return true;
     }
 
-    bool Chunk::RemoveWorldBlock(const glm::vec3 &worldPosition)
-    {
-        glm::ivec3 localPosition = glm::floor(worldPosition - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
+    bool Chunk::RemoveWorldBlock(const glm::vec3 &worldPosition) {
+        glm::ivec3 localPosition = glm::floor(
+                worldPosition - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
         return RemoveLocalBlock(localPosition.x, localPosition.y, localPosition.z);
     }
 
@@ -215,106 +173,82 @@ namespace SymoCraft {
 
     constexpr float maxBiomeHeight = 145.0f;
     constexpr float minBiomeHeight = 55.0f;
-    constexpr int oceanLevel = 85;
-    void Chunk::generateTerrain()
-    {
-        const int worldChunkX = m_chunk_coord.x * 16;
-        const int worldChunkZ = m_chunk_coord.y * 16;
+    constexpr int oceanLevel = 50;
+    constexpr uint16 maxHeight = 60;
+    constexpr uint16 stoneHeight = 40;
+    constexpr bool isCave = false;
 
-        data = (Block *)AmoMemory_Allocate(sizeof(Block) * k_chunk_width * k_chunk_height * k_chunk_length);
+    void Chunk::generateTerrain() {
+        AmoBase::AmoMemory_ZeroMem(local_blocks, sizeof(Block) * k_chunk_width * k_chunk_height * k_chunk_length);
 
-        for (int x = 0; x < k_chunk_length; x++)
-        {
-            for (int z = 0; z < k_chunk_width; z++)
-            {
+        for (int x = 0; x < k_chunk_length; x++) {
+            for (int z = 0; z < k_chunk_width; z++) {
                 // int16 maxHeight = TerrainGenerator::getHeight(x + worldChunkX, z + worldChunkZ, minBiomeHeight, maxBiomeHeight);
                 // int16 stoneHeight = (int16)(maxHeight - 3.0f);
-                uint16 maxHeight = 64;
-                uint16 stoneHeight = 40;
 
-                for (int y = 0; y < k_chunk_height; y++)
-                {
+                for (int y = 0; y < k_chunk_height; y++) {
                     // bool isCave = TerrainGenerator::getIsCave(x + worldChunkX, y, z + worldChunkZ, maxHeight);
-                    bool isCave = false;
                     const int arrayExpansion = GetLocalBlockIndex(x, y, z);
-                    if (!isCave)
-                    {
-                        if (y == 0)
-                        {
+                    if (!isCave) {
+                        if (y == 0) {
                             // Bedrock
-                            data[arrayExpansion].block_id = 5;
+                            local_blocks[arrayExpansion].block_id = 5;
                             // Set the first bit of compressed data to false, to let us know
                             // this is not a transparent block
-                            data[arrayExpansion].setTransparent(false);
-                            data[arrayExpansion].setIsBlendable(false);
-                            data[arrayExpansion].setIsLightSource(false);
-                        }
-                        else if (y < stoneHeight)
-                        {
+                            local_blocks[arrayExpansion].setTransparent(false);
+                            local_blocks[arrayExpansion].setIsBlendable(false);
+                            local_blocks[arrayExpansion].setIsLightSource(false);
+                        } else if (y < stoneHeight) {
                             // Stone
-                            data[arrayExpansion].block_id = 5;
-                            data[arrayExpansion].setTransparent(false);
-                            data[arrayExpansion].setIsBlendable(false);
-                            data[arrayExpansion].setIsLightSource(false);
-                        }
-                        else if (y < maxHeight)
-                        {
+                            local_blocks[arrayExpansion].block_id = 5;
+                            local_blocks[arrayExpansion].setTransparent(false);
+                            local_blocks[arrayExpansion].setIsBlendable(false);
+                            local_blocks[arrayExpansion].setIsLightSource(false);
+                        } else if (y < maxHeight) {
                             // Dirt
-                            data[arrayExpansion].block_id = 4;
-                            data[arrayExpansion].setTransparent(false);
-                            data[arrayExpansion].setIsBlendable(false);
-                            data[arrayExpansion].setIsLightSource(false);
-                        }
-                        else if (y == maxHeight)
-                        {
-                            if (maxHeight < oceanLevel + 2)
-                            {
+                            local_blocks[arrayExpansion].block_id = 4;
+                            local_blocks[arrayExpansion].setTransparent(false);
+                            local_blocks[arrayExpansion].setIsBlendable(false);
+                            local_blocks[arrayExpansion].setIsLightSource(false);
+                        } else if (y == maxHeight) {
+                            if (maxHeight < oceanLevel + 2) {
                                 // Sand
-                                data[arrayExpansion].block_id = 3;
-                                data[arrayExpansion].setTransparent(false);
-                                data[arrayExpansion].setIsBlendable(false);
-                                data[arrayExpansion].setIsLightSource(false);
-                            }
-                            else
-                            {
+                                local_blocks[arrayExpansion].block_id = 3;
+                                local_blocks[arrayExpansion].setTransparent(false);
+                                local_blocks[arrayExpansion].setIsBlendable(false);
+                                local_blocks[arrayExpansion].setIsLightSource(false);
+                            } else {
                                 // Grass
-                                data[arrayExpansion].block_id = 2;
-                                data[arrayExpansion].setTransparent(false);
-                                data[arrayExpansion].setIsBlendable(false);
-                                data[arrayExpansion].setIsLightSource(false);
+                                local_blocks[arrayExpansion].block_id = 2;
+                                local_blocks[arrayExpansion].setTransparent(false);
+                                local_blocks[arrayExpansion].setIsBlendable(false);
+                                local_blocks[arrayExpansion].setIsLightSource(false);
                             }
-                        }
-                        else if (y >= minBiomeHeight && y < oceanLevel)
-                        {
+                        } else if (y >= minBiomeHeight && y < oceanLevel) {
                             // Water
-                            data[arrayExpansion].block_id = 2;
-                            data[arrayExpansion].setTransparent(true);
-                            data[arrayExpansion].setIsBlendable(true);
-                            data[arrayExpansion].setIsLightSource(false);
+                            local_blocks[arrayExpansion].block_id = 2;
+                            local_blocks[arrayExpansion].setTransparent(true);
+                            local_blocks[arrayExpansion].setIsBlendable(true);
+                            local_blocks[arrayExpansion].setIsLightSource(false);
+                        } else if (!local_blocks[arrayExpansion].block_id) {
+                            local_blocks[arrayExpansion].block_id = AIR_BLOCK.block_id;
+                            local_blocks[arrayExpansion].setTransparent(true);
+                            local_blocks[arrayExpansion].setIsBlendable(false);
+                            local_blocks[arrayExpansion].setIsLightSource(false);
                         }
-                        else if (!data[arrayExpansion].block_id)
-                        {
-                            data[arrayExpansion].block_id = AIR_BLOCK.block_id;
-                            data[arrayExpansion].setTransparent(true);
-                            data[arrayExpansion].setIsBlendable(false);
-                            data[arrayExpansion].setIsLightSource(false);
-                        }
-                    }
-                    else
-                    {
-                        data[arrayExpansion].block_id = AIR_BLOCK.block_id;
-                        data[arrayExpansion].setTransparent(true);
-                        data[arrayExpansion].setIsBlendable(false);
-                        data[arrayExpansion].setIsLightSource(false);
-                        data[arrayExpansion].setLightColor(glm::ivec3(255, 255, 255));
+                    } else {
+                        local_blocks[arrayExpansion].block_id = AIR_BLOCK.block_id;
+                        local_blocks[arrayExpansion].setTransparent(true);
+                        local_blocks[arrayExpansion].setIsBlendable(false);
+                        local_blocks[arrayExpansion].setIsLightSource(false);
+                        local_blocks[arrayExpansion].setLightColor(glm::ivec3(255, 255, 255));
                     }
                 }
             }
         }
     }
 
-    void Chunk::generateRenderData()
-    {
+    void Chunk::generateRenderData() {
         SubChunk *solidSubChunk = nullptr;
         SubChunk *blendableSubChunk = nullptr;
 
@@ -356,23 +290,24 @@ namespace SymoCraft {
                             vertex.normal = normal;
                             i++;
                         }
+                    }
 
-                        for (i = 0; auto neighbor_block: neighbor_blocks) {
-                            neighbor_block = GetLocalBlock(neighbor_block_Xcoords[i],
-                                                              neighbor_block_Ycoords[i], neighbor_block_Zcoords[i]);
-                            // lightColors[i] = neighbor_blocks[i].getCompressedLightColor();
-                        }
+                    for (i = 0; auto neighbor_block: neighbor_blocks) {
+                        neighbor_block = GetLocalBlock(neighbor_block_Xcoords[i],
+                                                       neighbor_block_Ycoords[i], neighbor_block_Zcoords[i]);
+                        // lightColors[i] = neighbor_blocks[i].getCompressedLightColor();
+                    }
 
-                        SubChunk **currentSubChunkPtr = &solidSubChunk;
-                        if (block_format.m_is_blendable) {
-                            currentSubChunkPtr = &blendableSubChunk;
-                        }
+                    SubChunk **currentSubChunkPtr = &solidSubChunk;
+                    if (block_format.m_is_blendable) {
+                        currentSubChunkPtr = &blendableSubChunk;
+                    }
 
-                        // Only add the faces that are not culled by other neighbor_blocks
-                        // Use the 6 neighbor neighbor_blocks to iterate the 6 faces
-                        for (i = 0; auto neighbor_block: neighbor_blocks) {
-                            // If neighbor block is not null and is transparent
-                            if (!neighbor_block.IsNullBlock() && neighbor_block.IsTransparent()) {
+                    // Only add the faces that are not culled by other neighbor_blocks
+                    // Use the 6 blocks to iterate through the 6 faces
+                    for (i = 0; auto neighbor_block: neighbor_blocks) {
+                        // If neighbor block is not null and is transparent
+                        if (!neighbor_block.IsNullBlock() && neighbor_block.IsTransparent()) {
 
 //                          Smooth lighting
 //                          glm::vec<4, uint8, glm::defaultp> smoothLightVertex[6] = {};
@@ -426,7 +361,7 @@ namespace SymoCraft {
 //
 //                          smoothLightVertex[i][v] = currentVertexLight;
 //                          smoothSkyLightVertex[i][v] = currentVertexSkyLight;
-                            }
+                        }
 
 //                            *currentSubChunkPtr = getSubChunk(subChunks, *currentSubChunkPtr, currentLevel,
 //                                                              chunk_coord, currentBlockIsBlendable);
@@ -453,18 +388,19 @@ namespace SymoCraft {
 //                              smoothSkyLightVertex[i],
 //                                  lightColors[i]);
 
-                            // Add the block's top left triangle
-                            block_batch.AddVertex(block_faces[i][0]);
-                            block_batch.AddVertex(block_faces[i][1]);
-                            block_batch.AddVertex(block_faces[i][2]);
+                        // Add the block's top left triangle
+                        block_batch.AddVertex(block_faces[i][0]);
+                        block_batch.AddVertex(block_faces[i][1]);
+                        block_batch.AddVertex(block_faces[i][2]);
 
-                            // Add the block's bottom right triangle
-                            block_batch.AddVertex(block_faces[i][0]);
-                            block_batch.AddVertex(block_faces[i][1]);
-                            block_batch.AddVertex(block_faces[i][2]);
+                        // Add the block's bottom right triangle
+                        block_batch.AddVertex(block_faces[i][0]);
+                        block_batch.AddVertex(block_faces[i][2]);
+                        block_batch.AddVertex(block_faces[i][3]);
 
+                        vertex_count += 6;
+                        block_count += 1;
 //                            currentSubChunk->vertex_amount += 6;
-                        }
                     }
                 }
             }

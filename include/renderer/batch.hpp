@@ -30,7 +30,7 @@ namespace SymoCraft{
         uint16 offset;
     };
 
-    constexpr uint32 kMaxBatchSize = 300000;
+    constexpr uint32 kMaxBatchSize = 1000000;
 
     template<typename T>
     class Batch

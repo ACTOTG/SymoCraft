@@ -1,7 +1,6 @@
 #pragma once
 #include "core.h"
 #include "shader_program.h"
-#include "batch.hpp"
 #include "camera/camera.h"
 
 namespace SymoCraft{
@@ -13,6 +12,9 @@ namespace SymoCraft{
         uint32 first;
         uint32 baseInstance;
     };
+
+    extern uint16 vertex_count;
+    extern uint16 block_count;
 
     namespace Renderer
     {

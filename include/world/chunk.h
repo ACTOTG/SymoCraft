@@ -4,6 +4,8 @@
 #include "core.h"
 #include "block.h"
 #include "renderer/renderer.h"
+#include "renderer/batch.hpp"
+#include "chunk_manager.h"
 
 namespace SymoCraft {
 
@@ -11,15 +13,7 @@ namespace SymoCraft {
     // A sub-chunk is 16 * 16 * 16
     constexpr uint16 k_chunk_length = 16;
     constexpr uint16 k_chunk_width = 16;
-    constexpr uint16 k_chunk_height = 256;
-
-    struct SubChunk;
-
-    struct Vertex
-    {
-        uint32 data1;
-        uint32 data2;
-    };
+    constexpr uint16 k_chunk_height = 64;
 
     enum class ChunkState : uint8 {
         None,
@@ -30,29 +24,16 @@ namespace SymoCraft {
         Loaded
     };
 
-    enum class SubChunkState : uint8
-    {
-        Unloaded,
-        LoadBlockData,
-        LoadingBlockData,
-        RetesselateVertices,
-        DoneRetesselating,
-        TesselateVertices,
-        TesselatingVertices,
-        UploadVerticesToGpu,
-        Uploaded
-    };
-
     class Chunk {
     public:
-        Block *data;
+        Block *local_blocks;
         glm::ivec2 m_chunk_coord;
         ChunkState state;
         bool needsToGenerateDecorations;
         bool needsToCalculateLighting;
 
         Chunk* front_neighbor;
-        Chunk* bottom_neighbor;
+        Chunk* back_neighbor;
         Chunk* left_neighbor;
         Chunk* right_neighbor;
 

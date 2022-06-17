@@ -7,6 +7,9 @@
 namespace SymoCraft{
 
     Batch<Vertex3D> block_batch;
+    uint16 vertex_count{0};
+    uint16 block_count{0};
+
     namespace Renderer {
 
         static ShaderProgram block_shader;
@@ -176,8 +179,6 @@ namespace SymoCraft{
         static std::array<std::array<Vertex3D, 4>, 6> block_faces{}; // Each block contains 6 faces, which contains 4 vertices
 
         static uint16 index;
-        static uint16 vertex_count{0};
-        static uint16 block_count{0};
 
         void AddBlocksToBatch(const glm::ivec3 &block_center_coord, const uint16 &side_tex, const uint16 &top_tex,
                               const uint16 &bottom_tex) {

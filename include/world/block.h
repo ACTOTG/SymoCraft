@@ -1,7 +1,6 @@
 #pragma once
 #include <yaml-cpp/yaml.h>
 #include "core.h"
-#include "renderer/batch.hpp"
 
 namespace SymoCraft {
     constexpr uint16 NULL_BLOCK_ID = 0;
@@ -127,7 +126,7 @@ namespace SymoCraft {
 
     };
 
-    //Block NULL_BLOCK;
-    //Block AIR_BLOCK;
+    extern Block NULL_BLOCK;
+    extern Block AIR_BLOCK;
 
 }

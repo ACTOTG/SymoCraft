@@ -50,6 +50,15 @@ namespace SymoCraft
             glfwSetCursorPosCallback((GLFWwindow *) window.window_ptr, MouseMovementCallBack);
             glfwSetInputMode((GLFWwindow*)window.window_ptr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+            for(int x = -1; x < 2; x++)
+                for(int z = -1; z < 2; z++)
+                    ChunkManager::queueCreateChunk({x,z});
+
+            ChunkManager::patchChunkPointers();
+
+            for( auto chunk : ChunkManager::getAllChunks() )
+                chunk.second.generateTerrain();
+
             // -------------------------------------------------------------------
             // Render Loop
             while (!window.ShouldClose())
@@ -60,23 +69,21 @@ namespace SymoCraft
                 // Temporary Input Process Function
                 processInput((GLFWwindow*)GetWindow().window_ptr);
 
-//                Chunk a;
-//                a.generateTerrain({4, 4});
-//                a.generateRenderData({4, 4});
+//                //Add blocks, play as you want
+//                for( int i = 0; i < 16; )
+//                {
+//                    for( int j = 0; j < 16;)
+//                    {
+//                        Renderer::AddBlocksToBatch( glm::ivec3(i, -3, j), 16, 32, 0);
+//                        j += 1;
+//                    }
+//                    i += 1;
+//                }
 
-                //Add blocks, play as you want
-                for( int i = 0; i < 16; )
-                {
-                    for( int j = 0; j < 16;)
-                    {
-                        Renderer::AddBlocksToBatch( glm::ivec3(i, -3, j), 16, 32, 0);
-                        j += 1;
-                    }
-                    i += 1;
-                }
-
+                ChunkManager::getAllChunks().find({0,0})->second.generateRenderData();
                 glBindTextureUnit(0, texture_array.m_texture_Id);
                 SymoCraft::Renderer::Render();
+                SymoCraft::Renderer::ReportStatus();
 
                 window.SwapBuffers();
                 window.PollInt();
