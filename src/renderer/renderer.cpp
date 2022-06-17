@@ -76,7 +76,7 @@ namespace SymoCraft{
         void Render() {
             ClearBuffers();
 
-            FlushBatches3D();
+            DrawBatches3D();
             // flushBatches2D();
             // flushVoxelBatches();
         }
@@ -94,7 +94,7 @@ namespace SymoCraft{
             // batch3DVoxelsShader.compile("assets/shaders/VoxelShader.glsl");
         }
 
-        void FlushBatches3D() {
+        void DrawBatches3D() {
             block_shader.Bind();
 
             g_projection_mat = camera->GetCameraProjMat();
@@ -102,7 +102,7 @@ namespace SymoCraft{
             g_combo_mat = g_projection_mat * g_view_mat;
 
             block_shader.UploadMat4("u_combo_mat", g_combo_mat);
-            block_batch.Flush();
+            block_batch.Draw();
 
             block_shader.Unbind();
             // DebugStats::numDrawCalls += 2;
@@ -113,7 +113,7 @@ namespace SymoCraft{
 
             g_combo_mat = projection_mat * view_mat;
             block_shader.UploadMat4("u_combo_mat", g_combo_mat);
-            block_batch.Flush();
+            block_batch.Draw();
 
             block_shader.Unbind();
         }

@@ -148,7 +148,7 @@ namespace SymoCraft
                 for (int y = 0; y < k_chunk_height; y++) {
                     // bool isCave = TerrainGenerator::getIsCave(x + worldChunkX, y, z + worldChunkZ, maxHeight);
                     const int block_index = GetLocalBlockIndex(x, y, z);
-                    if(m_chunk_coord != glm::ivec2(0, 0))
+                    if(abs(m_chunk_coord.x) > 1 || abs(m_chunk_coord.y) > 1)
                     {
                         local_blocks[block_index].block_id = BlockConstants::AIR_BLOCK.block_id;
                         local_blocks[block_index].SetTransparency(true);
@@ -221,6 +221,9 @@ namespace SymoCraft
         SubChunk *solidSubChunk = nullptr;
         SubChunk *blendableSubChunk = nullptr;
 
+        const int kWorldChunkX = m_chunk_coord.x * 16;
+        const int kWorldChunkZ = m_chunk_coord.y * 16;
+
         for (int y = 0; y < k_chunk_height; y++) {
             int currentLevel = y / 16;
 
@@ -266,7 +269,8 @@ namespace SymoCraft
 
                             //If the face aren't culled, calculate its 4 vertices
                             for( int j = 0; j < 4; j++) {
-                                block_faces[i][j].pos_coord = (glm::ivec3(x, y, z) + BlockConstants::pos_coords[BlockConstants::vertex_indices[i * 4 + j]]);
+                                block_faces[i][j].pos_coord = (glm::ivec3(x + kWorldChunkX, y, z + kWorldChunkZ) +
+                                        BlockConstants::pos_coords[BlockConstants::vertex_indices[i * 4 + j]]);
                                 block_faces[i][j].tex_coord = {BlockConstants::tex_coords[j % 4], // Set uv coords
                                                                 (i * 4 + j >= 16) ? ((i * 4 + j >= 20)
                                                                  ? // Set layer i, sides first, the top second, the bottom last

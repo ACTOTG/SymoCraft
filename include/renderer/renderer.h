@@ -27,7 +27,7 @@ namespace SymoCraft{
         void reloadShaders();
 
         // void flushBatches2D();
-        void FlushBatches3D();
+        void DrawBatches3D();
         void FlushBatches3D(const glm::mat4 &projection_mat, const glm::mat4 &view_mat);
         // void flushVoxelBatches();
 
