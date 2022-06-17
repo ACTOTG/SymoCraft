@@ -1,11 +1,10 @@
 #include "renderer/renderer.h"
 #include "core/application.h"
 #include "core/window.h"
-#include "renderer/batch.hpp"
 #include "world/block.h"
+#include "core/constants.h"
 
 namespace SymoCraft{
-
     Batch<Vertex3D> block_batch;
     uint16 vertex_count;
     uint16 face_count;
@@ -46,8 +45,8 @@ namespace SymoCraft{
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
-            //glEnable(GL_BLEND);
-            //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             // Initialize shaders
             block_shader.CompileAndLink("../assets/shaders/vs_BlockShader.glsl",
@@ -55,9 +54,9 @@ namespace SymoCraft{
 
             // Initialize batches
             block_batch.init({
-                                     {0, 3, GL_INT,   offsetof(Vertex3D, pos_coord)},
+                                     {0, 3,   GL_INT, offsetof(Vertex3D, pos_coord)},
                                      {1, 3, GL_FLOAT, offsetof(Vertex3D, tex_coord)},
-                                     {2, 1, GL_FLOAT, offsetof(Vertex3D, normal)}});
+                                     {2, 1, GL_FLOAT, offsetof(Vertex3D, normal   )}});
 
             loadBlocks("../assets/configs/blockFormats.yaml");
 
@@ -133,49 +132,6 @@ namespace SymoCraft{
         // Draw 3D Functions
         // =========================================================
 
-        constexpr std::array<glm::ivec3, 8> k_pos_coords{
-                glm::ivec3(0, 0, 0),  // v0
-                glm::ivec3(0, 0, 1),  // v1
-                glm::ivec3(1, 0, 1),  // v2
-                glm::ivec3(1, 0, 0),  // v3
-                glm::ivec3(0, 1, 0),  // v4
-                glm::ivec3(0, 1, 1),  // v5
-                glm::ivec3(1, 1, 1),  // v6
-                glm::ivec3(1, 1, 0),  // v7
-        };
-
-        // The 8 vertices will look like this:
-        //   v4 ----------- v7     v0 is at (0, 0, 0)
-        //   /|            /|
-        //  / |           / |      Axis orientation
-        // v5 --------- v6  |            y
-        // |  |         |   |            |
-        // |  v0 -------|-- v3           +--- x
-        // | /          |  /            /
-        // |/           | /            z
-        // v1 --------- v2
-        //
-        // Where v4, v5, v6, v7 is the top face
-
-        // Tex-coords always loop with the triangle going:
-        // Counterclockwise order(right-hand rule), starting at top right
-        constexpr std::array<glm::vec2, 4> k_tex_coords{
-                glm::vec2(1.0f, 1.0f), // top-right
-                glm::vec2(0.0f, 1.0f), // top-left
-                glm::vec2(0.0f, 0.0f), // bottom-left
-                glm::vec2(1.0f, 0.0f), // bottom-right
-        };
-
-        constexpr std::array<uint16, 24> k_vertex_indices = {
-                // Each set of 6 indices represents one quad
-                7, 6, 2, 3, // Front face
-                6, 5, 1, 2, // Right face
-                5, 4, 0, 1, // Back face
-                4, 7, 3, 0, // Left face
-                7, 4, 5, 6, // Top face
-                2, 1, 0, 3  // Bottom face
-        };
-
         static std::array<std::array<Vertex3D, 4>, 6> block_faces{}; // Each block contains 6 faces, which contains 4 vertices
 
         static uint16 index;
@@ -188,8 +144,8 @@ namespace SymoCraft{
 
             for (index = 0; auto &face: block_faces) {
                 for (auto &vertex: face) {
-                    vertex.pos_coord = (k_pos_coords[k_vertex_indices[index]] + block_center_coord);
-                    vertex.tex_coord = {k_tex_coords[index % 4], // Set uv coords
+                    vertex.pos_coord = (block_center_coord + BlockConstants::pos_coords[BlockConstants::vertex_indices[index]]);
+                    vertex.tex_coord = {BlockConstants::tex_coords[index % 4], // Set uv coords
                                         (index >= 16) ? // Set layer index, sides first, the top second, the bottom last
                                         ((index >= 20) ? bottom_tex : top_tex) // if 16 <= index < 20, assign top_tex
                                                       : side_tex}; // if index < 16, assign side_tex

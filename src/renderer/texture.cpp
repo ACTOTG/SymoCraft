@@ -2,8 +2,6 @@
 
 Texture Texture::CreateRegularTexture(std::string_view filepath, bool pixelated)
 {
-    stbi_set_flip_vertically_on_load(true);
-
     Texture res;
     res.m_filepath = filepath;
     uint8* pixels = stbi_load(res.m_filepath.data(), &res.m_width, &res.m_height, &res.m_channel_amount, 0);
@@ -51,7 +49,7 @@ Texture Texture::CreateRegularTexture(std::string_view filepath, bool pixelated)
     return res;
 }
 
-TextureArray TextureArray::CreateAtlasSlice(const std::string &filepath, bool pixelated)
+TextureArray TextureArray::CreateAtlasSlice(std::string_view filepath, bool pixelated)
 {
     // Set up
     Texture tex_atlas = CreateRegularTexture( filepath, pixelated );

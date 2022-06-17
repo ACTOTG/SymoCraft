@@ -1,56 +1,11 @@
 #include "world/chunk.h"
 #include "renderer/batch.hpp"
 #include "renderer/renderer.h"
+#include "core/constants.h"
 
-namespace SymoCraft {
-
-    extern Batch<Vertex3D> block_batch;
-
-    constexpr std::array<glm::ivec3, 8> k_pos_coords{
-            glm::ivec3(0, 0, 0),  // v0
-            glm::ivec3(0, 0, 1),  // v1
-            glm::ivec3(1, 0, 1),  // v2
-            glm::ivec3(1, 0, 0),  // v3
-            glm::ivec3(0, 1, 0),  // v4
-            glm::ivec3(0, 1, 1),  // v5
-            glm::ivec3(1, 1, 1),  // v6
-            glm::ivec3(1, 1, 0),  // v7
-    };
-
-    // The 8 vertices will look like this:
-    //   v4 ----------- v7     v0 is at (0, 0, 0)
-    //   /|            /|
-    //  / |           / |      Axis orientation
-    // v5 --------- v6  |            y
-    // |  |         |   |            |
-    // |  v0 -------|-- v3           +--- x
-    // | /          |  /            /
-    // |/           | /            z
-    // v1 --------- v2
-    //
-    // Where v4, v5, v6, v7 is the top face
-
-    // Tex-coords always loop with the triangle going:
-    // Counterclockwise order(right-hand rule), starting at top right
-    constexpr std::array<glm::vec2, 4> k_tex_coords{
-            glm::vec2(1.0f, 1.0f), // top-right
-            glm::vec2(0.0f, 1.0f), // top-left
-            glm::vec2(0.0f, 0.0f), // bottom-left
-            glm::vec2(1.0f, 0.0f), // bottom-right
-    };
-
-    constexpr std::array<uint16, 24> k_vertex_indices = {
-            // Each set of 6 indices represents one quad
-            7, 6, 2, 3, // Front face
-            6, 5, 1, 2, // Right face
-            5, 4, 0, 1, // Back face
-            4, 7, 3, 0, // Left face
-            7, 4, 5, 6, // Top face
-            2, 1, 0, 3  // Bottom face
-    };
-
+namespace SymoCraft
+{
     static float g_normal;
-
     static std::array<std::array<Vertex3D, 4>, 6> block_faces{}; // Each block contains 6 faces, which contains 4 vertices
 
     Block Chunk::GetLocalBlock(int x, int y, int z) {
@@ -66,13 +21,12 @@ namespace SymoCraft {
             } else if (z < 0) {
                 return left_neighbor->GetLocalBlock(x, y, k_chunk_width + z);
             }
-        } else if (y >= k_chunk_height || y < 0) {
-            return NULL_BLOCK;
         }
+        else if (y >= k_chunk_height || y < 0)
+            return BlockConstants::NULL_BLOCK;
 
-        int index = GetLocalBlockIndex(x, y, z);
-        return local_blocks[index];
-    };
+        return local_blocks[GetLocalBlockIndex(x, y, z)];
+    }
 
     Block Chunk::GetWorldBlock(const glm::vec3 &worldPosition) {
         glm::ivec3 localPosition = glm::floor(
@@ -81,7 +35,8 @@ namespace SymoCraft {
     }
 
     bool Chunk::SetLocalBlock(int x, int y, int z, Block newBlock) {
-        if (x >= k_chunk_length || x < 0 || z >= k_chunk_width || z < 0) {
+        if (x >= k_chunk_length || x < 0 || z >= k_chunk_width || z < 0)
+        {
             if (x >= k_chunk_length) {
                 return front_neighbor->SetLocalBlock(x - k_chunk_length, y, z, newBlock);
             } else if (x < 0) {
@@ -93,18 +48,19 @@ namespace SymoCraft {
             } else if (z < 0) {
                 return left_neighbor->SetLocalBlock(x, y, k_chunk_width + z, newBlock);
             }
-        } else if (y >= k_chunk_height || y < 0) {
-            return false;
         }
+        else if (y >= k_chunk_height || y < 0)
+            return false;
+
 
         int index = GetLocalBlockIndex(x, y, z);
         BlockFormat blockFormat = get_block(newBlock.block_id);
         local_blocks[index].block_id = newBlock.block_id;
-        local_blocks[index].setTransparent(blockFormat.m_is_transparent);
-        local_blocks[index].setIsLightSource(blockFormat.m_is_lightSource);
+        local_blocks[index].SetTransparency(blockFormat.m_is_transparent);
+        local_blocks[index].SetIsLightSource(blockFormat.m_is_lightSource);
 
         return true;
-    };
+    }
 
     bool Chunk::SetWorldBlock(const glm::vec3 &worldPosition, Block newBlock) {
         glm::ivec3 localPosition = glm::floor(
@@ -129,11 +85,12 @@ namespace SymoCraft {
             return false;
         }
 
+        // Replace the block with an air block
         int index = SymoCraft::Chunk::GetLocalBlockIndex(x, y, z);
-        local_blocks[index].block_id = AIR_BLOCK.block_id;
-        local_blocks[index].setLightColor(glm::ivec3(255, 255, 255));
-        local_blocks[index].setTransparent(true);
-        local_blocks[index].setIsLightSource(false);
+        local_blocks[index].block_id = BlockConstants::AIR_BLOCK.block_id;
+        local_blocks[index].SetLightColor(glm::ivec3(255, 255, 255));
+        local_blocks[index].SetTransparency(true);
+        local_blocks[index].SetIsLightSource(false);
 
         return true;
     }
@@ -162,7 +119,7 @@ namespace SymoCraft {
 //                ret->state = SubChunkState::TesselatingVertices;
 //                ret->subChunkLevel = currentLevel;
 //                ret->chunkCoordinates = chunkCoordinates;
-//                ret->isBlendable = isBlendableSubChunk;
+//                ret->IsBlendable = isBlendableSubChunk;
 //            }
 //            else
 //            {
@@ -190,70 +147,70 @@ namespace SymoCraft {
 
                 for (int y = 0; y < k_chunk_height; y++) {
                     // bool isCave = TerrainGenerator::getIsCave(x + worldChunkX, y, z + worldChunkZ, maxHeight);
-                    const int arrayExpansion = GetLocalBlockIndex(x, y, z);
+                    const int block_index = GetLocalBlockIndex(x, y, z);
                     if(m_chunk_coord != glm::ivec2(0, 0))
                     {
-                        local_blocks[arrayExpansion].block_id = AIR_BLOCK.block_id;
-                        local_blocks[arrayExpansion].setTransparent(true);
-                        local_blocks[arrayExpansion].setIsBlendable(false);
-                        local_blocks[arrayExpansion].setIsLightSource(false);
-                        local_blocks[arrayExpansion].setLightColor(glm::ivec3(255, 255, 255));
+                        local_blocks[block_index].block_id = BlockConstants::AIR_BLOCK.block_id;
+                        local_blocks[block_index].SetTransparency(true);
+                        local_blocks[block_index].SetBlendability(false);
+                        local_blocks[block_index].SetIsLightSource(false);
+                        local_blocks[block_index].SetLightColor(glm::ivec3(255, 255, 255));
                         continue;
                     };
 
                     if (!isCave) {
                         if (y == 0) {
                             // Bedrock
-                            local_blocks[arrayExpansion].block_id = 5;
+                            local_blocks[block_index].block_id = 5;
                             // Set the first bit of compressed data to false, to let us know
                             // this is not a transparent block
-                            local_blocks[arrayExpansion].setTransparent(false);
-                            local_blocks[arrayExpansion].setIsBlendable(false);
-                            local_blocks[arrayExpansion].setIsLightSource(false);
+                            local_blocks[block_index].SetTransparency(false);
+                            local_blocks[block_index].SetBlendability(false);
+                            local_blocks[block_index].SetIsLightSource(false);
                         } else if (y < stoneHeight) {
                             // Stone
-                            local_blocks[arrayExpansion].block_id = 5;
-                            local_blocks[arrayExpansion].setTransparent(false);
-                            local_blocks[arrayExpansion].setIsBlendable(false);
-                            local_blocks[arrayExpansion].setIsLightSource(false);
+                            local_blocks[block_index].block_id = 5;
+                            local_blocks[block_index].SetTransparency(false);
+                            local_blocks[block_index].SetBlendability(false);
+                            local_blocks[block_index].SetIsLightSource(false);
                         } else if (y < maxHeight) {
                             // Dirt
-                            local_blocks[arrayExpansion].block_id = 4;
-                            local_blocks[arrayExpansion].setTransparent(false);
-                            local_blocks[arrayExpansion].setIsBlendable(false);
-                            local_blocks[arrayExpansion].setIsLightSource(false);
+                            local_blocks[block_index].block_id = 4;
+                            local_blocks[block_index].SetTransparency(false);
+                            local_blocks[block_index].SetBlendability(false);
+                            local_blocks[block_index].SetIsLightSource(false);
                         } else if (y == maxHeight) {
                             if (maxHeight < oceanLevel + 2) {
                                 // Sand
-                                local_blocks[arrayExpansion].block_id = 3;
-                                local_blocks[arrayExpansion].setTransparent(false);
-                                local_blocks[arrayExpansion].setIsBlendable(false);
-                                local_blocks[arrayExpansion].setIsLightSource(false);
+                                local_blocks[block_index].block_id = 3;
+                                local_blocks[block_index].SetTransparency(false);
+                                local_blocks[block_index].SetBlendability(false);
+                                local_blocks[block_index].SetIsLightSource(false);
                             } else {
                                 // Grass
-                                local_blocks[arrayExpansion].block_id = 2;
-                                local_blocks[arrayExpansion].setTransparent(false);
-                                local_blocks[arrayExpansion].setIsBlendable(false);
-                                local_blocks[arrayExpansion].setIsLightSource(false);
+                                local_blocks[block_index].block_id = 2;
+                                local_blocks[block_index].SetTransparency(false);
+                                local_blocks[block_index].SetBlendability(false);
+                                local_blocks[block_index].SetIsLightSource(false);
                             }
                         } else if (y >= minBiomeHeight && y < oceanLevel) {
                             // Water
-                            local_blocks[arrayExpansion].block_id = 2;
-                            local_blocks[arrayExpansion].setTransparent(true);
-                            local_blocks[arrayExpansion].setIsBlendable(true);
-                            local_blocks[arrayExpansion].setIsLightSource(false);
-                        } else if (!local_blocks[arrayExpansion].block_id) {
-                            local_blocks[arrayExpansion].block_id = AIR_BLOCK.block_id;
-                            local_blocks[arrayExpansion].setTransparent(true);
-                            local_blocks[arrayExpansion].setIsBlendable(false);
-                            local_blocks[arrayExpansion].setIsLightSource(false);
+                            local_blocks[block_index].block_id = 2;
+                            local_blocks[block_index].SetTransparency(true);
+                            local_blocks[block_index].SetBlendability(true);
+                            local_blocks[block_index].SetIsLightSource(false);
+                        } else if (!local_blocks[block_index].block_id) {
+                            local_blocks[block_index].block_id = BlockConstants::AIR_BLOCK.block_id;
+                            local_blocks[block_index].SetTransparency(true);
+                            local_blocks[block_index].SetBlendability(false);
+                            local_blocks[block_index].SetIsLightSource(false);
                         }
                     } else {
-                        local_blocks[arrayExpansion].block_id = AIR_BLOCK.block_id;
-                        local_blocks[arrayExpansion].setTransparent(true);
-                        local_blocks[arrayExpansion].setIsBlendable(false);
-                        local_blocks[arrayExpansion].setIsLightSource(false);
-                        local_blocks[arrayExpansion].setLightColor(glm::ivec3(255, 255, 255));
+                        local_blocks[block_index].block_id = BlockConstants::AIR_BLOCK.block_id;
+                        local_blocks[block_index].SetTransparency(true);
+                        local_blocks[block_index].SetBlendability(false);
+                        local_blocks[block_index].SetIsLightSource(false);
+                        local_blocks[block_index].SetLightColor(glm::ivec3(255, 255, 255));
                     }
                 }
             }
@@ -269,20 +226,20 @@ namespace SymoCraft {
 
             for (int x = 0; x < k_chunk_length; x++) {
                 for (int z = 0; z < k_chunk_width; z++) {
-                    // 24 Vertices per cube
-                    const Block &block = GetLocalBlock(x, y, z);
-                    int blockId = block.block_id;
 
-                    if (block.IsNullBlock() || block == AIR_BLOCK) {
+                    // 36 Vertices per cube
+                    const Block &block = GetLocalBlock(x, y, z);
+
+                    if (block == BlockConstants::NULL_BLOCK || block == BlockConstants::AIR_BLOCK) {
                         continue;
                     }
 
-                    const BlockFormat &block_format = get_block(blockId);
+                    const BlockFormat &block_format = get_block(block.block_id);
 
                     // The order of coordinates is FRONT, RIGHT, BACK, LEFT, TOP, BOTTOM neighbor_blocks to check
-                    int neighbor_block_Xcoords[6] = {x + 1,     x, x - 1,     x,     x,     x};
-                    int neighbor_block_Ycoords[6] = {    y,     y,     y,     y, y + 1, y - 1};
-                    int neighbor_block_Zcoords[6] = {    z, z + 1,     z, z - 1,      z,    z};
+                    const int neighbor_block_Xcoords[6] = {x + 1,     x, x - 1,     x,     x,     x};
+                    const int neighbor_block_Ycoords[6] = {    y,     y,     y,     y, y + 1, y - 1};
+                    const int neighbor_block_Zcoords[6] = {    z, z + 1,     z, z - 1,      z,    z};
 
                     // The 6 neighbor blocks that the target block is facing
                     Block neighbor_blocks[6];
@@ -292,7 +249,7 @@ namespace SymoCraft {
 
                     for (i = 0; auto &neighbor_block: neighbor_blocks) {
                         neighbor_block = GetLocalBlock(neighbor_block_Xcoords[i],neighbor_block_Ycoords[i], neighbor_block_Zcoords[i]);
-                        // lightColors[i] = neighbor_blocks[i].getCompressedLightColor();
+                        // lightColors[i] = neighbor_blocks[i].GetCompressedLightColor();
                         i++;
                     }
 
@@ -305,17 +262,17 @@ namespace SymoCraft {
                     // Use the 6 blocks to iterate through the 6 faces
                     for (i = 0; auto &neighbor_block: neighbor_blocks) {
                         // If neighbor block is not null and is transparent
-                        if (!neighbor_block.IsNullBlock() && neighbor_block.IsTransparent()) {
+                        if (neighbor_block != BlockConstants::NULL_BLOCK && neighbor_block.IsTransparent()) {
 
                             //If the face aren't culled, calculate its 4 vertices
                             for( int j = 0; j < 4; j++) {
-                                block_faces[i][j].pos_coord = (glm::ivec3(x, y, z) + k_pos_coords[k_vertex_indices[i * 4 + j]]);
-                                block_faces[i][j].tex_coord = {k_tex_coords[j % 4], // Set uv coords
-                                                    (i * 4 + j >= 16) ? ((i * 4 + j >= 20)
+                                block_faces[i][j].pos_coord = (glm::ivec3(x, y, z) + BlockConstants::pos_coords[BlockConstants::vertex_indices[i * 4 + j]]);
+                                block_faces[i][j].tex_coord = {BlockConstants::tex_coords[j % 4], // Set uv coords
+                                                                (i * 4 + j >= 16) ? ((i * 4 + j >= 20)
                                                                  ? // Set layer i, sides first, the top second, the bottom last
                                                                  block_format.m_bottom_texture
                                                                  : block_format.m_top_texture) // if 16 <= i < 20, assign top_tex
-                                                              : block_format.m_side_texture}; // if i < 16, assign side_tex
+                                                                 : block_format.m_side_texture}; // if i < 16, assign side_tex
                                 block_faces[i][j].normal = g_normal;
                             }
 //                          Smooth lighting

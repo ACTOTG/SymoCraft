@@ -3,9 +3,8 @@
 
 #include "core.h"
 #include "block.h"
-#include "renderer/renderer.h"
-#include "renderer/batch.hpp"
 #include "chunk_manager.h"
+#include "renderer/batch.hpp"
 
 namespace SymoCraft {
 

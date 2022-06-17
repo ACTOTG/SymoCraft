@@ -2,23 +2,9 @@
 
 namespace SymoCraft{
     static robin_hood::unordered_flat_map<uint16, BlockFormat> block_format_map;
-    static robin_hood::unordered_flat_map<std::string, uint16> name_to_id_map;
+    static robin_hood::unordered_flat_map<std::string_view , uint16> name_to_id_map;
 
-    Block NULL_BLOCK = {
-            NULL_BLOCK_ID,
-            255,
-            255,
-            255
-    };
-
-    Block AIR_BLOCK = {
-            1,
-            255,
-            255,
-            255
-    };
-
-    uint16 get_block_id(const std::string& block_name)
+    uint16 get_block_id(std::string_view block_name)
     {
         const auto& iter = name_to_id_map.find(block_name);
         if (iter == name_to_id_map.end())
@@ -38,7 +24,7 @@ namespace SymoCraft{
     }
 
 
-    const BlockFormat& get_block(const std::string& name)
+    const BlockFormat& get_block(std::string_view name)
     {
         int blockId = get_block_id(name);
         return block_format_map[blockId];
@@ -63,9 +49,9 @@ namespace SymoCraft{
             auto bottom_texture = block.second["bottom"].as<uint16>();
             bool isTransparent = block.second["isTransparent"].as<bool>();
             bool isSolid = block.second["isSolid"].as<bool>();
-            bool isBlendable = block.second["isBlendable"].IsDefined() && block.second["isBlendable"].as<bool>();
-            bool isLightSource = block.second["isLightSource"].IsDefined() && block.second["isLightSource"].as<bool>();
-            int16 lightLevel = block.second["light_level"].IsDefined() ? block.second["light_level"].as<int16>() : 0;
+            bool isBlendable = block.second["IsBlendable"].IsDefined() && block.second["IsBlendable"].as<bool>();
+            bool isLightSource = block.second["IsLightSource"].IsDefined() && block.second["IsLightSource"].as<bool>();
+            int16 lightLevel = block.second["m_light_level"].IsDefined() ? block.second["m_light_level"].as<int16>() : 0;
 
             if (block_format_map.contains(id))
             {

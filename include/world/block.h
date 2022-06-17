@@ -2,9 +2,8 @@
 #include <yaml-cpp/yaml.h>
 #include "core.h"
 
-namespace SymoCraft {
-    constexpr uint16 NULL_BLOCK_ID = 0;
-
+namespace SymoCraft
+{
     struct BlockFormat {
         uint16 m_top_texture;
         uint16 m_side_texture;
@@ -13,13 +12,13 @@ namespace SymoCraft {
         bool m_is_solid;
         bool m_is_blendable;
         bool m_is_lightSource;
-        int16 light_level;
+        int16 m_light_level;
     };
 
     void loadBlocks(std::string_view block_format_config);
-    uint16 get_block_id(const std::string& block_name);
+    uint16 get_block_id(std::string_view block_name);
     const BlockFormat& get_block(int block_id);
-    const BlockFormat& get_block(const std::string& name);
+    const BlockFormat& get_block(std::string_view name);
 
     class Block {
     public:
@@ -31,13 +30,13 @@ namespace SymoCraft {
         //  8 bits block type
         // 32 bits extra stuff
         uint16 block_id;
-        int16 lightLevel;
+        uint16 lightLevel;
         int16 lightColor;
 
         // Bit 1 IsTransparent
-        // Bit 2 isBlendable
-        // Bit 3 is_lightSource
-        uint16 bitwise_compressed_data;
+        // Bit 2 IsBlendable
+        // Bit 3 IsLightSource
+        uint8 bitwise_compressed_data;
 
         inline bool operator==(const Block& b) const
         {
@@ -54,46 +53,46 @@ namespace SymoCraft {
             return (bitwise_compressed_data & (1 << 0));
         }
 
-        inline bool isBlendable() const
+        inline bool IsBlendable() const
         {
             return (bitwise_compressed_data & (1 << 1));
         }
 
-        inline bool isLightSource() const
+        inline bool IsLightSource() const
         {
             return (bitwise_compressed_data & (1 << 2));
         }
 
-        inline bool isLightPassable() const
+        inline bool IsLightPassable() const
         {
-            return isLightSource() || IsTransparent();
+            return IsLightSource() || IsTransparent();
         }
 
-        inline void setTransparent(bool transparent)
+        inline void SetTransparency(bool is_transparent)
         {
             // Clear the bit
             bitwise_compressed_data &= ~(1 << 0);
             // Set the bit if needed
-            bitwise_compressed_data |= transparent ? (1 << 0) : 0;
+            bitwise_compressed_data |= is_transparent ? (1 << 0) : 0;
         }
 
-        inline void setIsBlendable(bool isBlendable)
+        inline void SetBlendability(bool is_blendable)
         {
             // Clear the bit
             bitwise_compressed_data &= ~(1 << 1);
             // Set the bit if needed
-            bitwise_compressed_data |= isBlendable ? (1 << 1) : 0;
+            bitwise_compressed_data |= is_blendable ? (1 << 1) : 0;
         }
 
-        inline void setIsLightSource(bool isLightSource)
+        inline void SetIsLightSource(bool is_lightSource)
         {
             // Clear the bit
             bitwise_compressed_data &= ~(1 << 2);
             // Set the bit if needed
-            bitwise_compressed_data |= isLightSource ? (1 << 2) : 0;
+            bitwise_compressed_data |= is_lightSource ? (1 << 2) : 0;
         }
 
-        inline void setLightColor(const glm::ivec3& color)
+        inline void SetLightColor(const glm::ivec3& color)
         {
             // Convert from number between 0-255 to number between 0-7
             lightColor =
@@ -102,7 +101,7 @@ namespace SymoCraft {
                     (( ((int)((float)color.b / 255.0f) * 7) << 6) & 0x1C0);
         }
 
-        inline glm::ivec3 getLightColor() const
+        inline glm::ivec3 GetLightColor() const
         {
             // Convert from number between 0-7 to number between 0-255
             return {
@@ -112,22 +111,12 @@ namespace SymoCraft {
             };
         }
 
-        inline glm::ivec3 getCompressedLightColor() const
+        inline glm::ivec3 GetCompressedLightColor() const
         {
             return {((lightColor & 0x7) >> 0),  // R
                     ((lightColor & 0x38) >> 3), // G
                     ((lightColor & 0x1C0) >> 6) // B
             };
         }
-
-        inline bool IsNullBlock() const
-        {
-            return block_id == NULL_BLOCK_ID;
-        }
-
     };
-
-    extern Block NULL_BLOCK;
-    extern Block AIR_BLOCK;
-
 }

@@ -2,6 +2,7 @@
 #include "core.h"
 #include "shader_program.h"
 #include "camera/camera.h"
+#include "renderer/batch.hpp"
 
 namespace SymoCraft{
     struct Framebuffer;
@@ -13,6 +14,7 @@ namespace SymoCraft{
         uint32 baseInstance;
     };
 
+    extern Batch<Vertex3D> block_batch;
     extern uint16 vertex_count;
     extern uint16 face_count;
 
@@ -26,12 +28,12 @@ namespace SymoCraft{
 
         // void flushBatches2D();
         void FlushBatches3D();
-        void FlushBatches3D(const glm::mat4& projection_mat, const glm::mat4& view_mat);
+        void FlushBatches3D(const glm::mat4 &projection_mat, const glm::mat4 &view_mat);
         // void flushVoxelBatches();
 
         // void setShader2D(const Shader& shader);
-        void setShader(const Shader& shader);
-        void setCamera(const Camera& camera);
+        void setShader(const Shader &shader);
+        void setCamera(const Camera &camera);
         //void setCameraFrustum(const Frustum& cameraFrustum);
 
         void ClearBuffers();

@@ -1,6 +1,6 @@
 #include "world/chunk_manager.h"
 #include "world/chunk.h"
-#include "core/utils.h"
+#include "core/constants.h"
 
 namespace SymoCraft{
 
@@ -28,7 +28,7 @@ namespace SymoCraft{
             if (!chunk) {
                 // Assume it's a chunk that's out of bounds
                 // TODO: Make this only return null block if it's far far away from the player
-                return NULL_BLOCK;
+                return BlockConstants::NULL_BLOCK;
             }
 
             return chunk->GetWorldBlock(worldPosition);
@@ -67,7 +67,7 @@ namespace SymoCraft{
 //                return;
 //            }
 //
-//            bool isLightSourceBlock = ChunkManager::getBlock(worldPosition).isLightSource();
+//            bool isLightSourceBlock = ChunkManager::getBlock(worldPosition).IsLightSource();
 //            if (ChunkPrivate::removeBlock(worldPosition, chunkCoords, chunk)) {
 //                retesselateChunkBlockUpdate(chunkCoords, worldPosition, chunk);
 //                queueRecalculateLighting(chunkCoords, worldPosition, isLightSourceBlock);

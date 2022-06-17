@@ -22,7 +22,7 @@ public:
 class TextureArray : public Texture
 {
 public:
-    TextureArray CreateAtlasSlice(const std::string &filepath, bool pixelated);
+    TextureArray CreateAtlasSlice(std::string_view filepath, bool pixelated);
 
     uint16 layer_amount{};
 };

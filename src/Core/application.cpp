@@ -8,6 +8,7 @@
 #include "core/window.h"
 #include "core/global_thread_pool.h"
 #include "renderer/texture.h"
+#include "renderer/renderer.h"
 #include "world/chunk.h"
 
 namespace SymoCraft
@@ -40,6 +41,8 @@ namespace SymoCraft
         {
             Window& window = GetWindow();
             double previous_frame_time = glfwGetTime();
+
+            stbi_set_flip_vertically_on_load(true);
             TextureArray texture_array;
             texture_array = texture_array.CreateAtlasSlice("../assets/textures/texture.png", true);
 
@@ -50,14 +53,18 @@ namespace SymoCraft
             glfwSetCursorPosCallback((GLFWwindow *) window.window_ptr, MouseMovementCallBack);
             glfwSetInputMode((GLFWwindow*)window.window_ptr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-            for(int x = -1; x < 2; x++)
-                for(int z = -1; z < 2; z++)
-                    ChunkManager::queueCreateChunk({x,z});
 
-            for( auto chunk : ChunkManager::getAllChunks() )
-                chunk.second.generateTerrain();
+            // Manual chunk generation for testing
+            {
+                for(int x = -1; x < 2; x++)
+                    for(int z = -1; z < 2; z++)
+                        ChunkManager::queueCreateChunk({x,z});
 
-            ChunkManager::patchChunkPointers();
+                for( auto chunk : ChunkManager::getAllChunks() )
+                    chunk.second.generateTerrain();
+
+                ChunkManager::patchChunkPointers();
+            }
 
             // -------------------------------------------------------------------
             // Render Loop
@@ -80,11 +87,10 @@ namespace SymoCraft
 //                    i += 1;
 //                }
 
-                glEnable(GL_DEPTH_TEST);
                 ChunkManager::getAllChunks().find({0,0})->second.generateRenderData();
                 glBindTextureUnit(0, texture_array.m_texture_Id);
-                SymoCraft::Renderer::Render();
-                SymoCraft::Renderer::ReportStatus();
+                Renderer::Render();
+                Renderer::ReportStatus();
 
                 window.SwapBuffers();
                 window.PollInt();

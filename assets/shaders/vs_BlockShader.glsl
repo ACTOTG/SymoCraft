@@ -2,7 +2,7 @@
 
 layout (location = 0) in vec3 i_pos_coord;
 layout (location = 1) in vec3 i_tex_coord; // ** z coord is the layer index for the texture array, starting from 0 **
-layout (location = 2) in vec3 i_normal;
+layout (location = 2) in float i_normal;
 
 out vec3 o_tex_coord;
 
