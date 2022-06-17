@@ -10,7 +10,8 @@ set(Core src/core/global_thread_pool.cpp
         src/core/window.cpp
         src/core/application.cpp)
 
-set(ECS src/core/ECS/family_type_id.cpp)
+set(ECS src/core/ECS/internal.cpp
+        src/core/ECS/registry.cpp)
 
 file(GLOB SOURCE_FILE
         "vendor/yaml-cpp/src/*.cpp"
