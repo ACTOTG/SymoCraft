@@ -83,7 +83,7 @@ namespace SymoCraft{
             m_vertex_amount++;
         }
 
-        void Flush()  //Draw vertices
+        void Draw()  //Draw vertices
         {
             if (m_vertex_amount <= 0)
             {
@@ -91,19 +91,23 @@ namespace SymoCraft{
                 return;
             }
 
-            // Deliver data to VBO memory
-            glNamedBufferSubData(m_vbo, 0, m_data_size, data);
-
-            // Draw the 3D screen space stuff
             glBindVertexArray(m_vao);
             glDrawArrays(GL_TRIANGLES, 0, m_vertex_amount);
             glBindVertexArray(0);
 
-            // Clear the batch
+        }
+
+        inline void ReloadData()
+        {
+            glNamedBufferSubData(m_vbo, 0, m_data_size, data);
+        }
+
+        inline void Clear()
+        {
             m_vertex_amount = 0;
         }
 
-        void Free()
+        inline void Free()
         {
             if (data)
             {
@@ -113,12 +117,7 @@ namespace SymoCraft{
             }
         }
 
-        bool hasRoom() const
-        {
-            return m_vertex_amount <= kMaxBatchSize;
-        }
-
-        bool operator<(const Batch& batch) const
+        inline bool operator<(const Batch& batch) const
         {
             return (zIndex < batch.zIndex);
         }
@@ -130,6 +129,11 @@ namespace SymoCraft{
         uint32 m_vertex_amount;
         int32 zIndex;
         T* data;
+
+        inline bool hasRoom() const
+        {
+            return m_vertex_amount <= kMaxBatchSize;
+        }
     };
 
 }

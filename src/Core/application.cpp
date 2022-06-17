@@ -56,14 +56,21 @@ namespace SymoCraft
 
             // Manual chunk generation for testing
             {
-                for(int x = -1; x < 2; x++)
-                    for(int z = -1; z < 2; z++)
+                for(int x = -3; x <= 3; x++)
+                    for(int z = -3; z <= 3; z++)
                         ChunkManager::queueCreateChunk({x,z});
 
                 for( auto chunk : ChunkManager::getAllChunks() )
                     chunk.second.generateTerrain();
 
                 ChunkManager::patchChunkPointers();
+
+                // We only need to calculate the vertices once, since we can't remove or add blocks now
+                for(int x = -1; x <= 1; x++)
+                    for(int z = -1; z <= 1; z++)
+                        ChunkManager::getAllChunks().find({x,z})->second.generateRenderData();
+
+                block_batch.ReloadData();
             }
 
             // -------------------------------------------------------------------
@@ -76,18 +83,6 @@ namespace SymoCraft
                 // Temporary Input Process Function
                 processInput((GLFWwindow*)GetWindow().window_ptr);
 
-//                //Add blocks, play as you want
-//                for( int i = 0; i < 16; )
-//                {
-//                    for( int j = 0; j < 16;)
-//                    {
-//                        Renderer::AddBlocksToBatch( glm::ivec3(i, -3, j), 16, 32, 0);
-//                        j += 1;
-//                    }
-//                    i += 1;
-//                }
-
-                ChunkManager::getAllChunks().find({0,0})->second.generateRenderData();
                 glBindTextureUnit(0, texture_array.m_texture_Id);
                 Renderer::Render();
                 Renderer::ReportStatus();
