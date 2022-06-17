@@ -18,7 +18,7 @@ namespace SymoCraft{
     //  3. Clear the batch
 
     struct Vertex3D{
-        glm::vec3 pos_coord;
+        glm::ivec3 pos_coord;
         glm::vec3 tex_coord;
         glm::vec3 normal;
     };
@@ -26,10 +26,11 @@ namespace SymoCraft{
     struct VertexAttribute{
         uint16 attribute_slot;
         uint16 element_amount;
+        GLenum data_type;
         uint16 offset;
     };
 
-    constexpr uint32 kMaxBatchSize = 10000;
+    constexpr uint32 kMaxBatchSize = 300000;
 
     template<typename T>
     class Batch
@@ -38,7 +39,7 @@ namespace SymoCraft{
         void init(std::initializer_list<VertexAttribute> vertex_attributes)
         {
             m_data_size = sizeof(T) * kMaxBatchSize;
-            data = new T[kMaxBatchSize];
+            data = (T*)AmoMemory_Allocate(m_data_size);
 
             // Create buffers
             glCreateBuffers(1, &m_vbo);
@@ -55,7 +56,7 @@ namespace SymoCraft{
             for (const auto& attribute : vertex_attributes)
             {
                 glEnableVertexArrayAttrib(m_vao, attribute.attribute_slot);
-                glVertexArrayAttribFormat(m_vao, attribute.attribute_slot, attribute.element_amount, GL_FLOAT, GL_FALSE, attribute.offset);
+                glVertexArrayAttribFormat(m_vao, attribute.attribute_slot, attribute.element_amount, attribute.data_type, GL_FALSE, attribute.offset);
                 glVertexArrayAttribBinding(m_vao, attribute.attribute_slot, 0);
             }
 
@@ -106,7 +107,7 @@ namespace SymoCraft{
         {
             if (data)
             {
-                delete data;
+                AmoMemory_Free(data);
                 data = nullptr;
                 m_data_size = 0;
             }

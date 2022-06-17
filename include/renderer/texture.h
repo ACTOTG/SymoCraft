@@ -8,9 +8,9 @@ using layer_t = int;
 class Texture
 {
 public:
-    Texture CreateRegularTexture(const std::string_view &filepath, bool pixelated);
+    Texture CreateRegularTexture(std::string_view filepath, bool pixelated);
 
-    std::string m_filepath{};
+    std::string_view m_filepath;
     int m_width{};
     int m_height{};
     int m_channel_amount{};
@@ -24,7 +24,7 @@ class TextureArray : public Texture
 public:
     TextureArray CreateAtlasSlice(const std::string &filepath, bool pixelated);
 
-    int layer_amount{};
+    uint16 layer_amount{};
 };
 
 #endif

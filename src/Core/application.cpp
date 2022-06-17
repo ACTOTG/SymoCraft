@@ -7,8 +7,8 @@
 #include "core.h"
 #include "core/window.h"
 #include "core/global_thread_pool.h"
-#include "renderer/renderer.h"
 #include "renderer/texture.h"
+#include "world/chunk.h"
 
 namespace SymoCraft
 {
@@ -60,18 +60,21 @@ namespace SymoCraft
                 // Temporary Input Process Function
                 processInput((GLFWwindow*)GetWindow().window_ptr);
 
+//                Chunk a;
+//                a.generateTerrain({4, 4});
+//                a.generateRenderData({4, 4});
+
                 //Add blocks, play as you want
-                for( float i = 0.0f; i < 10; )
+                for( int i = 0; i < 16; )
                 {
-                    for( float j = 0.0f; j < 10;)
+                    for( int j = 0; j < 16;)
                     {
-                        Renderer::AddBlocksToBatch( glm::vec3(i, 0.0f, j), 16, 32, 0);
-                        j += 1.0f;
+                        Renderer::AddBlocksToBatch( glm::ivec3(i, -3, j), 16, 32, 0);
+                        j += 1;
                     }
-                    i += 1.0f;
+                    i += 1;
                 }
 
-                SymoCraft::Renderer::ReportStatus();
                 glBindTextureUnit(0, texture_array.m_texture_Id);
                 SymoCraft::Renderer::Render();
 

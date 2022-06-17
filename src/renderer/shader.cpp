@@ -3,7 +3,7 @@
 bool Shader::compile(ShaderType type, std::string_view shaderFilepath)
 {
 	// Report compilation
-    AmoLogger_Log("Compiling shader: %s\n", shaderFilepath);
+    AmoLogger_Log("Compiling shader: %s", shaderFilepath.data());
 
 	// Read the shader source code from the file
 	std::ifstream shader_file(shaderFilepath.data(), std::ios::in | std::ios::binary);
@@ -16,7 +16,7 @@ bool Shader::compile(ShaderType type, std::string_view shaderFilepath)
 		shader_source_code = shader_stream.str();
 	}
 	else
-        AmoLogger_Error("Could not open file: %s\n",  shaderFilepath);
+        AmoLogger_Error("Could not open file: %s",  shaderFilepath.data());
 
 
 	GLenum shaderType = toGlShaderType(type);

@@ -1,6 +1,38 @@
-grass_block:
+air_block:
   id: 1
-  side: 32
-  top: 16
+  side: 255
+  top: 255
+  bottom: 255
+  isSolid: false
+  isTransparent: true
+  isLightSource: false
+  light_level: 0
+grass_block:
+  id: 2
+  side: 16
+  top: 32
   bottom: 0
-
+  isSolid: true
+  isTransparent: false
+  colorTopByBiome: true
+sand:
+  id: 3
+  side: 1
+  top: 1
+  bottom: 1
+  isSolid: true
+  isTransparent: false
+dirt:
+  id: 4
+  side: 0
+  top: 0
+  bottom: 0
+  isSolid: true
+  isTransparent: false
+stone:
+  id: 5
+  side: 5
+  top: 5
+  bottom: 5
+  isSolid: true
+  isTransparent: false

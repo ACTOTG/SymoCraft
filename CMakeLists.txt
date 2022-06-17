@@ -13,11 +13,12 @@ set(Core src/core/global_thread_pool.cpp
 set(ECS src/core/ECS/family_type_id.cpp)
 
 file(GLOB SOURCE_FILE
+        "include/renderer/batch.hpp"
         "src/renderer/*.cpp"
+        "src/world/*.cpp"
         "src/camera/camera.cpp"
         "vendor/yaml-cpp/src/*.cpp"
         "vendor/yaml-cpp/src/*.h"
-        "include/renderer/batch.hpp"
         "src/input/*.cpp")
 
 add_executable(SymoCraft src/main.cpp
