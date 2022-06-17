@@ -54,10 +54,10 @@ namespace SymoCraft
                 for(int z = -1; z < 2; z++)
                     ChunkManager::queueCreateChunk({x,z});
 
-            ChunkManager::patchChunkPointers();
-
             for( auto chunk : ChunkManager::getAllChunks() )
                 chunk.second.generateTerrain();
+
+            ChunkManager::patchChunkPointers();
 
             // -------------------------------------------------------------------
             // Render Loop
@@ -80,6 +80,7 @@ namespace SymoCraft
 //                    i += 1;
 //                }
 
+                glEnable(GL_DEPTH_TEST);
                 ChunkManager::getAllChunks().find({0,0})->second.generateRenderData();
                 glBindTextureUnit(0, texture_array.m_texture_Id);
                 SymoCraft::Renderer::Render();

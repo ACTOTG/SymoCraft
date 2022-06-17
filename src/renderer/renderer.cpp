@@ -7,8 +7,8 @@
 namespace SymoCraft{
 
     Batch<Vertex3D> block_batch;
-    uint16 vertex_count{0};
-    uint16 block_count{0};
+    uint16 vertex_count;
+    uint16 face_count;
 
     namespace Renderer {
 
@@ -18,7 +18,7 @@ namespace SymoCraft{
         static glm::mat4 g_projection_mat;
         static glm::mat4 g_view_mat;
         static glm::mat4 g_combo_mat;
-        static glm::vec3 g_normal;
+        static float g_normal;
 
         constexpr float depth_value = 1.0f;
         constexpr std::array<float, 4> clear_color = {0.2f, 0.3f, 0.3f, 1.0f};
@@ -46,8 +46,8 @@ namespace SymoCraft{
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            //glEnable(GL_BLEND);
+            //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             // Initialize shaders
             block_shader.CompileAndLink("../assets/shaders/vs_BlockShader.glsl",
@@ -57,7 +57,7 @@ namespace SymoCraft{
             block_batch.init({
                                      {0, 3, GL_INT,   offsetof(Vertex3D, pos_coord)},
                                      {1, 3, GL_FLOAT, offsetof(Vertex3D, tex_coord)},
-                                     {2, 3, GL_FLOAT, offsetof(Vertex3D, normal)}});
+                                     {2, 1, GL_FLOAT, offsetof(Vertex3D, normal)}});
 
             loadBlocks("../assets/configs/blockFormats.yaml");
 
@@ -184,7 +184,7 @@ namespace SymoCraft{
                               const uint16 &bottom_tex) {
             // Let Amo decide what value should the normal have...
             // glm::vec3 normal = glm::vec3(offset.x, offset.y, offset.z);
-            g_normal = glm::vec3();
+
 
             for (index = 0; auto &face: block_faces) {
                 for (auto &vertex: face) {
@@ -210,8 +210,8 @@ namespace SymoCraft{
         }
 
         void ReportStatus() {
-            if (block_count % 10000 == 0)
-                AmoLogger_Log("%d vertices, %d blocks in total loaded\n", vertex_count, block_count);
+            if (face_count % 10000 == 0)
+                AmoLogger_Log("%d vertices, %d faces in total loaded\n", vertex_count, face_count);
         }
 
         // =========================================================

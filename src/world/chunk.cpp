@@ -49,6 +49,8 @@ namespace SymoCraft {
             2, 1, 0, 3  // Bottom face
     };
 
+    static float g_normal;
+
     static std::array<std::array<Vertex3D, 4>, 6> block_faces{}; // Each block contains 6 faces, which contains 4 vertices
 
     Block Chunk::GetLocalBlock(int x, int y, int z) {
@@ -173,9 +175,9 @@ namespace SymoCraft {
 
     constexpr float maxBiomeHeight = 145.0f;
     constexpr float minBiomeHeight = 55.0f;
-    constexpr int oceanLevel = 50;
-    constexpr uint16 maxHeight = 60;
-    constexpr uint16 stoneHeight = 40;
+    constexpr int oceanLevel = 9;
+    constexpr uint16 maxHeight = 13;
+    constexpr uint16 stoneHeight = 8;
     constexpr bool isCave = false;
 
     void Chunk::generateTerrain() {
@@ -189,6 +191,16 @@ namespace SymoCraft {
                 for (int y = 0; y < k_chunk_height; y++) {
                     // bool isCave = TerrainGenerator::getIsCave(x + worldChunkX, y, z + worldChunkZ, maxHeight);
                     const int arrayExpansion = GetLocalBlockIndex(x, y, z);
+                    if(m_chunk_coord != glm::ivec2(0, 0))
+                    {
+                        local_blocks[arrayExpansion].block_id = AIR_BLOCK.block_id;
+                        local_blocks[arrayExpansion].setTransparent(true);
+                        local_blocks[arrayExpansion].setIsBlendable(false);
+                        local_blocks[arrayExpansion].setIsLightSource(false);
+                        local_blocks[arrayExpansion].setLightColor(glm::ivec3(255, 255, 255));
+                        continue;
+                    };
+
                     if (!isCave) {
                         if (y == 0) {
                             // Bedrock
@@ -267,35 +279,21 @@ namespace SymoCraft {
 
                     const BlockFormat &block_format = get_block(blockId);
 
-                    // The order of coordinates is LEFT, RIGHT, BOTTOM, TOP, BACK, FRONT neighbor_blocks to check
-                    int neighbor_block_Xcoords[6] = {x, x, x, x, x - 1, x + 1};
-                    int neighbor_block_Ycoords[6] = {y, y, y - 1, y + 1, y, y};
-                    int neighbor_block_Zcoords[6] = {z - 1, z + 1, z, z, z, z};
+                    // The order of coordinates is FRONT, RIGHT, BACK, LEFT, TOP, BOTTOM neighbor_blocks to check
+                    int neighbor_block_Xcoords[6] = {x + 1,     x, x - 1,     x,     x,     x};
+                    int neighbor_block_Ycoords[6] = {    y,     y,     y,     y, y + 1, y - 1};
+                    int neighbor_block_Zcoords[6] = {    z, z + 1,     z, z - 1,      z,    z};
 
                     // The 6 neighbor blocks that the target block is facing
                     Block neighbor_blocks[6];
                     // glm::ivec3 lightColors[6];
 
                     uint16 i;
-                    glm::vec3 normal{};
-                    for (i = 0; auto &face: block_faces) {
-                        for (auto &vertex: face) {
-                            vertex.pos_coord = (glm::ivec3(x, y, z) + k_pos_coords[k_vertex_indices[i]]);
-                            vertex.tex_coord = {k_tex_coords[k_vertex_indices[i % 4]], // Set uv coords
-                                                (i >= 16) ? ((i >= 20)
-                                                             ? // Set layer i, sides first, the top second, the bottom last
-                                                             block_format.m_bottom_texture
-                                                             : block_format.m_top_texture) // if 16 <= i < 20, assign top_tex
-                                                          : block_format.m_side_texture}; // if i < 16, assign side_tex
-                            vertex.normal = normal;
-                            i++;
-                        }
-                    }
 
-                    for (i = 0; auto neighbor_block: neighbor_blocks) {
-                        neighbor_block = GetLocalBlock(neighbor_block_Xcoords[i],
-                                                       neighbor_block_Ycoords[i], neighbor_block_Zcoords[i]);
+                    for (i = 0; auto &neighbor_block: neighbor_blocks) {
+                        neighbor_block = GetLocalBlock(neighbor_block_Xcoords[i],neighbor_block_Ycoords[i], neighbor_block_Zcoords[i]);
                         // lightColors[i] = neighbor_blocks[i].getCompressedLightColor();
+                        i++;
                     }
 
                     SubChunk **currentSubChunkPtr = &solidSubChunk;
@@ -305,10 +303,21 @@ namespace SymoCraft {
 
                     // Only add the faces that are not culled by other neighbor_blocks
                     // Use the 6 blocks to iterate through the 6 faces
-                    for (i = 0; auto neighbor_block: neighbor_blocks) {
+                    for (i = 0; auto &neighbor_block: neighbor_blocks) {
                         // If neighbor block is not null and is transparent
                         if (!neighbor_block.IsNullBlock() && neighbor_block.IsTransparent()) {
 
+                            //If the face aren't culled, calculate its 4 vertices
+                            for( int j = 0; j < 4; j++) {
+                                block_faces[i][j].pos_coord = (glm::ivec3(x, y, z) + k_pos_coords[k_vertex_indices[i * 4 + j]]);
+                                block_faces[i][j].tex_coord = {k_tex_coords[j % 4], // Set uv coords
+                                                    (i * 4 + j >= 16) ? ((i * 4 + j >= 20)
+                                                                 ? // Set layer i, sides first, the top second, the bottom last
+                                                                 block_format.m_bottom_texture
+                                                                 : block_format.m_top_texture) // if 16 <= i < 20, assign top_tex
+                                                              : block_format.m_side_texture}; // if i < 16, assign side_tex
+                                block_faces[i][j].normal = g_normal;
+                            }
 //                          Smooth lighting
 //                          glm::vec<4, uint8, glm::defaultp> smoothLightVertex[6] = {};
 //                          glm::vec<4, uint8, glm::defaultp> smoothSkyLightVertex[6] = {};
@@ -361,7 +370,7 @@ namespace SymoCraft {
 //
 //                          smoothLightVertex[i][v] = currentVertexLight;
 //                          smoothSkyLightVertex[i][v] = currentVertexSkyLight;
-                        }
+
 
 //                            *currentSubChunkPtr = getSubChunk(subChunks, *currentSubChunkPtr, currentLevel,
 //                                                              chunk_coord, currentBlockIsBlendable);
@@ -399,8 +408,10 @@ namespace SymoCraft {
                         block_batch.AddVertex(block_faces[i][3]);
 
                         vertex_count += 6;
-                        block_count += 1;
+                        face_count += 1;
 //                            currentSubChunk->vertex_amount += 6;
+                        }
+                        i++;
                     }
                 }
             }

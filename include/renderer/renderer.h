@@ -14,7 +14,7 @@ namespace SymoCraft{
     };
 
     extern uint16 vertex_count;
-    extern uint16 block_count;
+    extern uint16 face_count;
 
     namespace Renderer
     {

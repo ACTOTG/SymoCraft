@@ -89,6 +89,7 @@ namespace SymoCraft {
         {
             // Clear the bit
             bitwise_compressed_data &= ~(1 << 2);
+            // Set the bit if needed
             bitwise_compressed_data |= isLightSource ? (1 << 2) : 0;
         }
 

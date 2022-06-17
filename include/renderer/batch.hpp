@@ -20,7 +20,7 @@ namespace SymoCraft{
     struct Vertex3D{
         glm::ivec3 pos_coord;
         glm::vec3 tex_coord;
-        glm::vec3 normal;
+        float normal;
     };
 
     struct VertexAttribute{

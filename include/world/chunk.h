@@ -13,7 +13,7 @@ namespace SymoCraft {
     // A sub-chunk is 16 * 16 * 16
     constexpr uint16 k_chunk_length = 16;
     constexpr uint16 k_chunk_width = 16;
-    constexpr uint16 k_chunk_height = 64;
+    constexpr uint16 k_chunk_height = 32;
 
     enum class ChunkState : uint8 {
         None,

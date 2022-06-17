@@ -73,7 +73,7 @@ namespace SymoCraft{
             }
 
             block_format_map[id] = BlockFormat{
-                    side_texture, top_texture, bottom_texture,
+                    top_texture, side_texture, bottom_texture,
                     isTransparent, isSolid, isBlendable,
                     isLightSource, lightLevel };
         }
