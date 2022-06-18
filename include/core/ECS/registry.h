@@ -19,8 +19,12 @@ namespace SymoCraft
         typedef uint64 EntityId;
         typedef uint32 ComponentIndex;
 
+        template<typename ...Components>
+        class RegistryViewer;
+        
         class Registry
         {
+
         public:
             // -------------------------------------------------------------------
             // Registry Functions
@@ -164,11 +168,118 @@ namespace SymoCraft
             // Remove all component of an entity
             void RemoveAllComponent(EntityId entity);
 
-        private:
+            // ---------------------------------------------------------------------------------------------------
+            // Registry Viewer
+            template<typename... Components>
+            RegistryViewer<Components...> View()
+            {
+                return RegistryViewer<Components...>(*this);
+            }
+
+        public:
             std::vector<EntityId> entities;
+
+        private:
             std::vector<Internal::ComponentContainer> component_set;
             std::vector<EntityId> free_entities;
             std::vector<std::string> debug_component_names;
+        };
+
+        /* ---------------------------------------------------------------------------------------------------
+           About registry viewer:
+           If we want to search an entity that have several components, the functionalities
+           of registry itself are not enough.
+           What I want to do is create a viewer that can look through the registry to get this kind of entity.
+
+           The first thing is to store what kinds of components does the entity has?
+           The solution is to create a bitset of all the components. set the corresponding component_type bit to 1
+
+           The second problem is how to loop the registry and get what we want?
+           The solution is to create an iterator for the registry looping all the entities in it
+        */
+        class Iterator
+        {
+        public:
+            // constructor
+            // Parameters: Registry reference, entity index, components need, is searching for all the component
+            Iterator( Registry& reg, EntityIndex index
+                       , std::bitset<Internal::kMaxNumComponents>com_need
+                       , bool all);
+
+            // Indirect operator = Indexing operator
+            // Return an entity index
+            EntityIndex operator*() const;
+
+            // identity operator
+            bool operator ==(Iterator& other) const;
+
+            bool operator !=(Iterator& other) const;
+
+            // Increment operator
+            // skip the unqualified elements
+            Iterator& operator++();
+
+        private:
+            Registry& registry;
+            EntityIndex entity_index;
+            std::bitset<Internal::kMaxNumComponents>components_need;
+            bool _is_searching_all;
+
+            // Is it a valid index and has the correct component;
+            bool IsIndexValid();
+        };
+
+        template<typename... Components>
+        class RegistryViewer
+        {
+            friend class Iterator;
+        public:
+            explicit RegistryViewer(Registry &reg)
+            : registry(reg)
+            {
+                _is_searching_all = sizeof...(Components) == 0;
+                if (!_is_searching_all)
+                {
+                    int component_type[] = {0 , ECS::Internal::GetComponentType<Components>() ...};
+                    for (int i = 1; i <= (sizeof...(Components)); i++)
+                        components_need.set(component_type[i]);
+                }
+            }
+
+            const Iterator begin() const
+            {
+                int first_index = 0;
+                for (; first_index < registry.entities.size() &&
+                        (
+                                !HasRequiredComponents(registry, components_need, registry.entities[first_index]) ||
+                                !registry.IsEntityValid(registry.entities[first_index])
+                                );)
+                    first_index++;
+                return Iterator(registry, first_index, components_need, _is_searching_all);
+            }
+
+            const Iterator end() const
+            {
+                return Iterator(registry, (EntityIndex)registry.entities.size(), components_need, _is_searching_all);
+            }
+
+        private:
+            Registry& registry;
+            std::bitset<Internal::kMaxNumComponents> components_need;
+            bool _is_searching_all;
+
+            static bool HasRequiredComponents(Registry& reg, const std::bitset<Internal::kMaxNumComponents> &need,
+                                             EntityIndex entity_index)
+            {
+                bool has_required_components = true;
+                for (int i = 0; i < need.size(); i++)
+                    if (need.test(i) && !reg.HasComponentByType(entity_index, i))
+                    {
+                        has_required_components = false;
+                        break;
+                    }
+                return has_required_components;
+            }
         };
     }
 }
