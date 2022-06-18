@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="SymoCraft" targetName="particles" />
+      <config projectName="SymoCraft" targetName="inputlag" />
+      <config projectName="SymoCraft" targetName="cursor" />
+      <config projectName="SymoCraft" targetName="simple" />
+      <config projectName="SymoCraft" targetName="update_mappings" />
+      <config projectName="SymoCraft" targetName="monitors" />
+      <config projectName="SymoCraft" targetName="glfw" />
+      <config projectName="SymoCraft" targetName="uninstall" />
+      <config projectName="SymoCraft" targetName="sharing" />
+      <config projectName="SymoCraft" targetName="empty" />
+      <config projectName="SymoCraft" targetName="gears" />
+      <config projectName="SymoCraft" targetName="heightmap" />
+      <config projectName="SymoCraft" targetName="reopen" />
+      <config projectName="SymoCraft" targetName="triangle-vulkan" />
+      <config projectName="SymoCraft" targetName="SymoCraft" />
+      <config projectName="SymoCraft" targetName="iconify" />
+      <config projectName="SymoCraft" targetName="timeout" />
+      <config projectName="SymoCraft" targetName="joysticks" />
+      <config projectName="SymoCraft" targetName="boing" />
+      <config projectName="SymoCraft" targetName="glfwinfo" />
+      <config projectName="SymoCraft" targetName="offscreen" />
+      <config projectName="SymoCraft" targetName="splitview" />
+      <config projectName="SymoCraft" targetName="events" />
+      <config projectName="SymoCraft" targetName="opacity" />
+      <config projectName="SymoCraft" targetName="gamma" />
+      <config projectName="SymoCraft" targetName="icon" />
+      <config projectName="SymoCraft" targetName="threads" />
+      <config projectName="SymoCraft" targetName="tearing" />
+      <config projectName="SymoCraft" targetName="msaa" />
+      <config projectName="SymoCraft" targetName="title" />
+      <config projectName="SymoCraft" targetName="wave" />
+      <config projectName="SymoCraft" targetName="clipboard" />
+      <config projectName="SymoCraft" targetName="windows" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="6395f205-12ac-4050-8721-40a4ab67820f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/SymoCraft.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SymoCraft.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/core.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/core.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/core/ECS/component.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/core/ECS/component.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/core/ECS/registry.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/core/ECS/registry.h" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2022" />
+    <option name="minorVersion" value="1.2" />
+  </component>
+  <component name="ProjectId" id="2AjKtBF08mGN0h1QAmlg389ti3r" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/cppprograme/objectorintedproject/project/SymoCraft&quot;
+  }
+}</component>
+  <component name="RunManager" selected="CMake Application.SymoCraft">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SymoCraft" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="SymoCraft" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="SymoCraft">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="boing" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="boing" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="boing">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="clipboard" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="clipboard" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="clipboard">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="cursor" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="cursor" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="cursor">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="empty" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="empty" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="empty">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="events" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="events" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="events">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gamma" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="gamma" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="gamma">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gears" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="gears" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="gears">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="glfw" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="glfw" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="glfwinfo" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="glfwinfo" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="glfwinfo">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="heightmap" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="heightmap" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="heightmap">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="icon" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="icon" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="icon">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="iconify" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="iconify" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="iconify">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="inputlag" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="inputlag" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="inputlag">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="joysticks" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="joysticks" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="joysticks">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="monitors" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="monitors" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="monitors">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="msaa" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="msaa" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="msaa">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="offscreen" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="offscreen" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="offscreen">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="opacity" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="opacity" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="opacity">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="particles" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="particles" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="particles">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="reopen" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="reopen" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="reopen">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="sharing" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="sharing" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="sharing">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="simple" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="simple" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="simple">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="splitview" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="splitview" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="splitview">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="tearing" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="tearing" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="tearing">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="threads" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="threads" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="threads">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="timeout" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="timeout" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="timeout">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="title" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="title" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="title">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="triangle-vulkan" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="triangle-vulkan" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="triangle-vulkan">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="uninstall" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="uninstall" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="update_mappings" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="update_mappings" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="wave" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="wave" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="wave">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="windows" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="SymoCraft" TARGET_NAME="windows" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="SymoCraft" RUN_TARGET_NAME="windows">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.SymoCraft" />
+      <item itemvalue="CMake Application.uninstall" />
+      <item itemvalue="CMake Application.boing" />
+      <item itemvalue="CMake Application.gears" />
+      <item itemvalue="CMake Application.heightmap" />
+      <item itemvalue="CMake Application.offscreen" />
+      <item itemvalue="CMake Application.particles" />
+      <item itemvalue="CMake Application.sharing" />
+      <item itemvalue="CMake Application.simple" />
+      <item itemvalue="CMake Application.splitview" />
+      <item itemvalue="CMake Application.wave" />
+      <item itemvalue="CMake Application.glfw" />
+      <item itemvalue="CMake Application.update_mappings" />
+      <item itemvalue="CMake Application.clipboard" />
+      <item itemvalue="CMake Application.cursor" />
+      <item itemvalue="CMake Application.empty" />
+      <item itemvalue="CMake Application.events" />
+      <item itemvalue="CMake Application.gamma" />
+      <item itemvalue="CMake Application.glfwinfo" />
+      <item itemvalue="CMake Application.icon" />
+      <item itemvalue="CMake Application.iconify" />
+      <item itemvalue="CMake Application.inputlag" />
+      <item itemvalue="CMake Application.joysticks" />
+      <item itemvalue="CMake Application.monitors" />
+      <item itemvalue="CMake Application.msaa" />
+      <item itemvalue="CMake Application.opacity" />
+      <item itemvalue="CMake Application.reopen" />
+      <item itemvalue="CMake Application.tearing" />
+      <item itemvalue="CMake Application.threads" />
+      <item itemvalue="CMake Application.timeout" />
+      <item itemvalue="CMake Application.title" />
+      <item itemvalue="CMake Application.triangle-vulkan" />
+      <item itemvalue="CMake Application.windows" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6395f205-12ac-4050-8721-40a4ab67820f" name="Changes" comment="" />
+      <created>1655517766245</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1655517766245</updated>
+      <workItem from="1655517767598" duration="2060000" />
+      <workItem from="1655519849006" duration="136000" />
+      <workItem from="1655519989319" duration="5749000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

@@ -12,6 +12,7 @@ namespace SymoCraft
 {
     //enum class TagType : uint8;
 
+    // TODO: *Rebuild* the whole entity component system!!
     namespace ECS
     {
         typedef uint32 EntityIndex;
@@ -121,7 +122,6 @@ namespace SymoCraft
                 {
                     AmoLogger_Error("Cannot check if invalid entity %d has a component."
                     , entity);
-                    return nullptr;
                 }
 
                 int32 component_type = Internal::GetComponentType<T>();
@@ -131,9 +131,12 @@ namespace SymoCraft
                     AmoLogger_Warning("Tried to check if an entity had component '%d', "
                                       "but a component of type '%d' does not exist in the registry."
                     , component_type, component_type);
-                    return nullptr;
                 }
 
+                AmoLogger_Notice(HasComponent<T>(entity), "Entity '%d' does not have component '%d'"
+                                 , entity, component_type);
+                // TODO: This will crash if the component is null,
+                //  should we return a null component?
                 return *component_set[component_type].template Get<T>(Internal::GetEntityIndex(entity));
             }
 
