@@ -1,4 +1,4 @@
-#include <FastNoise/FastNoise.h>
+#include <fast_noise_lite/FastNoiseLite.h>
 #include <random>
 #include <algorithm>
 #include "world/chunk.h"
@@ -105,66 +105,9 @@ namespace SymoCraft
         return RemoveLocalBlock(localPosition.x, localPosition.y, localPosition.z);
     }
 
-//    SubChunk* Chunk::getSubChunk(SubChunk* subChunks, SubChunk* currentSubChunk, int currentLevel, const glm::ivec2& chunkCoordinates, bool isBlendableSubChunk)
-//    {
-//        bool needsNewChunk = currentSubChunk == nullptr
-//                             || currentSubChunk->subChunkLevel != currentLevel
-//                             || currentSubChunk->vertex_amount + 6 >= World::MaxVertsPerSubChunk
-//                             || currentSubChunk->state != SubChunkState::TesselatingVertices;
-//
-//        SubChunk* ret = currentSubChunk;
-//        if (needsNewChunk)
-//        {
-//            if (!subChunks->empty())
-//            {
-//                DebugStats::totalChunkRamUsed = DebugStats::totalChunkRamUsed + (World::MaxVertsPerSubChunk * sizeof(Vertex));
-//
-//                ret = subChunks->getNewPool();
-//                ret->state = SubChunkState::TesselatingVertices;
-//                ret->subChunkLevel = currentLevel;
-//                ret->chunkCoordinates = chunkCoordinates;
-//                ret->IsBlendable = isBlendableSubChunk;
-//            }
-//            else
-//            {
-//                AmoLogger_Warning("Ran out of sub-chunk vertex room.");
-//                ret = nullptr;
-//            }
-//        }
-//        return ret;
-//    }
-
-//    static FastNoise::SmartNode<FastNoise::Perlin> perlin_node;
-//    static FastNoise::SmartNode<FastNoise::FractalFBm> fractal_fbm_node;
-//    static FastNoise::SmartNode<FastNoise::DomainScale> domain_scale_node;
-//    static FastNoise::SmartNode<FastNoise::PositionOutput> pos_output_node;
-//    static FastNoise::SmartNode<FastNoise::Add> add_node;
-//    static FastNoise::SmartNode<> generator;
-
     void InitializeNoise() {
-//        perlin_node = FastNoise::New<FastNoise::Perlin>();
-//        fractal_fbm_node = FastNoise::New<FastNoise::FractalFBm>();
-//        domain_scale_node = FastNoise::New<FastNoise::DomainScale>();
-//        pos_output_node = FastNoise::New<FastNoise::PositionOutput>();
-//        add_node = FastNoise::New<FastNoise::Add>();
-//        generator = FastNoise::NewFromEncodedNodeTree(
-//                "GQAQAAAAAD8NAAUAAAAAAABABwAAAAAAPwAAAAAAAAAAgD8BBAAAAAAAAAAgQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==");
-//
-//        fractal_fbm_node->SetSource(perlin_node);
-//        fractal_fbm_node->SetOctaveCount(8);
-//        fractal_fbm_node->SetGain(0.7f);
-//        fractal_fbm_node->SetWeightedStrength(0.3f);
-//
-//        domain_scale_node->SetSource(fractal_fbm_node);
-//        domain_scale_node->SetScale(0.75f);
-//
-//        pos_output_node->Set<FastNoise::Dim::Y>(2.5, 0);
-//
-//        add_node->SetLHS(domain_scale_node);
-//        add_node->SetRHS(pos_output_node);
-
         std::mt19937 mt{ std::random_device{}() };
-        seed = static_cast<int>(mt());
+        seed = mt();
 
         for(auto& noise_generator : noise_generators)
         {
@@ -172,7 +115,7 @@ namespace SymoCraft
             noise_generator.noise.SetFractalType(FastNoiseLite::FractalType_FBm);
             noise_generator.noise.SetFractalOctaves(5);
             noise_generator.noise.SetFractalLacunarity(1.6f);
-            noise_generator.noise.SetSeed(seed++);
+            noise_generator.noise.SetSeed(static_cast<int>(seed++));
         }
 
         noise_generators[0].noise.SetFrequency(0.003);
@@ -191,14 +134,6 @@ namespace SymoCraft
     static float min_range{0};
     float Chunk::GetNoise(int x, int z)
     {
-
-//        min_range = *std::min_element(height_map.begin(), height_map.end());
-//        max_range = *std::max_element(height_map.begin(), height_map.end());
-//        for( auto& height : height_map)
-//            height = Remap(height, min_range, max_range, minBiomeHeight, maxBiomeHeight);
-//        for(int x = 0; x < k_chunk_length; x++)
-//            for(int z = 0; z < k_chunk_width; z++)
-//                height_map[x][z] = generator->GenSingle2D(x + m_chunk_coord.x * k_chunk_length,z + m_chunk_coord.y * k_chunk_width, seed);
         float blended_noise{0};
         for(auto& noise_generator : noise_generators)
         {
@@ -452,7 +387,6 @@ namespace SymoCraft
 
                         vertex_count += 6;
                         face_count += 1;
-//                            currentSubChunk->vertex_amount += 6;
                         }
                         i++;
                     }

@@ -36,7 +36,6 @@ add_executable(SymoCraft src/main.cpp
 
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/glfw)
-add_subdirectory(vendor/FastNoise2)
-target_link_libraries(${PROJECT_NAME} glfw FastNoise)
+target_link_libraries(${PROJECT_NAME} glfw)
 
 include_directories(vendor include vendor/glfw/include/)

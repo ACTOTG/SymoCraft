@@ -17,12 +17,6 @@ namespace SymoCraft {
         Loaded
     };
 
-    struct RandomDevice{
-        size_t seed;
-        float weight;
-        float frequency;
-    };
-
     struct NoiseGenerator
     {
         FastNoiseLite noise;
@@ -40,7 +34,7 @@ namespace SymoCraft {
     static constexpr int oceanLevel = 48;
     static uint16 maxHeight;
     static uint16 stoneHeight;
-    static int32 seed;
+    static uint32 seed;
     static float weight_sum;
     static std::array<NoiseGenerator, 3> noise_generators{};
 
