@@ -29,8 +29,6 @@ namespace SymoCraft{
         void Init() {
             Window &window = Application::GetWindow();
             camera = Application::GetCamera();
-            glm::vec3 start_pos{-30.0f, 70.0f, -30.0f};
-            camera->SetCameraPos(start_pos);
 
             // Load OpenGL functions using Glad
             if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {

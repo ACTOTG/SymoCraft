@@ -12,7 +12,8 @@ namespace SymoCraft
     {
         glm::vec3 position;     // position in world
         glm::vec3 scale;
-        glm::vec3 orientation;
+        float yaw;
+        float pitch;
 
         glm::vec3 front;      // x axis
         glm::vec3 up;           // y axis

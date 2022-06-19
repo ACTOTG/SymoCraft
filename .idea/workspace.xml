@@ -46,12 +46,28 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0c46570f-9ed0-4461-b094-9656aa7ba90c" name="Changes" comment="Ready to render">
+    <list default="true" id="6395f205-12ac-4050-8721-40a4ab67820f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/renderer/camera.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/camera/camera.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/camera/camera.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/core/ECS/component.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/core/ECS/component.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/core/application.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/core/application.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/core/global_thread_pool.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/core/global_thread_pool.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/core/window.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/core/window.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/input/input.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/input/input.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/input/key_bindings.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/input/key_bindings.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/input/key_handler.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/input/key_handler.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/world/chunk.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/world/chunk.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/camera.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/camera/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/camera/Camera.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/ECS/Systems/transform_system.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/ECS/Systems/transform_system.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/application.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/application.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/global_thread_pool.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/global_thread_pool.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/window.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/window.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/input/input.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/input/input.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/input/key_bindings.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/input/key_bindings.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/input/key_handler.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/input/key_handler.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer/renderer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/renderer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/world/chunk.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/world/chunk.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

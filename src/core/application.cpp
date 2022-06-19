@@ -10,6 +10,9 @@
 #include "renderer/texture.h"
 #include "renderer/renderer.h"
 #include "world/chunk.h"
+#include "core/ECS/registry.h"
+#include "core/ECS/Systems/transform_system.h"
+#include "core/ECS/component.h"
 
 namespace SymoCraft
 {
@@ -34,6 +37,8 @@ namespace SymoCraft
 
             // Initialize all other subsystems.
             // global_thread_pool = new GlobalThreadPool(std::thread::hardware_concurrency());
+            ECS::Registry &registry = GetRegistry();
+            registry.RegisterComponent<Transform>("Transform");
             Renderer::Init();
         }
 
@@ -73,6 +78,10 @@ namespace SymoCraft
 
             block_batch.ReloadData();
             Report();
+
+            glm::vec3 start_pos{-30.0f, 70.0f, -30.0f};
+            GetCamera()->SetCameraPos(start_pos);
+
             // -------------------------------------------------------------------
             // Render Loop
             while (!window.ShouldClose())
@@ -82,6 +91,7 @@ namespace SymoCraft
 
                 // Temporary Input Process Function
                 processInput((GLFWwindow*)GetWindow().window_ptr);
+                TransformSystem::Update(GetRegistry());
 
                 glBindTextureUnit(0, texture_array.m_texture_Id);
                 Renderer::Render();
@@ -118,6 +128,12 @@ namespace SymoCraft
         {
             static Camera* camera = new Camera(GetWindow().width, GetWindow().height);
             return camera;
+        }
+
+        ECS::Registry &GetRegistry()
+        {
+            static ECS::Registry* registry = new ECS::Registry;
+            return *registry;
         }
 
         GlobalThreadPool& GetGlobalThreadPool()

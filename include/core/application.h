@@ -13,7 +13,10 @@ namespace SymoCraft
     //struct FrameBuffer;
     class GlobalThreadPool;
     class Camera;
-
+    namespace ECS
+    {
+        class Registry;
+    }
 
     namespace Application
     {
@@ -34,6 +37,9 @@ namespace SymoCraft
 
         // Get Camera Pointer
         Camera* GetCamera();
+
+        // Get Registry
+        ECS::Registry &GetRegistry();
 
         // Need to be replaced in the following development
         void processInput(GLFWwindow* window);
