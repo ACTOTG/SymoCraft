@@ -15,7 +15,8 @@ set(Core src/core/global_thread_pool.cpp
 set(ECS src/core/ECS/internal.cpp
         src/core/ECS/registry.cpp
         src/core/ECS/Systems/transform_system.cpp
-        #src/core/ECS/Systems/physics_system.cpp
+        src/core/ECS/Systems/physics_system.cpp
+        src/core/ECS/Systems/character_system.cpp
         )
 
 file(GLOB SOURCE_FILE

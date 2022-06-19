@@ -12,8 +12,8 @@ namespace SymoCraft
     {
         glm::vec3 position;     // position in world
         glm::vec3 scale;
-        float yaw;
-        float pitch;
+        float yaw;              // orientation .y
+        float pitch;            // orientation .x
 
         glm::vec3 front;      // x axis
         glm::vec3 up;           // y axis
@@ -41,6 +41,33 @@ namespace SymoCraft
         {
             glm::vec3 size;
             glm::vec3 offset;
+        };
+    }
+
+    namespace Character
+    {
+        struct CharacterComponent
+        {
+            float base_speed;
+            float run_speed;
+            float jump_force;
+            float down_jump_force;
+
+            glm::vec3 movement_axis;
+            // movement axis
+            // x:front or back
+            // y:up or down
+            // z:left or right
+
+            bool is_running;
+            bool apply_jump_force;
+            bool is_jumping;
+        };
+
+        struct PlayerComponent
+        {
+            float movement_sensitivity;
+            glm::vec3 camera_offset;
         };
     }
 

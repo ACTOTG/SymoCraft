@@ -29,6 +29,7 @@ namespace SymoCraft {
     class Camera {
     public:
 
+        ECS::EntityId entity_id;
         // Constructor.
         // Parameters: Viewport width, Viewport height, camera Position;
         Camera(float, float, glm::vec3 = glm::vec3(0.0f, 0.0f, 0.0f));
@@ -82,12 +83,8 @@ namespace SymoCraft {
 
     private:
         static const glm::vec3 world_up;
-        ECS::EntityId entity_id;
 
         float fov;          // field of view
-        float last_x;       // last x position of cursor
-        float last_y;       // last y position of cursor
-        bool first_enter = true;  // is first enter of cursor? initialized by true
 
     }; // camera
 

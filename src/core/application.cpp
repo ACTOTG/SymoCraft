@@ -12,10 +12,16 @@
 #include "world/chunk.h"
 #include "core/ECS/registry.h"
 #include "core/ECS/Systems/transform_system.h"
+#include "core/ECS/Systems/character_system.h"
+#include "core/ECS/Systems/physics_system.h"
 #include "core/ECS/component.h"
+#include "world/world.h"
 
 namespace SymoCraft
 {
+
+    static bool first_enter = true;  // is first enter of cursor? initialized by true
+
 
     namespace Application
     {
@@ -23,7 +29,7 @@ namespace SymoCraft
 
         // Internal variables
         static GlobalThreadPool* global_thread_pool;
-
+        static Camera* camera;
 
         void Init()
         {
@@ -39,11 +45,21 @@ namespace SymoCraft
             // global_thread_pool = new GlobalThreadPool(std::thread::hardware_concurrency());
             ECS::Registry &registry = GetRegistry();
             registry.RegisterComponent<Transform>("Transform");
+            registry.RegisterComponent<Physics::RigidBody>("RigidBody");
+            registry.RegisterComponent<Physics::HitBox>("HigBox");
+            registry.RegisterComponent<Character::CharacterComponent>("CharacterComponent");
+            registry.RegisterComponent<Character::PlayerComponent>("PlayerComponent");
+
             Renderer::Init();
+            World::Init();
+
+            camera = GetCamera();
         }
 
         void Run()
         {
+
+            std::cout << player << std::endl;
             Window& window = GetWindow();
             double previous_frame_time = glfwGetTime();
 
@@ -55,9 +71,9 @@ namespace SymoCraft
             AmoLogger_Warning("Temporary Input Process Function is waiting to be replaced");
             // need to be replaced
 
+            glfwSetScrollCallback( (GLFWwindow *) window.window_ptr, MouseScrollCallBack);
             glfwSetCursorPosCallback((GLFWwindow *) window.window_ptr, MouseMovementCallBack);
             glfwSetInputMode((GLFWwindow*)window.window_ptr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
 
             // 出生在区块里，开局往天上飞，不然看不见XD
             // Manual chunk generation for testing
@@ -79,9 +95,10 @@ namespace SymoCraft
             block_batch.ReloadData();
             Report();
 
+            ECS::Registry &registry = GetRegistry();
             glm::vec3 start_pos{-30.0f, 70.0f, -30.0f};
-            GetCamera()->SetCameraPos(start_pos);
-
+            Transform &transform = registry.GetComponent<Transform>(World::GetPlayer());
+            transform.position = start_pos;
             // -------------------------------------------------------------------
             // Render Loop
             while (!window.ShouldClose())
@@ -91,7 +108,12 @@ namespace SymoCraft
 
                 // Temporary Input Process Function
                 processInput((GLFWwindow*)GetWindow().window_ptr);
+
+                //::Registry &registry = GetRegistry();
+
                 TransformSystem::Update(GetRegistry());
+                Physics::Update(GetRegistry());
+                Character::Player::Update(GetRegistry());
 
                 glBindTextureUnit(0, texture_array.m_texture_Id);
                 Renderer::Render();
@@ -141,18 +163,58 @@ namespace SymoCraft
             return *global_thread_pool;
         }
 
-        void MouseMovementCallBack(GLFWwindow* window, double x_pos_in, double y_pos_in)
+        void MouseMovementCallBack(GLFWwindow* window, double xpos_in, double ypos_in)
         {
-            GetCamera()->InsMouseMovementCallBack(window, x_pos_in, y_pos_in);
+            static float last_x = 0;       // last x position of cursor
+            static float last_y = 0;       // last y position of cursor
+            ECS::Registry &registry = Application::GetRegistry();
+            //Transform &transform = registry.GetComponent<Transform>(camera->entity_id);
+            Transform &transform = registry.GetComponent<Transform>(World::GetPlayer());
+            Character::PlayerComponent &player_com = registry.GetComponent<Character::PlayerComponent>(World::GetPlayer());
+            auto xpos = static_cast<float>(xpos_in);
+            auto ypos = static_cast<float>(ypos_in);
+
+            // modify the first enter of the mouse
+            if (first_enter)
+            {
+                last_x = xpos;
+                last_y = ypos;
+                first_enter = false;
+            }
+            float xoffset = xpos - last_x;
+            float yoffset = last_y - ypos;   // reversed since y-coordinates range from bottom to top
+            last_x = xpos;
+            last_y = ypos;
+
+            std::cout << xoffset << ' ' << yoffset << std::endl;
+
+            const float sensitivity = 0.05f;
+            xoffset *= sensitivity;
+            yoffset *= sensitivity;
+
+
+            transform.pitch += yoffset;
+            transform.yaw += xoffset;
+            transform.pitch = glm::clamp(transform.pitch, -89.0f, 89.0f);
+
+
         }
 
+        void MouseScrollCallBack(GLFWwindow* window, double x_pos_in, double y_pos_in)
+        {
+            GetCamera()->InsMouseScrollCallBack(window, x_pos_in, y_pos_in);
+        }
         void processInput(GLFWwindow* window)
         {
             if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
                 glfwSetWindowShouldClose(window, true);
 
+            ECS::Registry &registry = GetRegistry();
+            Character::CharacterComponent &player_com = registry.GetComponent<Character::CharacterComponent>(World::GetPlayer());
+
             // --------------------------------------------------------------------------------------------
             // process input for camera moving
+            /*
             float camera_displacement = 0;
             if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
                 camera_displacement = 5.0f * delta_time;        // 5.0 unit per second (actual displacement)
@@ -171,6 +233,33 @@ namespace SymoCraft
                 GetCamera()->CameraMoveBy(UPWARD, camera_displacement);
             if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
                 GetCamera()->CameraMoveBy(DOWNWARD, camera_displacement);
+                */
+
+            player_com.is_running = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
+
+
+            player_com.movement_axis.x =
+                    glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS
+                    ? 1.0f
+                    :glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS
+                      ? -1.0f
+                      : 0.0f;
+            player_com.movement_axis.z =
+                    glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS
+                    ? 1.0f
+                    :
+                    glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS
+                      ? -1.0f
+                      : 0.0f;
+
+            if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+            {
+                if (!player_com.is_jumping)
+                {
+                    player_com.apply_jump_force = true;
+                }
+            }
+
         }
     }
 

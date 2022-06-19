@@ -15,7 +15,6 @@ namespace SymoCraft
     const glm::vec3 Camera::world_up = glm::vec3(0.0f, 1.0f, 0.0f);
 
     Camera::Camera( float width, float height, glm::vec3 c_pos)
-            : last_x(width), last_y(height)
     {
         ECS::Registry &registry = Application::GetRegistry();
         entity_id = registry.CreateEntity();
@@ -31,41 +30,7 @@ namespace SymoCraft
 
     void Camera::InsMouseMovementCallBack(GLFWwindow *window, double xpos_in, double ypos_in)
     {
-        ECS::Registry &registry = Application::GetRegistry();
-        Transform &transform = registry.GetComponent<Transform>(entity_id);
-
-        auto xpos = static_cast<float>(xpos_in);
-        auto ypos = static_cast<float>(ypos_in);
-
-        // modify the first enter of the mouse
-        if (first_enter)
-        {
-            last_x = xpos;
-            last_y = ypos;
-            first_enter = false;
         }
-
-        float xoffset = xpos - last_x;
-        float yoffset = last_y - ypos;   // reversed since y-coordinates range from bottom to top
-        last_x = xpos;
-        last_y = ypos;
-
-        const float sensitivity = 0.01f;
-        xoffset *= sensitivity;
-        yoffset *= sensitivity;
-
-        // calculate the angles of camera
-        transform.yaw += xoffset;
-        transform.pitch += yoffset;
-
-        // add some constraints to the camera avoiding the gimbal lock
-        if (transform.pitch > 89.0f)
-            transform.pitch = 89.0f;
-        if (transform.pitch < -89.0f)
-            transform.pitch = -89.0f;
-
-        // update Front, Right and Up Vectors using the updated Euler angles
-    }
 
     void Camera::InsMouseScrollCallBack(GLFWwindow *window, double x_offset, double y_offset)
     {
@@ -75,7 +40,7 @@ namespace SymoCraft
         if (fov > 45.0f)
             fov = 45.0f;
     }
-
+/*
     void Camera::CameraMoveBy(MoveDirection direction, float displacement)
     {
         ECS::Registry &registry = Application::GetRegistry();
@@ -103,7 +68,7 @@ namespace SymoCraft
                 break;
         }
     }
-
+*/
     glm::mat4 Camera::GetCameraViewMat() const
     {
         ECS::Registry &registry = Application::GetRegistry();

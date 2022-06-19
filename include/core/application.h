@@ -41,9 +41,11 @@ namespace SymoCraft
         // Get Registry
         ECS::Registry &GetRegistry();
 
-        // Need to be replaced in the following development
+        // Process input and some functions call back
         void processInput(GLFWwindow* window);
         void MouseMovementCallBack(GLFWwindow* window, double x_pos_in, double y_pos_in);
+        void MouseScrollCallBack(GLFWwindow* window, double x_pos_in, double y_pos_in);
+
 
         // Delta time
         extern float delta_time;
