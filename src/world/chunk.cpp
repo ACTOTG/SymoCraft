@@ -63,6 +63,7 @@ namespace SymoCraft
         local_blocks[index].SetTransparency(blockFormat.m_is_transparent);
         local_blocks[index].SetIsLightSource(blockFormat.m_is_lightSource);
 
+        UpdateChunkLocalBlocks({x, y, z});
         return true;
     }
 
@@ -96,6 +97,7 @@ namespace SymoCraft
         local_blocks[index].SetTransparency(true);
         local_blocks[index].SetIsLightSource(false);
 
+        UpdateChunkLocalBlocks({x, y, z});
         return true;
     }
 
