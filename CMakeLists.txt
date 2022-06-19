@@ -13,7 +13,10 @@ set(Core src/core/global_thread_pool.cpp
         src/core/application.cpp)
 
 set(ECS src/core/ECS/internal.cpp
-        src/core/ECS/registry.cpp)
+        src/core/ECS/registry.cpp
+        #src/core/ECS/Systems/transform_system.cpp
+        src/core/ECS/Systems/physics_system.cpp
+        )
 
 file(GLOB SOURCE_FILE
         "vendor/yaml-cpp/src/*.cpp"

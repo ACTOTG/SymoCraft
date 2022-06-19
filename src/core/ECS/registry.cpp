@@ -5,9 +5,7 @@
 #include "core/ECS/registry.h"
 #include "core.h"
 
-namespace SymoCraft
-{
-    namespace ECS
+namespace SymoCraft::ECS
     {
         typedef uint32 EntityIndex;
         typedef uint32 EntityType;
@@ -72,8 +70,6 @@ namespace SymoCraft
         }
 
 
-
-
         bool Registry::HasComponentByType(EntityId entity, int32 component_type) const
         {
             if (!IsEntityValid(entity))
@@ -134,5 +130,47 @@ namespace SymoCraft
                 if (component_set[i].IsComponentExist(entity))
                     component_set[i].Remove(entity);
         }
+
+        // ----------------------------------------------------------------------
+        // Iterator implementation
+        Iterator::Iterator(Registry &reg, EntityIndex index, std::bitset<Internal::kMaxNumComponents> com_need,
+                           bool all)
+                           : registry(reg), entity_index(index), components_need(com_need),
+                           _is_searching_all(all)
+        {/*empty*/}
+
+        EntityIndex Iterator::operator*() const
+        {
+            return registry.entities[entity_index];
+        }
+
+        bool Iterator::operator==(Iterator &other) const
+        {
+            return entity_index==other.entity_index;
+        }
+
+
+        bool Iterator::operator!=(Iterator &other) const
+        {
+            return entity_index!=other.entity_index;
+        }
+
+        Iterator& Iterator::operator++()
+        {
+            do
+            {
+                entity_index++;
+            } while (entity_index < registry.entities.size() && !IsIndexValid());
+            return *this;
+        }
+
+        bool Iterator::IsIndexValid()
+        {
+            return entity_index >=0 && registry.IsEntityValid(registry.entities[entity_index]) &&
+                    (
+                            _is_searching_all ||
+                            RegistryViewer<>::HasRequiredComponents(registry, components_need
+                                                                  , registry.entities[entity_index])
+                            );
+        }
     }
-}
