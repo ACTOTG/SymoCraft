@@ -10,5 +10,8 @@ uniform sampler2DArray u_texture_array;
 
 void main()
 {
-	frag_color = texture(u_texture_array, o_tex_coord);
+	vec4 texcolor = texture(u_texture_array, o_tex_coord);
+	if (texcolor.a < 0.1f)
+		discard;
+	frag_color = texcolor;
 }
