@@ -7,7 +7,6 @@ namespace SymoCraft{
     static std::mutex chunkMtx;
     static robin_hood::unordered_node_map<glm::ivec2, Chunk> chunks;
     static uint32 chunkPosInstancedBuffer;
-    static uint32 biomeInstancedVbo;
     static uint32 globalVao;
     static uint32 globalRenderVbo;
     // TODO: Make this better

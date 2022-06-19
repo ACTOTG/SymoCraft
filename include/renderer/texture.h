@@ -27,4 +27,10 @@ public:
     uint16 layer_amount{};
 };
 
+class CubeMap : public Texture
+{
+public:
+    CubeMap CreateCubeMap(std::string_view filepath);
+};
+
 #endif

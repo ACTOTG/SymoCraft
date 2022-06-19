@@ -99,7 +99,7 @@ namespace SymoCraft
             Report();
 
             ECS::Registry &registry = GetRegistry();
-            glm::vec3 start_pos{-30.0f, 70.0f, -30.0f};
+            glm::vec3 start_pos{-30.0f, 140.0f, -30.0f};
             Transform &transform = registry.GetComponent<Transform>(World::GetPlayer());
             transform.position = start_pos;
             Renderer::ReportStatus();

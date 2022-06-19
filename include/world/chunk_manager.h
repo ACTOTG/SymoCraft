@@ -15,11 +15,11 @@ namespace SymoCraft{
     // A chunk is 16 * 16 * 256
     static constexpr uint16 k_chunk_length = 16;
     static constexpr uint16 k_chunk_width = 16;
-    static constexpr uint16 k_chunk_height = 128;
+    static constexpr uint16 k_chunk_height = 256;
 
-    static constexpr int maxBiomeHeight = 70;
-    static constexpr int minBiomeHeight = 40;
-    static constexpr int oceanLevel = 48;
+    static constexpr int maxBiomeHeight = 145;
+    static constexpr int minBiomeHeight = 55;
+    static constexpr int oceanLevel = 85;
 
     struct Vertex
     {
@@ -53,7 +53,7 @@ namespace SymoCraft{
 
         void queueGenerateDecorations(const glm::ivec2& lastPlayerLoadChunkPos);
         void queueCreateChunk(const glm::ivec2& chunkCoordinates);
-        void queueRetesselateChunk(const glm::ivec2& chunkCoordinates, Chunk* chunk = nullptr);
+        void queueUpdateChunk(const glm::ivec2& chunkCoordinates, Chunk* chunk = nullptr);
     }
 }
 #endif //SYMOCRAFT_CHUNK_MANAGER_H

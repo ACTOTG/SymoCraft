@@ -102,8 +102,6 @@ namespace SymoCraft {
 
         // void info();
 
-        void LoadBlockFace(Vertex*, const std::array<Vertex3D, 4> &block_face, CUBE_FACE face);
-
         inline int GetLocalBlockIndex(int x, int y ,int z){
             return x * k_chunk_length + y * k_chunk_height + z;
         }

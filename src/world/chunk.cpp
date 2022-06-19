@@ -119,13 +119,13 @@ namespace SymoCraft
             noise_generator.noise.SetSeed(static_cast<int>(mt()));
         }
 
-        noise_generators[0].noise.SetFrequency(0.005);
+        noise_generators[0].noise.SetFrequency(0.00573);
         noise_generators[1].noise.SetFrequency(0.02);
         noise_generators[2].noise.SetFrequency(0.1);
 
         noise_generators[0].weight = 1.0f;
-        noise_generators[1].weight = 0.3f;
-        noise_generators[2].weight = 0.1f;
+        noise_generators[1].weight = 0.2f;
+        noise_generators[2].weight = 0.03f;
 
         for(auto& noise_generator : noise_generators)
             weight_sum += noise_generator.weight;
@@ -191,13 +191,13 @@ namespace SymoCraft
                             local_blocks[block_index].SetTransparency(false);
                             local_blocks[block_index].SetBlendability(false);
                             local_blocks[block_index].SetIsLightSource(false);
-                        } else if (y < minBiomeHeight - 3) {
+                        } else if (y < maxHeight) {
                             // Dirt
                             local_blocks[block_index].block_id = 4;
                             local_blocks[block_index].SetTransparency(false);
                             local_blocks[block_index].SetBlendability(false);
                             local_blocks[block_index].SetIsLightSource(false);
-                        } else if ( minBiomeHeight - 3 < y < minBiomeHeight + 3 ) {
+                        } else if ( y == maxHeight ) {
                             if (maxHeight < oceanLevel + 2) {
                                 // Sand
                                 local_blocks[block_index].block_id = 3;
@@ -388,10 +388,11 @@ namespace SymoCraft
                     // Use the 6 blocks to iterate through the 6 faces
                     for (i = 0; auto &neighbor_block: neighbor_blocks) {
                         // If neighbor block is not null and is transparent
-                        if ((neighbor_block != BlockConstants::NULL_BLOCK && neighbor_block.IsTransparent()) || block.block_id == 7) {
-
+                        if (neighbor_block != BlockConstants::NULL_BLOCK && neighbor_block.IsTransparent())
+                        {
                             //If the face aren't culled, calculate its 4 vertices
-                            for( int j = 0; j < 4; j++) {
+                            for( int j = 0; j < 4; j++)
+                            {
                                 block_faces[i][j].pos_coord = (glm::ivec3(x + kWorldChunkX, y, z + kWorldChunkZ) +
                                         BlockConstants::pos_coords[BlockConstants::vertex_indices[i * 4 + j]]);
                                 block_faces[i][j].tex_coord = {BlockConstants::tex_coords[j % 4], // Set uv coords
