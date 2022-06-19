@@ -20,7 +20,7 @@ namespace SymoCraft{
         static float g_normal;
 
         constexpr float depth_value = 1.0f;
-        constexpr std::array<float, 4> clear_color = {0.2f, 0.3f, 0.3f, 1.0f};
+        constexpr std::array<float, 4> clear_color = {0.529f, 0.808f, 0.922f, 1.0f};
 
         // Internal functions
         static void GLAPIENTRY messageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
@@ -29,6 +29,8 @@ namespace SymoCraft{
         void Init() {
             Window &window = Application::GetWindow();
             camera = Application::GetCamera();
+            glm::vec3 start_pos{-30.0f, 70.0f, -30.0f};
+            camera->SetCameraPos(start_pos);
 
             // Load OpenGL functions using Glad
             if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
@@ -140,7 +142,6 @@ namespace SymoCraft{
                               const uint16 &bottom_tex) {
             // Let Amo decide what value should the normal have...
             // glm::vec3 normal = glm::vec3(offset.x, offset.y, offset.z);
-
 
             for (index = 0; auto &face: block_faces) {
                 for (auto &vertex: face) {

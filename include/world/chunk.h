@@ -1,19 +1,13 @@
 #ifndef SYMOCRAFT_CHUNK_H
 #define SYMOCRAFT_CHUNK_H
 
+#include <fast_noise_lite/FastNoiseLite.h>
 #include "core.h"
 #include "block.h"
 #include "chunk_manager.h"
 #include "renderer/batch.hpp"
 
 namespace SymoCraft {
-
-    // A chunk is 16 * 16 * 256
-    // A sub-chunk is 16 * 16 * 16
-    constexpr uint16 k_chunk_length = 16;
-    constexpr uint16 k_chunk_width = 16;
-    constexpr uint16 k_chunk_height = 32;
-
     enum class ChunkState : uint8 {
         None,
         Unloaded,
@@ -22,6 +16,37 @@ namespace SymoCraft {
         Loading,
         Loaded
     };
+
+    struct RandomDevice{
+        size_t seed;
+        float weight;
+        float frequency;
+    };
+
+    struct NoiseGenerator
+    {
+        FastNoiseLite noise;
+        float weight;
+    };
+
+    // A chunk is 16 * 16 * 256
+    // A sub-chunk is 16 * 16 * 16
+    static constexpr uint16 k_chunk_length = 16;
+    static constexpr uint16 k_chunk_width = 16;
+    static constexpr uint16 k_chunk_height = 128;
+
+    static constexpr int maxBiomeHeight = 70;
+    static constexpr int minBiomeHeight = 40;
+    static constexpr int oceanLevel = 48;
+    static uint16 maxHeight;
+    static uint16 stoneHeight;
+    static int32 seed;
+    static float weight_sum;
+    static std::array<NoiseGenerator, 3> noise_generators{};
+
+    static std::array<std::array<float, k_chunk_width>, k_chunk_length> height_map;
+    void InitializeNoise();
+    void Report();
 
     class Chunk {
     public:
@@ -63,8 +88,9 @@ namespace SymoCraft {
         bool SetWorldBlock(const glm::vec3 &worldPosition, Block newBlock);
         bool RemoveWorldBlock(const glm::vec3 &worldPosition);
 
+        float GetNoise(int x, int z);
 
-        void generateTerrain();
+        void GenerateTerrain();
         void generateRenderData();
 
     private:

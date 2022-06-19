@@ -1,11 +1,12 @@
 #ifndef SYMOCRAFT_CHUNK_MANAGER_H
 #define SYMOCRAFT_CHUNK_MANAGER_H
+
 #include "core.h"
 #include "world.h"
 #include "renderer/shader_program.h"
 
-namespace SymoCraft{
 
+namespace SymoCraft{
     struct Block;
     class Frustum;
     class Chunk;

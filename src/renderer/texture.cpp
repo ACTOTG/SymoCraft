@@ -54,7 +54,7 @@ TextureArray TextureArray::CreateAtlasSlice(std::string_view filepath, bool pixe
     // Set up
     Texture tex_atlas = CreateRegularTexture( filepath, pixelated );
 
-    constexpr uint16 tile_width = 16, tile_height = 16;
+    constexpr uint16 tile_width = 64, tile_height = 64;
     uint16 tile_columns = tex_atlas.m_width / tile_width,
            tile_rows = tex_atlas.m_height / tile_height,
            tile_quantity = tile_columns * tile_rows;
@@ -64,7 +64,7 @@ TextureArray TextureArray::CreateAtlasSlice(std::string_view filepath, bool pixe
     TextureArray tile_set;
     tile_set.layer_amount = tile_quantity;
     glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &tile_set.m_texture_Id);
-    glTextureStorage3D(tile_set.m_texture_Id, 1, GL_RGBA32F, tile_width, tile_height, tile_quantity);
+    glTextureStorage3D(tile_set.m_texture_Id, 1, tex_atlas.m_internal_format, tile_width, tile_height, tile_quantity);
 
     for (GLsizei i = 0; i < tile_quantity; ++i)
     {

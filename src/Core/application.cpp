@@ -44,7 +44,7 @@ namespace SymoCraft
 
             stbi_set_flip_vertically_on_load(true);
             TextureArray texture_array;
-            texture_array = texture_array.CreateAtlasSlice("../assets/textures/texture.png", true);
+            texture_array = texture_array.CreateAtlasSlice("../assets/textures/texture_atlas.png", true);
 
             AmoLogger_Log("Temporary CAMERA class is waiting to be replaced");
             AmoLogger_Warning("Temporary Input Process Function is waiting to be replaced");
@@ -56,24 +56,23 @@ namespace SymoCraft
 
             // 出生在区块里，开局往天上飞，不然看不见XD
             // Manual chunk generation for testing
-            {
-                for(int x = -3; x <= 3; x++)
-                    for(int z = -3; z <= 3; z++)
-                        ChunkManager::queueCreateChunk({x,z});
+            InitializeNoise();
+            for(int x = -3; x <= 3; x++)
+                for(int z = -3; z <= 3; z++)
+                    ChunkManager::queueCreateChunk({x,z});
 
-                for( auto chunk : ChunkManager::getAllChunks() )
-                    chunk.second.generateTerrain();
+            for( auto chunk : ChunkManager::getAllChunks() )
+                chunk.second.GenerateTerrain();
 
-                ChunkManager::patchChunkPointers();
+            ChunkManager::patchChunkPointers();
 
-                // We only need to calculate the vertices once, since we can't remove or add blocks now
-                for(int x = -1; x <= 1; x++)
-                    for(int z = -1; z <= 1; z++)
-                        ChunkManager::getAllChunks().find({x,z})->second.generateRenderData();
+            // We only need to calculate the vertices once, since we can't remove or add blocks now
+            for(int x = -2; x <= 2; x++)
+                for(int z = -2; z <= 2; z++)
+                    ChunkManager::getAllChunks().find({x,z})->second.generateRenderData();
 
-                block_batch.ReloadData();
-            }
-
+            block_batch.ReloadData();
+            Report();
             // -------------------------------------------------------------------
             // Render Loop
             while (!window.ShouldClose())

@@ -4,6 +4,8 @@ project(SymoCraft)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(FASTNOISE2_NOISETOOL OFF CACHE BOOL "Build Noise Tool" FORCE)
+
 set(MemoryAllocator include/MemoryAllocator/AmoBase.cpp)
 
 set(Core src/core/global_thread_pool.cpp
@@ -31,6 +33,7 @@ add_executable(SymoCraft src/main.cpp
 
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/glfw)
-target_link_libraries(${PROJECT_NAME} glfw)
+add_subdirectory(vendor/FastNoise2)
+target_link_libraries(${PROJECT_NAME} glfw FastNoise)
 
 include_directories(vendor include vendor/glfw/include/)

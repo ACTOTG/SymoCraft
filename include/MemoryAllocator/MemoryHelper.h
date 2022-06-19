@@ -52,7 +52,7 @@ namespace MemoryHelper {
     {
 #ifdef _DEBUG
         AmoLogger_Notice(offset + sizeof(First) <= sized_mem.size
-                     , "Cannot unpack this memory. Would result in a buffer overrun.")
+                     , "Cannot unpack this memory. Would result in a buffer overrun.");
 #endif
         static_assert(std::is_trivial<First>() && std::is_standard_layout<First>()
                 , "Cannot accept non-POD values for dynamic memory unpacking");

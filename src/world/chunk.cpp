@@ -1,7 +1,11 @@
+#include <FastNoise/FastNoise.h>
+#include <random>
+#include <algorithm>
 #include "world/chunk.h"
-#include "renderer/batch.hpp"
 #include "renderer/renderer.h"
 #include "core/constants.h"
+#include "core/utils.h"
+
 
 namespace SymoCraft
 {
@@ -130,25 +134,102 @@ namespace SymoCraft
 //        return ret;
 //    }
 
-    constexpr float maxBiomeHeight = 145.0f;
-    constexpr float minBiomeHeight = 55.0f;
-    constexpr int oceanLevel = 9;
-    constexpr uint16 maxHeight = 13;
-    constexpr uint16 stoneHeight = 8;
-    constexpr bool isCave = false;
+//    static FastNoise::SmartNode<FastNoise::Perlin> perlin_node;
+//    static FastNoise::SmartNode<FastNoise::FractalFBm> fractal_fbm_node;
+//    static FastNoise::SmartNode<FastNoise::DomainScale> domain_scale_node;
+//    static FastNoise::SmartNode<FastNoise::PositionOutput> pos_output_node;
+//    static FastNoise::SmartNode<FastNoise::Add> add_node;
+//    static FastNoise::SmartNode<> generator;
 
-    void Chunk::generateTerrain() {
+    void InitializeNoise() {
+//        perlin_node = FastNoise::New<FastNoise::Perlin>();
+//        fractal_fbm_node = FastNoise::New<FastNoise::FractalFBm>();
+//        domain_scale_node = FastNoise::New<FastNoise::DomainScale>();
+//        pos_output_node = FastNoise::New<FastNoise::PositionOutput>();
+//        add_node = FastNoise::New<FastNoise::Add>();
+//        generator = FastNoise::NewFromEncodedNodeTree(
+//                "GQAQAAAAAD8NAAUAAAAAAABABwAAAAAAPwAAAAAAAAAAgD8BBAAAAAAAAAAgQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==");
+//
+//        fractal_fbm_node->SetSource(perlin_node);
+//        fractal_fbm_node->SetOctaveCount(8);
+//        fractal_fbm_node->SetGain(0.7f);
+//        fractal_fbm_node->SetWeightedStrength(0.3f);
+//
+//        domain_scale_node->SetSource(fractal_fbm_node);
+//        domain_scale_node->SetScale(0.75f);
+//
+//        pos_output_node->Set<FastNoise::Dim::Y>(2.5, 0);
+//
+//        add_node->SetLHS(domain_scale_node);
+//        add_node->SetRHS(pos_output_node);
+
+        std::mt19937 mt{ std::random_device{}() };
+        seed = static_cast<int>(mt());
+
+        for(auto& noise_generator : noise_generators)
+        {
+            noise_generator.noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+            noise_generator.noise.SetFractalType(FastNoiseLite::FractalType_FBm);
+            noise_generator.noise.SetFractalOctaves(5);
+            noise_generator.noise.SetFractalLacunarity(1.6f);
+            noise_generator.noise.SetSeed(seed++);
+        }
+
+        noise_generators[0].noise.SetFrequency(0.003);
+        noise_generators[1].noise.SetFrequency(0.02);
+        noise_generators[2].noise.SetFrequency(0.1);
+
+        noise_generators[0].weight = 1.0f;
+        noise_generators[1].weight = 0.25f;
+        noise_generators[2].weight = 0.08f;
+
+        for(auto& noise_generator : noise_generators)
+            weight_sum += noise_generator.weight;
+    }
+
+    static float max_range{1};
+    static float min_range{0};
+    float Chunk::GetNoise(int x, int z)
+    {
+
+//        min_range = *std::min_element(height_map.begin(), height_map.end());
+//        max_range = *std::max_element(height_map.begin(), height_map.end());
+//        for( auto& height : height_map)
+//            height = Remap(height, min_range, max_range, minBiomeHeight, maxBiomeHeight);
+//        for(int x = 0; x < k_chunk_length; x++)
+//            for(int z = 0; z < k_chunk_width; z++)
+//                height_map[x][z] = generator->GenSingle2D(x + m_chunk_coord.x * k_chunk_length,z + m_chunk_coord.y * k_chunk_width, seed);
+        float blended_noise{0};
+        for(auto& noise_generator : noise_generators)
+        {
+            blended_noise += Remap(noise_generator.noise.GetNoise((float)x / 3.0f, (float)z / 3.0f),
+                                   -1.0f, 1.0f, 0.0f, 1.0f) * noise_generator.weight;
+        }
+
+        blended_noise /= weight_sum;
+        blended_noise = pow(blended_noise, 1.19f);
+        return Remap(blended_noise, 0.0f, 1.0f, minBiomeHeight, maxBiomeHeight);
+    }
+
+    void Report()
+    {
+        AmoLogger_Info("The range is between: %d - %d\n The seed is %d", (int)min_range, (int)max_range, seed);
+    }
+
+    void Chunk::GenerateTerrain() {
         AmoBase::AmoMemory_ZeroMem(local_blocks, sizeof(Block) * k_chunk_width * k_chunk_height * k_chunk_length);
 
-        for (int x = 0; x < k_chunk_length; x++) {
-            for (int z = 0; z < k_chunk_width; z++) {
-                // int16 maxHeight = TerrainGenerator::getHeight(x + worldChunkX, z + worldChunkZ, minBiomeHeight, maxBiomeHeight);
-                // int16 stoneHeight = (int16)(maxHeight - 3.0f);
+        int world_x = m_chunk_coord.x * k_chunk_length;
+        int world_z = m_chunk_coord.y * k_chunk_width;
+        for (int z = 0; z < k_chunk_width; z++) {
+            for (int x = 0; x < k_chunk_length; x++) {
+                maxHeight = (uint16)GetNoise(x + world_x, z + world_z);
+                stoneHeight = maxHeight - 3;
 
                 for (int y = 0; y < k_chunk_height; y++) {
                     // bool isCave = TerrainGenerator::getIsCave(x + worldChunkX, y, z + worldChunkZ, maxHeight);
-                    const int block_index = GetLocalBlockIndex(x, y, z);
-                    if(abs(m_chunk_coord.x) > 1 || abs(m_chunk_coord.y) > 1)
+                    const int block_index = GetLocalBlockIndex(x , y, z);
+                    if(abs(m_chunk_coord.x) > 2 || abs(m_chunk_coord.y) > 2)
                     {
                         local_blocks[block_index].block_id = BlockConstants::AIR_BLOCK.block_id;
                         local_blocks[block_index].SetTransparency(true);
@@ -158,7 +239,6 @@ namespace SymoCraft
                         continue;
                     };
 
-                    if (!isCave) {
                         if (y == 0) {
                             // Bedrock
                             local_blocks[block_index].block_id = 5;
@@ -195,8 +275,8 @@ namespace SymoCraft
                             }
                         } else if (y >= minBiomeHeight && y < oceanLevel) {
                             // Water
-                            local_blocks[block_index].block_id = 2;
-                            local_blocks[block_index].SetTransparency(true);
+                            local_blocks[block_index].block_id = 4;
+                            local_blocks[block_index].SetTransparency(false);
                             local_blocks[block_index].SetBlendability(true);
                             local_blocks[block_index].SetIsLightSource(false);
                         } else if (!local_blocks[block_index].block_id) {
@@ -205,16 +285,18 @@ namespace SymoCraft
                             local_blocks[block_index].SetBlendability(false);
                             local_blocks[block_index].SetIsLightSource(false);
                         }
-                    } else {
-                        local_blocks[block_index].block_id = BlockConstants::AIR_BLOCK.block_id;
-                        local_blocks[block_index].SetTransparency(true);
-                        local_blocks[block_index].SetBlendability(false);
-                        local_blocks[block_index].SetIsLightSource(false);
-                        local_blocks[block_index].SetLightColor(glm::ivec3(255, 255, 255));
-                    }
                 }
+//                    else {
+//                        local_blocks[block_index].block_id = BlockConstants::AIR_BLOCK.block_id;
+//                        local_blocks[block_index].SetTransparency(true);
+//                        local_blocks[block_index].SetBlendability(false);
+//                        local_blocks[block_index].SetIsLightSource(false);
+//                        local_blocks[block_index].SetLightColor(glm::ivec3(255, 255, 255));
+
             }
+
         }
+
     }
 
     void Chunk::generateRenderData() {

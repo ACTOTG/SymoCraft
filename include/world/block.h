@@ -36,7 +36,7 @@ namespace SymoCraft
         // Bit 1 IsTransparent
         // Bit 2 IsBlendable
         // Bit 3 IsLightSource
-        uint8 bitwise_compressed_data;
+        uint16 bitwise_compressed_data;
 
         inline bool operator==(const Block& b) const
         {

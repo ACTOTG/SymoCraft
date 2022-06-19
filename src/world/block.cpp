@@ -2,11 +2,11 @@
 
 namespace SymoCraft{
     static robin_hood::unordered_flat_map<uint16, BlockFormat> block_format_map;
-    static robin_hood::unordered_flat_map<std::string_view , uint16> name_to_id_map;
+    static robin_hood::unordered_flat_map<std::string , uint16> name_to_id_map;
 
     uint16 get_block_id(std::string_view block_name)
     {
-        const auto& iter = name_to_id_map.find(block_name);
+        const auto& iter = name_to_id_map.find(block_name.data());
         if (iter == name_to_id_map.end())
         {
             return 0;

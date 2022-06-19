@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="FastNoise2"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;CMake Files\vendor\;CMake Files\vendor\FastNoise2\;CMake Files\vendor\FastNoise2\cmake\;CMake Files\vendor\FastNoise2\src\;CMake Files\vendor\glfw\;CMake Files\vendor\glfw\src\;CMake Files\vendor\glfw\examples\;CMake Files\vendor\glfw\tests\;CMake Files\vendor\glm\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="D:/msys64/clang64/bin/mingw32-make.exe -f &quot;E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="D:/msys64/clang64/bin/mingw32-make.exe -f &quot;E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/msys64/clang64/bin/mingw32-make.exe -f &quot;E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/msys64/clang64/bin/mingw32-make.exe -f &quot;E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="FastNoise">
+				<Option output="E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/src/libFastNoiseD.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/src"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DFASTNOISE_STATIC_LIB"/>
+					<Add directory="E:/Coding/SymoCraft/vendor/FastNoise2/include"/>
+					<Add directory="D:/msys64/clang64/include/c++/v1"/>
+					<Add directory="D:/msys64/clang64/lib/clang/14.0.4/include"/>
+					<Add directory="D:/msys64/clang64/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/msys64/clang64/bin/mingw32-make.exe -f &quot;E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/src/Makefile&quot;  VERBOSE=1 FastNoise"/>
+					<CompileFile command="D:/msys64/clang64/bin/mingw32-make.exe -f &quot;E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/msys64/clang64/bin/mingw32-make.exe -f &quot;E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/msys64/clang64/bin/mingw32-make.exe -f &quot;E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="FastNoise/fast">
+				<Option output="E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/src/libFastNoiseD.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/src"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add option="-DFASTNOISE_STATIC_LIB"/>
+					<Add directory="E:/Coding/SymoCraft/vendor/FastNoise2/include"/>
+					<Add directory="D:/msys64/clang64/include/c++/v1"/>
+					<Add directory="D:/msys64/clang64/lib/clang/14.0.4/include"/>
+					<Add directory="D:/msys64/clang64/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="D:/msys64/clang64/bin/mingw32-make.exe -f &quot;E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/src/Makefile&quot;  VERBOSE=1 FastNoise/fast"/>
+					<CompileFile command="D:/msys64/clang64/bin/mingw32-make.exe -f &quot;E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/src/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="D:/msys64/clang64/bin/mingw32-make.exe -f &quot;E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/src/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="D:/msys64/clang64/bin/mingw32-make.exe -f &quot;E:/Coding/SymoCraft/cmake-build-deubg-clang/vendor/FastNoise2/src/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/FastNoise.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/FastNoise_BuildList.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/FastNoise_C.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/FastNoise_Config.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/FastNoise_Export.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/BasicGenerators.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/BasicGenerators.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Blends.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Blends.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Cellular.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Cellular.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/DomainWarp.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/DomainWarp.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/DomainWarpFractal.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/DomainWarpFractal.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Fractal.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Fractal.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Generator.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Generator.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Modifiers.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Modifiers.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Perlin.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Perlin.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Simplex.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Simplex.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Utils.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Value.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Generators/Value.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/Metadata.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastNoise/SmartNode.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastSIMD/FastSIMD.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastSIMD/FastSIMD_Config.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastSIMD/FastSIMD_Export.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastSIMD/FunctionList.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastSIMD/InlInclude.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/include/FastSIMD/SIMDTypeList.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastNoise/FastNoise_C.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastNoise/Metadata.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastNoise/SmartNode.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/FastSIMD.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/FastSIMD_BuildList.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/FastSIMD_Level_AVX2.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/FastSIMD_Level_AVX512.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/FastSIMD_Level_NEON.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/FastSIMD_Level_SSE2.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/FastSIMD_Level_SSE3.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/FastSIMD_Level_SSE41.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/FastSIMD_Level_SSE42.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/FastSIMD_Level_SSSE3.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/FastSIMD_Level_Scalar.cpp">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/Internal/AVX.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/Internal/AVX512.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/Internal/NEON.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/Internal/SSE.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/Internal/Scalar.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/Internal/SourceBuilder.inl">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/FastSIMD/Internal/VecTools.h">
+			<Option target="FastNoise"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\vendor\FastNoise2\"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/cmake/Config.cmake.in">
+			<Option virtualFolder="CMake Files\vendor\FastNoise2\cmake\"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/FastNoise2/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\vendor\FastNoise2\src\"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/glfw/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\vendor\glfw\"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/glfw/cmake_uninstall.cmake.in">
+			<Option virtualFolder="CMake Files\vendor\glfw\"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/glfw/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\vendor\glfw\src\"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/glfw/src/glfw3.pc.in">
+			<Option virtualFolder="CMake Files\vendor\glfw\src\"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/glfw/src/glfw3Config.cmake.in">
+			<Option virtualFolder="CMake Files\vendor\glfw\src\"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/glfw/src/glfw_config.h.in">
+			<Option virtualFolder="CMake Files\vendor\glfw\src\"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/glfw/examples/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\vendor\glfw\examples\"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/glfw/tests/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\vendor\glfw\tests\"/>
+		</Unit>
+		<Unit filename="E:/Coding/SymoCraft/vendor/glm/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\vendor\glm\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
