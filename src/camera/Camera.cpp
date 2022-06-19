@@ -50,7 +50,7 @@ namespace SymoCraft
         last_x = xpos;
         last_y = ypos;
 
-        const float sensitivity = 0.001f;
+        const float sensitivity = 0.01f;
         xoffset *= sensitivity;
         yoffset *= sensitivity;
 
