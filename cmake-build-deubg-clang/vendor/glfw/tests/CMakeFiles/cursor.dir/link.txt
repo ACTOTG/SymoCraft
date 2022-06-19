@@ -1,3 +1,0 @@
-D:\JetBrains\Toolbox\apps\CLion\ch-0\221.5787.29\bin\cmake\win\bin\cmake.exe -E rm -f CMakeFiles\cursor.dir/objects.a
-D:\msys64\clang64\bin\llvm-ar.exe qc CMakeFiles\cursor.dir/objects.a @CMakeFiles\cursor.dir\objects1.rsp
-D:\msys64\clang64\bin\clang.exe -g -Wl,--whole-archive CMakeFiles\cursor.dir/objects.a -Wl,--no-whole-archive -o cursor.exe -Wl,--out-implib,libcursor.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\cursor.dir\linklibs.rsp

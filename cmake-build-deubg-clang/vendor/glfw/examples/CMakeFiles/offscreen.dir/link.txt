@@ -1,3 +1,0 @@
-D:\JetBrains\Toolbox\apps\CLion\ch-0\221.5787.29\bin\cmake\win\bin\cmake.exe -E rm -f CMakeFiles\offscreen.dir/objects.a
-D:\msys64\clang64\bin\llvm-ar.exe qc CMakeFiles\offscreen.dir/objects.a @CMakeFiles\offscreen.dir\objects1.rsp
-D:\msys64\clang64\bin\clang.exe -g -Wl,--whole-archive CMakeFiles\offscreen.dir/objects.a -Wl,--no-whole-archive -o offscreen.exe -Wl,--out-implib,liboffscreen.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\offscreen.dir\linklibs.rsp

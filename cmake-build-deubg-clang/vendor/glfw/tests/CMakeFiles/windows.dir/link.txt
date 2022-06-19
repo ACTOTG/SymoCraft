@@ -1,3 +1,0 @@
-D:\JetBrains\Toolbox\apps\CLion\ch-0\221.5787.29\bin\cmake\win\bin\cmake.exe -E rm -f CMakeFiles\windows.dir/objects.a
-D:\msys64\clang64\bin\llvm-ar.exe qc CMakeFiles\windows.dir/objects.a @CMakeFiles\windows.dir\objects1.rsp
-D:\msys64\clang64\bin\clang.exe -g -mwindows -Wl,--whole-archive CMakeFiles\windows.dir/objects.a -Wl,--no-whole-archive -o windows.exe -Wl,--out-implib,libwindows.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\windows.dir\linklibs.rsp

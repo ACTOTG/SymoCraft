@@ -1,3 +1,0 @@
-D:\JetBrains\Toolbox\apps\CLion\ch-0\221.5787.29\bin\cmake\win\bin\cmake.exe -E rm -f CMakeFiles\icon.dir/objects.a
-D:\msys64\clang64\bin\llvm-ar.exe qc CMakeFiles\icon.dir/objects.a @CMakeFiles\icon.dir\objects1.rsp
-D:\msys64\clang64\bin\clang.exe -g -mwindows -Wl,--whole-archive CMakeFiles\icon.dir/objects.a -Wl,--no-whole-archive -o icon.exe -Wl,--out-implib,libicon.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\icon.dir\linklibs.rsp

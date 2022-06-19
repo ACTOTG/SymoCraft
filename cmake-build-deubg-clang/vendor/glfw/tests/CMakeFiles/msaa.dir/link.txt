@@ -1,3 +1,0 @@
-D:\JetBrains\Toolbox\apps\CLion\ch-0\221.5787.29\bin\cmake\win\bin\cmake.exe -E rm -f CMakeFiles\msaa.dir/objects.a
-D:\msys64\clang64\bin\llvm-ar.exe qc CMakeFiles\msaa.dir/objects.a @CMakeFiles\msaa.dir\objects1.rsp
-D:\msys64\clang64\bin\clang.exe -g -Wl,--whole-archive CMakeFiles\msaa.dir/objects.a -Wl,--no-whole-archive -o msaa.exe -Wl,--out-implib,libmsaa.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\msaa.dir\linklibs.rsp
