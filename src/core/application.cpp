@@ -216,9 +216,11 @@ namespace SymoCraft
 
             ECS::Registry &registry = GetRegistry();
             Character::CharacterComponent &player_com = registry.GetComponent<Character::CharacterComponent>(World::GetPlayer());
+            Physics::RigidBody &rigid_body = registry.GetComponent<Physics::RigidBody>(World::GetPlayer());
 
             // --------------------------------------------------------------------------------------------
             // process input for camera moving
+
             /*
             float camera_displacement = 0;
             if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
@@ -259,7 +261,7 @@ namespace SymoCraft
 
             if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
             {
-                if (!player_com.is_jumping)
+                if (!player_com.is_jumping && rigid_body.on_ground)
                 {
                     player_com.apply_jump_force = true;
                 }
