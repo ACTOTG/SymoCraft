@@ -88,7 +88,7 @@ namespace SymoCraft
                 chunk.second.GenerateVegetation();
             }
 
-            ChunkManager::patchChunkPointers();
+            ChunkManager::RearrangeChunkPointers();
 
             // We only need to calculate the vertices once, since we can't remove or add blocks now
             for(int x = -World::chunk_radius + 1; x <= World::chunk_radius - 1; x++)

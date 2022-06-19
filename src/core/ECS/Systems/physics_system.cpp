@@ -167,7 +167,7 @@ namespace SymoCraft
                     for (int32 z = back_z; z <= front_z; z++)
                     {
                         glm::vec3 box_pos = glm::vec3(x - 0.5f, y - 0.5f, z - 0.5f);
-                        Block block = ChunkManager::getBlock(box_pos);
+                        Block block = ChunkManager::GetBlock(box_pos);
                         BlockFormat block_format = get_block(block.block_id);
 
                         block_transform.position = box_pos;

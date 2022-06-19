@@ -22,8 +22,8 @@ namespace SymoCraft{
 //        static CommandBufferContainer* blendableCommandBuffer = nullptr;
 
     namespace ChunkManager {
-        Block getBlock(const glm::vec3 &worldPosition) {
-            Chunk *chunk = getChunk(worldPosition);
+        Block GetBlock(const glm::vec3 &worldPosition) {
+            Chunk *chunk = GetChunk(worldPosition);
 
             if (!chunk) {
                 // Assume it's a chunk that's out of bounds
@@ -34,53 +34,52 @@ namespace SymoCraft{
             return chunk->GetWorldBlock(worldPosition);
         }
 
-//        void setBlock(const glm::vec3 &worldPosition, Block newBlock) {
-//            glm::ivec2 chunkCoords = World::toChunkCoords(worldPosition);
-//            Chunk *chunk = getChunk(worldPosition);
-//
-//            if (!chunk) {
-//                if (worldPosition.y >= 0 && worldPosition.y < 256) {
-//                    // Assume it's a chunk that's out of bounds
-//                    AmoLogger_Warning("Tried to set invalid block at position<%2.3f, %2.3f, %2.3f>!", worldPosition.x,
-//                                     worldPosition.y, worldPosition.z);
-//                }
-//                return;
-//            }
-//
-//            if (chunk->SetWorldBlock(worldPosition, newBlock)) {
-//                retesselateChunkBlockUpdate(chunkCoords, worldPosition, chunk);
-//                queueRecalculateLighting(chunkCoords, worldPosition, false);
-//                chunkWorker->beginWork();
-//            }
-//        }
-//
-//        void removeBlock(const glm::vec3 &worldPosition) {
-//            glm::ivec2 chunkCoords = World::toChunkCoords(worldPosition);
-//            Chunk *chunk = getChunk(worldPosition);
-//
-//            if (!chunk) {
-//                if (worldPosition.y >= 0 && worldPosition.y < 256) {
-//                    // Assume it's a chunk that's out of bounds
-//                    AmoLogger_Warning("Tried to set invalid block at position<%2.3f, %2.3f, %2.3f>!", worldPosition.x,
-//                                     worldPosition.y, worldPosition.z);
-//                }
-//                return;
-//            }
-//
-//            bool isLightSourceBlock = ChunkManager::getBlock(worldPosition).IsLightSource();
-//            if (ChunkPrivate::removeBlock(worldPosition, chunkCoords, chunk)) {
-//                retesselateChunkBlockUpdate(chunkCoords, worldPosition, chunk);
-//                queueRecalculateLighting(chunkCoords, worldPosition, isLightSourceBlock);
-//                chunkWorker->beginWork();
-//            }
-//        }
-
-        Chunk *getChunk(const glm::vec3 &worldPosition) {
+        void SetBlock(const glm::vec3 &worldPosition, Block newBlock) {
             glm::ivec2 chunkCoords = World::toChunkCoords(worldPosition);
-            return getChunk(chunkCoords);
+            Chunk *chunk = GetChunk(worldPosition);
+
+            if (!chunk) {
+                if (worldPosition.y >= 0 && worldPosition.y < 256) {
+                    // Assume it's a chunk that's out of bounds
+                    AmoLogger_Warning("Tried to set invalid block at position<%2.3f, %2.3f, %2.3f>!", worldPosition.x,
+                                      worldPosition.y, worldPosition.z);
+                }
+                return;
+            }
+
+            if (chunk->SetWorldBlock(worldPosition, newBlock)) {
+                chunk->UpdateChunkLocalBlocks(worldPosition);
+            }
         }
 
-        Chunk *getChunk(const glm::ivec2 &chunkCoords) {
+        void RemoveBLock(const glm::vec3 &worldPosition) {
+            glm::ivec2 chunkCoords = World::toChunkCoords(worldPosition);
+            Chunk *chunk = GetChunk(worldPosition);
+
+            if (!chunk) {
+                if (worldPosition.y >= 0 && worldPosition.y < 256) {
+                    // Assume it's a chunk that's out of bounds
+                    AmoLogger_Warning("Tried to set invalid block at position<%2.3f, %2.3f, %2.3f>!", worldPosition.x,
+                                      worldPosition.y, worldPosition.z);
+                }
+                return;
+            }
+            bool isLightSourceBlock = ChunkManager::GetBlock(worldPosition).IsLightSource();
+            if (chunk->RemoveWorldBlock(worldPosition)) {
+                chunk->UpdateChunkLocalBlocks(worldPosition);
+                queueRecalculateLighting(chunkCoords, worldPosition, isLightSourceBlock);
+            }
+        }
+
+
+        Chunk *getChunk(const glm::vec3 &worldPosition)
+        {
+            glm::ivec2 chunkCoords = World::toChunkCoords(worldPosition);
+            return GetChunk(chunkCoords);
+        }
+
+        Chunk *getChunk(const glm::ivec2 &chunkCoords)
+        {
             Chunk *chunk = nullptr;
 
             {
@@ -96,8 +95,7 @@ namespace SymoCraft{
             return chunk;
         }
 
-        robin_hood::unordered_node_map<glm::ivec2, Chunk>& getAllChunks()
-        {
+        robin_hood::unordered_node_map<glm::ivec2, Chunk> &getAllChunks() {
             return chunks;
         }
 
@@ -115,98 +113,28 @@ namespace SymoCraft{
             }
         }
 
-        void queueCreateChunk(const glm::ivec2& chunkCoordinates)
-        {
+        void queueCreateChunk(const glm::ivec2 &chunkCoordinates) {
             // Only upload if we need to
-            Chunk* chunk = getChunk(chunkCoordinates);
+            Chunk *chunk = GetChunk(chunkCoordinates);
             if (!chunk)
             {
-//                if (!blockPool->empty())
-//                {
-                    Chunk newChunk;
-                    newChunk.local_blocks = (Block*)AmoMemory_Allocate(sizeof(Block) * k_chunk_length * k_chunk_width * k_chunk_height);
-                    newChunk.m_chunk_coord = chunkCoordinates;
-                    newChunk.front_neighbor = getChunk(chunkCoordinates + INormals2::Front);
-                    newChunk.back_neighbor = getChunk(chunkCoordinates + INormals2::Back);
-                    newChunk.left_neighbor = getChunk(chunkCoordinates + INormals2::Left);
-                    newChunk.right_neighbor = getChunk(chunkCoordinates + INormals2::Right);
-                    newChunk.state = ChunkState::Loaded;
 
-                    {
-                        // TODO: Ensure this is only ever accessed from the main thread
-                        //std::lock_guard lock(chunkMtx);
-                        chunks[newChunk.m_chunk_coord] = newChunk;
-                    }
+                Chunk newChunk;
+                newChunk.local_blocks = (Block *) AmoMemory_Allocate(
+                        sizeof(Block) * k_chunk_length * k_chunk_width * k_chunk_height);
+                newChunk.m_chunk_coord = chunkCoordinates;
+                newChunk.front_neighbor = GetChunk(chunkCoordinates + INormals2::Front);
+                newChunk.back_neighbor = GetChunk(chunkCoordinates + INormals2::Back);
+                newChunk.left_neighbor = GetChunk(chunkCoordinates + INormals2::Left);
+                newChunk.right_neighbor = GetChunk(chunkCoordinates + INormals2::Right);
+                newChunk.state = ChunkState::Loaded;
+
+                {
+                    // TODO: Ensure this is only ever accessed from the main thread
+                    //std::lock_guard lock(chunkMtx);
+                    chunks[newChunk.m_chunk_coord] = newChunk;
                 }
             }
         }
-
-
-
-//        // TODO: Simplify me!
-//        static void retesselateChunkBlockUpdate(const glm::ivec2& chunkCoords, const glm::vec3& worldPosition, Chunk* chunk)
-//        {
-//            FillChunkCommand cmd;
-//            cmd.type = CommandType::TesselateVertices;
-//            cmd.subChunks = subChunks;
-//            cmd.chunk = chunk;
-//
-//            // Get any neighboring chunks that need to be updated
-//            int numChunksToUpdate = 1;
-//            Chunk* chunksToUpdate[3];
-//            chunksToUpdate[0] = chunk;
-//            glm::ivec3 localPosition = glm::floor(worldPosition - glm::vec3(chunkCoords.x * 16.0f, 0.0f, chunkCoords.y * 16.0f));
-//            if (localPosition.x == 0)
-//            {
-//                if (chunk->bottomNeighbor)
-//                {
-//                    chunksToUpdate[numChunksToUpdate++] = chunk->bottomNeighbor;
-//                }
-//            }
-//            else if (localPosition.x == 15)
-//            {
-//                if (chunk->topNeighbor)
-//                {
-//                    chunksToUpdate[numChunksToUpdate++] = chunk->topNeighbor;
-//                }
-//            }
-//            if (localPosition.z == 0)
-//            {
-//                if (chunk->leftNeighbor)
-//                {
-//                    chunksToUpdate[numChunksToUpdate++] = chunk->leftNeighbor;
-//                }
-//            }
-//            else if (localPosition.z == 15)
-//            {
-//                if (chunk->rightNeighbor)
-//                {
-//                    chunksToUpdate[numChunksToUpdate++] = chunk->rightNeighbor;
-//                }
-//            }
-//
-//            // Update the sub-chunks that are about to be deleted
-//            for (int i = 0; i < (int)subChunks->size(); i++)
-//            {
-//                if ((*subChunks)[i]->state == SubChunkState::Uploaded)
-//                {
-//                    for (int j = 0; j < numChunksToUpdate; j++)
-//                    {
-//                        if ((*subChunks)[i]->chunkCoordinates == chunksToUpdate[j]->chunkCoords)
-//                        {
-//                            (*subChunks)[i]->state = SubChunkState::RetesselateVertices;
-//                        }
-//                    }
-//                }
-//            }
-//
-//            // Queue up all the chunks
-//            chunkWorker->queueCommand(cmd);
-//            for (int i = 1; i < numChunksToUpdate; i++)
-//            {
-//                cmd.chunk = chunksToUpdate[i];
-//                chunkWorker->queueCommand(cmd);
-//            }
-//            chunkWorker->beginWork();
-//        }
+    }
 }

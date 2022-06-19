@@ -8,10 +8,13 @@
 #include "renderer/batch.hpp"
 
 namespace SymoCraft {
+
     enum class ChunkState : uint8 {
         None,
         Unloaded,
         Unloading,
+        ToBeUpdated,
+        Updated,
         Saving,
         Loading,
         Loaded
@@ -79,34 +82,12 @@ namespace SymoCraft {
         void GenerateTerrain();
         void GenerateVegetation();
         void GenerateRenderData();
+        void UpdateChunkLocalBlocks(const glm::vec3& block_world_coord);
 
     private:
-        enum class CUBE_FACE : uint32
-        {
-            LEFT = 0,
-            RIGHT = 1,
-            BOTTOM = 2,
-            TOP = 3,
-            BACK = 4,
-            FRONT = 5,
-            SIZE = 6
-        };
-
-        enum class UV_INDEX : uint32
-        {
-            TOP_RIGHT = 0,
-            TOP_LEFT = 1,
-            BOTTOM_LEFT = 2,
-            BOTTOM_RIGHT = 3,
-            SIZE
-        };
-
         Block GetLocalBlock(int x, int y, int z);
         bool SetLocalBlock(int x, int y, int z, Block newBlock);
         bool RemoveLocalBlock(int x, int y, int z);
-
-        SubChunk* getSubChunk(SubChunk* subChunks, SubChunk* currentSubChunk, int currentLevel, const glm::ivec2& chunkCoordinates, bool isBlendableSubChunk);
-
 
         // Must guarantee at least 16 sub-chunks located at this address
 

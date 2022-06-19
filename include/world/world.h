@@ -16,7 +16,7 @@ namespace SymoCraft
 
     namespace World{
         void Init();
-        constexpr uint16 chunk_radius = 6;
+        constexpr uint16 chunk_radius = 10;
         glm::ivec2 toChunkCoords(const glm::vec3& worldCoordinates);
         void CreatePlayer();
 

@@ -110,14 +110,14 @@ namespace SymoCraft
 
         for(auto& noise_generator : noise_generators)
         {
-            noise_generator.noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
+            noise_generator.noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
             noise_generator.noise.SetFractalType(FastNoiseLite::FractalType_FBm);
-            noise_generator.noise.SetFractalOctaves(16);
-            noise_generator.noise.SetFractalLacunarity(1.2f);
+            noise_generator.noise.SetFractalOctaves(8);
+            noise_generator.noise.SetFractalLacunarity(1.6f);
             noise_generator.noise.SetSeed(static_cast<int>(mt()));
         }
 
-        noise_generators[0].noise.SetFrequency(0.007);
+        noise_generators[0].noise.SetFrequency(0.005);
         noise_generators[1].noise.SetFrequency(0.02);
         noise_generators[2].noise.SetFrequency(0.1);
 
@@ -136,7 +136,7 @@ namespace SymoCraft
         float blended_noise{0};
         for(auto& noise_generator : noise_generators)
         {
-            blended_noise += Remap(noise_generator.noise.GetNoise((float)x / 2.5f, (float)z / 2.5f),
+            blended_noise += Remap(noise_generator.noise.GetNoise((float)x / 1.5f, (float)z / 1.5f),
                                    -1.0f, 1.0f, 0.0f, 1.0f) * noise_generator.weight;
         }
 
@@ -160,7 +160,7 @@ namespace SymoCraft
         for (int z = 0; z < k_chunk_width; z++) {
             for (int x = 0; x < k_chunk_length; x++) {
                 maxHeight = (uint16)GetNoise(x + world_x, z + world_z);
-                stoneHeight = maxHeight - 3;
+                stoneHeight = maxHeight - 6;
 
                 for (int y = 0; y < k_chunk_height; y++) {
                     // bool isCave = TerrainGenerator::getIsCave(x + worldChunkX, y, z + worldChunkZ, maxHeight);
@@ -189,13 +189,13 @@ namespace SymoCraft
                             local_blocks[block_index].SetTransparency(false);
                             local_blocks[block_index].SetBlendability(false);
                             local_blocks[block_index].SetIsLightSource(false);
-                        } else if (y < maxHeight) {
+                        } else if (y < minBiomeHeight - 3) {
                             // Dirt
                             local_blocks[block_index].block_id = 4;
                             local_blocks[block_index].SetTransparency(false);
                             local_blocks[block_index].SetBlendability(false);
                             local_blocks[block_index].SetIsLightSource(false);
-                        } else if (y == maxHeight) {
+                        } else if ( minBiomeHeight - 3 < y < minBiomeHeight + 3 ) {
                             if (maxHeight < oceanLevel + 2) {
                                 // Sand
                                 local_blocks[block_index].block_id = 3;
@@ -346,8 +346,6 @@ namespace SymoCraft
     }
 
     void Chunk::GenerateRenderData() {
-        SubChunk *solidSubChunk = nullptr;
-        SubChunk *blendableSubChunk = nullptr;
 
         const int kWorldChunkX = m_chunk_coord.x * 16;
         const int kWorldChunkZ = m_chunk_coord.y * 16;
@@ -384,16 +382,11 @@ namespace SymoCraft
                         i++;
                     }
 
-                    SubChunk **currentSubChunkPtr = &solidSubChunk;
-                    if (block_format.m_is_blendable) {
-                        currentSubChunkPtr = &blendableSubChunk;
-                    }
-
                     // Only add the faces that are not culled by other neighbor_blocks
                     // Use the 6 blocks to iterate through the 6 faces
                     for (i = 0; auto &neighbor_block: neighbor_blocks) {
                         // If neighbor block is not null and is transparent
-                        if (neighbor_block != BlockConstants::NULL_BLOCK && neighbor_block.IsTransparent()) {
+                        if ((neighbor_block != BlockConstants::NULL_BLOCK && neighbor_block.IsTransparent()) || block.block_id == 7) {
 
                             //If the face aren't culled, calculate its 4 vertices
                             for( int j = 0; j < 4; j++) {
@@ -502,6 +495,40 @@ namespace SymoCraft
                         i++;
                     }
                 }
+            }
+        }
+    }
+
+    void Chunk::UpdateChunkLocalBlocks(const glm::vec3& block_world_coord)
+    {
+        glm::ivec3 block_local_coord = glm::floor(block_world_coord - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
+
+        if (block_local_coord.x == 0)
+        {
+            if (back_neighbor)
+            {
+                back_neighbor->state = ChunkState::ToBeUpdated;
+            }
+        }
+        else if (block_local_coord.x == 15)
+        {
+            if (front_neighbor)
+            {
+                front_neighbor->state = ChunkState::ToBeUpdated;
+            }
+        }
+        if (block_local_coord.z == 0)
+        {
+            if (left_neighbor)
+            {
+                left_neighbor->state = ChunkState::ToBeUpdated;
+            }
+        }
+        else if (block_local_coord.z == 15)
+        {
+            if (right_neighbor)
+            {
+                right_neighbor->state = ChunkState::ToBeUpdated;
             }
         }
     }
