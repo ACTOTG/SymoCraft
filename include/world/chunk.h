@@ -23,15 +23,6 @@ namespace SymoCraft {
         float weight;
     };
 
-    // A chunk is 16 * 16 * 256
-    // A sub-chunk is 16 * 16 * 16
-    static constexpr uint16 k_chunk_length = 16;
-    static constexpr uint16 k_chunk_width = 16;
-    static constexpr uint16 k_chunk_height = 128;
-
-    static constexpr int maxBiomeHeight = 70;
-    static constexpr int minBiomeHeight = 40;
-    static constexpr int oceanLevel = 48;
     static uint16 maxHeight;
     static uint16 stoneHeight;
     static uint32 seed;
@@ -79,14 +70,14 @@ namespace SymoCraft {
             }
         };
 
-        Block GetWorldBlock(const glm::vec3 &worldPosition);
-        bool SetWorldBlock(const glm::vec3 &worldPosition, Block newBlock);
-        bool RemoveWorldBlock(const glm::vec3 &worldPosition);
+        Block GetWorldBlock(const glm::vec3 &world_coord);
+        bool SetWorldBlock(const glm::vec3 &world_coord, Block new_block);
+        bool RemoveWorldBlock(const glm::vec3 &world_coord);
 
         float GetNoise(int x, int z);
 
         void GenerateTerrain();
-        void GenerateVegetation(const glm::ivec2 &lastPlayerLoadPosChunkCoords, float seed);
+        void GenerateVegetation();
         void GenerateRenderData();
 
     private:
@@ -114,7 +105,7 @@ namespace SymoCraft {
         bool SetLocalBlock(int x, int y, int z, Block newBlock);
         bool RemoveLocalBlock(int x, int y, int z);
 
-//        SubChunk* getSubChunk(SubChunk* subChunks, SubChunk* currentSubChunk, int currentLevel, const glm::ivec2& chunkCoordinates, bool isBlendableSubChunk);
+        SubChunk* getSubChunk(SubChunk* subChunks, SubChunk* currentSubChunk, int currentLevel, const glm::ivec2& chunkCoordinates, bool isBlendableSubChunk);
 
 
         // Must guarantee at least 16 sub-chunks located at this address

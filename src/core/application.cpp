@@ -78,18 +78,21 @@ namespace SymoCraft
             // 出生在区块里，开局往天上飞，不然看不见XD
             // Manual chunk generation for testing
             InitializeNoise();
-            for(int x = -3; x <= 3; x++)
-                for(int z = -3; z <= 3; z++)
+            for(int x = -World::chunk_radius; x <= World::chunk_radius; x++)
+                for(int z = -World::chunk_radius; z <= World::chunk_radius; z++)
                     ChunkManager::queueCreateChunk({x,z});
 
             for( auto chunk : ChunkManager::getAllChunks() )
+            {
                 chunk.second.GenerateTerrain();
+                chunk.second.GenerateVegetation();
+            }
 
             ChunkManager::patchChunkPointers();
 
             // We only need to calculate the vertices once, since we can't remove or add blocks now
-            for(int x = -2; x <= 2; x++)
-                for(int z = -2; z <= 2; z++)
+            for(int x = -World::chunk_radius + 1; x <= World::chunk_radius - 1; x++)
+                for(int z = -World::chunk_radius + 1; z <= World::chunk_radius - 1; z++)
                     ChunkManager::getAllChunks().find({x, z})->second.GenerateRenderData();
 
             block_batch.ReloadData();
@@ -99,6 +102,8 @@ namespace SymoCraft
             glm::vec3 start_pos{-30.0f, 70.0f, -30.0f};
             Transform &transform = registry.GetComponent<Transform>(World::GetPlayer());
             transform.position = start_pos;
+            Renderer::ReportStatus();
+
             // -------------------------------------------------------------------
             // Render Loop
             while (!window.ShouldClose())

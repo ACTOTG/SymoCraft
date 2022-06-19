@@ -14,11 +14,9 @@ namespace SymoCraft
     }
     static ECS::EntityId player;
 
-    namespace World
-    {
+    namespace World{
         void Init();
-
-        constexpr uint16 chunk_radius = 3;
+        constexpr uint16 chunk_radius = 6;
         glm::ivec2 toChunkCoords(const glm::vec3& worldCoordinates);
         void CreatePlayer();
 

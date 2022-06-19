@@ -13,6 +13,15 @@ namespace SymoCraft{
     struct FillChunkCommand;
     enum class ChunkState : uint8;
 
+    // A chunk is 16 * 16 * 256
+    static constexpr uint16 k_chunk_length = 16;
+    static constexpr uint16 k_chunk_width = 16;
+    static constexpr uint16 k_chunk_height = 128;
+
+    static constexpr int maxBiomeHeight = 70;
+    static constexpr int minBiomeHeight = 40;
+    static constexpr int oceanLevel = 48;
+
     enum class SubChunkState : uint8
     {
         Unloaded,

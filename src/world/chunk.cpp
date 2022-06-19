@@ -32,9 +32,9 @@ namespace SymoCraft
         return local_blocks[GetLocalBlockIndex(x, y, z)];
     }
 
-    Block Chunk::GetWorldBlock(const glm::vec3 &worldPosition) {
+    Block Chunk::GetWorldBlock(const glm::vec3 &world_coord) {
         glm::ivec3 localPosition = glm::floor(
-                worldPosition - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
+                world_coord - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
         return GetLocalBlock(localPosition.x, localPosition.y, localPosition.z);
     }
 
@@ -66,10 +66,10 @@ namespace SymoCraft
         return true;
     }
 
-    bool Chunk::SetWorldBlock(const glm::vec3 &worldPosition, Block newBlock) {
+    bool Chunk::SetWorldBlock(const glm::vec3 &world_coord, Block new_block) {
         glm::ivec3 localPosition = glm::floor(
-                worldPosition - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
-        return SetLocalBlock(localPosition.x, localPosition.y, localPosition.z, newBlock);
+                world_coord - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
+        return SetLocalBlock(localPosition.x, localPosition.y, localPosition.z, new_block);
     }
 
     bool Chunk::RemoveLocalBlock(int x, int y, int z) {
@@ -99,9 +99,9 @@ namespace SymoCraft
         return true;
     }
 
-    bool Chunk::RemoveWorldBlock(const glm::vec3 &worldPosition) {
+    bool Chunk::RemoveWorldBlock(const glm::vec3 &world_coord) {
         glm::ivec3 localPosition = glm::floor(
-                worldPosition - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
+                world_coord - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
         return RemoveLocalBlock(localPosition.x, localPosition.y, localPosition.z);
     }
 
@@ -110,20 +110,20 @@ namespace SymoCraft
 
         for(auto& noise_generator : noise_generators)
         {
-            noise_generator.noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+            noise_generator.noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2S);
             noise_generator.noise.SetFractalType(FastNoiseLite::FractalType_FBm);
-            noise_generator.noise.SetFractalOctaves(5);
-            noise_generator.noise.SetFractalLacunarity(1.6f);
+            noise_generator.noise.SetFractalOctaves(16);
+            noise_generator.noise.SetFractalLacunarity(1.2f);
             noise_generator.noise.SetSeed(static_cast<int>(mt()));
         }
 
-        noise_generators[0].noise.SetFrequency(0.003);
+        noise_generators[0].noise.SetFrequency(0.007);
         noise_generators[1].noise.SetFrequency(0.02);
         noise_generators[2].noise.SetFrequency(0.1);
 
         noise_generators[0].weight = 1.0f;
-        noise_generators[1].weight = 0.25f;
-        noise_generators[2].weight = 0.08f;
+        noise_generators[1].weight = 0.3f;
+        noise_generators[2].weight = 0.1f;
 
         for(auto& noise_generator : noise_generators)
             weight_sum += noise_generator.weight;
@@ -136,10 +136,12 @@ namespace SymoCraft
         float blended_noise{0};
         for(auto& noise_generator : noise_generators)
         {
-            blended_noise += Remap(noise_generator.noise.GetNoise((float)x / 3.0f, (float)z / 3.0f),
+            blended_noise += Remap(noise_generator.noise.GetNoise((float)x / 2.5f, (float)z / 2.5f),
                                    -1.0f, 1.0f, 0.0f, 1.0f) * noise_generator.weight;
         }
 
+        max_range = std::max(max_range, blended_noise);
+        min_range = std::min(min_range, blended_noise);
         blended_noise /= weight_sum;
         blended_noise = pow(blended_noise, 1.19f);
         return Remap(blended_noise, 0.0f, 1.0f, minBiomeHeight, maxBiomeHeight);
@@ -163,7 +165,7 @@ namespace SymoCraft
                 for (int y = 0; y < k_chunk_height; y++) {
                     // bool isCave = TerrainGenerator::getIsCave(x + worldChunkX, y, z + worldChunkZ, maxHeight);
                     const int block_index = GetLocalBlockIndex(x , y, z);
-                    if(abs(m_chunk_coord.x) > 2 || abs(m_chunk_coord.y) > 2)
+                    if(abs(m_chunk_coord.x) > World::chunk_radius - 1|| abs(m_chunk_coord.y) > World::chunk_radius - 1)
                     {
                         local_blocks[block_index].block_id = BlockConstants::AIR_BLOCK.block_id;
                         local_blocks[block_index].SetTransparency(true);
@@ -233,133 +235,114 @@ namespace SymoCraft
 
     }
 
-    void Chunk::GenerateVegetation(const glm::ivec2& lastPlayerLoadPosChunkCoords, float seed)
+    void Chunk::GenerateVegetation()
     {
-        for (int chunkZ = lastPlayerLoadPosChunkCoords.y - World::chunk_radius; chunkZ <= lastPlayerLoadPosChunkCoords.y + World::chunk_radius; chunkZ++)
-        {
-            for (int chunkX = lastPlayerLoadPosChunkCoords.x - World::chunk_radius; chunkX <= lastPlayerLoadPosChunkCoords.x + World::chunk_radius; chunkX++)
-            {
-                const int worldChunkX = chunkX * 16;
-                const int worldChunkZ = chunkZ * 16;
+           const int worldChunkX = m_chunk_coord.x * 16;
+           const int worldChunkZ = m_chunk_coord.y * 16;
 
-                glm::ivec2 localChunkPos = glm::vec2(lastPlayerLoadPosChunkCoords.x - chunkX, lastPlayerLoadPosChunkCoords.y - chunkZ);
-                bool inRangeOfPlayer =
-                        (localChunkPos.x * localChunkPos.x) + (localChunkPos.y * localChunkPos.y) <=
-                        ((World::chunk_radius - 1) * (World::chunk_radius - 1));
-                if (!inRangeOfPlayer)
-                {
-                    // Skip over all chunks in range radius - 1
-                    continue;
-                }
+//           glm::ivec2 localChunkPos = glm::vec2(lastPlayerLoadPosChunkCoords.x - chunkX, lastPlayerLoadPosChunkCoords.y - chunkZ);
+//           bool inRangeOfPlayer =
+//                   (localChunkPos.x * localChunkPos.x) + (localChunkPos.y * localChunkPos.y) <=
+//                   ((World::chunk_radius - 1) * (World::chunk_radius - 1));
+//           if (!inRangeOfPlayer)
+//           {
+//               // Skip over all chunks in range radius - 1
+//               continue;
+//           }
 
-                Chunk* chunk = ChunkManager::getChunk(glm::vec3(worldChunkX, 128.0f, worldChunkZ));
-                if (!chunk)
-                {
-                    // TODO: Is this a problem...? It should only effect chunks on the edge of the border
-                    // g_logger_error("Bad chunk when generating terrain. Skipping chunk.");
-                    continue;
-                }
+           for (int x = 0; x < World::chunk_radius; x++)
+           {
+               for (int z = 0; z < World::chunk_radius; z++)
+               {
+                   // Generate some trees if needed
+                   bool generateTree = mt() % 100 > 98;
 
-                if (!chunk->needsToGenerateDecorations)
-                {
-                    continue;
-                }
-                chunk->needsToGenerateDecorations = false;
+                   if (generateTree)
+                   {
+                       uint16 y = GetNoise(x + worldChunkX, z + worldChunkZ) + 1;
 
-                for (int x = 0; x < World::chunk_radius; x++)
-                {
-                    for (int z = 0; z < World::chunk_radius; z++)
-                    {
-                        // Generate some trees if needed
-                        int num = (rand() % 100);
-                        bool generateTree = num > 98;
+                       if (y > oceanLevel + 2)
+                       {
+                           // Generate a tree
+                           uint16 treeHeight = (mt() % 3) + 3;
+                           uint16 leavesBottomY = glm::clamp(treeHeight - 3, 3, (int)k_chunk_height - 1);
+                           uint16 leavesTopY = treeHeight + 1;
+                           if (y + 1 + leavesTopY < k_chunk_height)
+                           {
+                               for (int treeY = 0; treeY <= treeHeight; treeY++)
+                               {
+                                   local_blocks[GetLocalBlockIndex(x, treeY + y, z)].block_id = 6;
+                                   local_blocks[GetLocalBlockIndex(x, treeY + y, z)].SetBlendability(false);
+                                   local_blocks[GetLocalBlockIndex(x, treeY + y, z)].SetTransparency(false);
+                                   local_blocks[GetLocalBlockIndex(x, treeY + y, z)].SetIsLightSource(false);
+                               }
 
-                        if (generateTree)
-                        {
-                            uint16 y = GetNoise(x + worldChunkX, z + worldChunkZ) + 1;
+                               int ringLevel = 0;
+                               for (int leavesY = leavesBottomY + y; leavesY <= leavesTopY + y; leavesY++)
+                               {
+                                   int leafRadius = leavesY == leavesTopY ? 2 : 1;
+                                   for (int leavesX = x - leafRadius; leavesX <= x + leafRadius; leavesX++)
+                                   {
+                                       for (int leavesZ = z - leafRadius; leavesZ <= z + leafRadius; leavesZ++)
+                                       {
+                                           if (leavesX < k_chunk_length && leavesX >= 0 && leavesZ < k_chunk_width && leavesZ >= 0)
+                                           {
+                                               local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ)].block_id = 7;
+                                               local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ)].SetBlendability(false);
+                                               local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ)].SetTransparency(true);
+                                               local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ)].SetIsLightSource(false);
+                                           }
+                                           else if (leavesX < 0)
+                                           {
+                                               if (back_neighbor)
+                                               {
+                                                   back_neighbor->local_blocks[GetLocalBlockIndex(k_chunk_length + leavesX, leavesY, leavesZ)].block_id = 7;
+                                                   local_blocks[GetLocalBlockIndex(k_chunk_length + leavesX, leavesY, leavesZ)].SetBlendability(false);
+                                                   local_blocks[GetLocalBlockIndex(k_chunk_length + leavesX, leavesY, leavesZ)].SetTransparency(true);
+                                                   local_blocks[GetLocalBlockIndex(k_chunk_length + leavesX, leavesY, leavesZ)].SetIsLightSource(false);
+                                               }
+                                           }
+                                           else if (leavesX >= k_chunk_length)
+                                           {
+                                               if (front_neighbor)
+                                               {
+                                                   front_neighbor->local_blocks[GetLocalBlockIndex(leavesX - k_chunk_length, leavesY, leavesZ)].block_id = 7;
+                                                   local_blocks[GetLocalBlockIndex(leavesX - k_chunk_length, leavesY, leavesZ)].SetBlendability(false);
+                                                   local_blocks[GetLocalBlockIndex(leavesX - k_chunk_length, leavesY, leavesZ)].SetTransparency(true);
+                                                   local_blocks[GetLocalBlockIndex(leavesX - k_chunk_length, leavesY, leavesZ)].SetIsLightSource(false);
+                                               }
+                                           }
+                                           else if (leavesZ < 0)
+                                           {
+                                               if (left_neighbor)
+                                               {
+                                                   left_neighbor->local_blocks[GetLocalBlockIndex(leavesX, leavesY, k_chunk_width + leavesZ)].block_id = 7;
+                                                   local_blocks[GetLocalBlockIndex(leavesX, leavesY, k_chunk_width + leavesZ)].SetBlendability(false);
+                                                   local_blocks[GetLocalBlockIndex(leavesX, leavesY, k_chunk_width + leavesZ)].SetTransparency(true);
+                                                   local_blocks[GetLocalBlockIndex(leavesX, leavesY, k_chunk_width + leavesZ)].SetIsLightSource(false);
+                                               }
+                                           }
+                                           else if (leavesZ >= k_chunk_width)
+                                           {
+                                               if (right_neighbor)
+                                               {
+                                                   right_neighbor->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ - k_chunk_width)].block_id = 7;
+                                                   local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ - k_chunk_width)].SetBlendability(false);
+                                                   local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ - k_chunk_width)].SetTransparency(true);
+                                                   local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ - k_chunk_width)].SetIsLightSource(false);
+                                               }
+                                           }
+                                       }
+                                   }
+                                   ringLevel++;
+                               }
+                           }
+                       }
+                   }
+               }
+           }
 
-                            if (y > oceanLevel + 2)
-                            {
-                                // Generate a tree
-                                int treeHeight = (mt() % 3) + 3;
-                                int leavesBottomY = glm::clamp(treeHeight - 3, 3, (int)k_chunk_height - 1);
-                                int leavesTopY = treeHeight + 1;
-                                if (generateTree && (y + 1 + leavesTopY < k_chunk_height))
-                                {
-                                    for (int treeY = 0; treeY <= treeHeight; treeY++)
-                                    {
-                                        chunk->local_blocks[GetLocalBlockIndex(x, treeY + y, z)].block_id = 6;
-                                        chunk->local_blocks[GetLocalBlockIndex(x, treeY + y, z)].SetBlendability(false);
-                                        chunk->local_blocks[GetLocalBlockIndex(x, treeY + y, z)].SetTransparency(false);
-                                        chunk->local_blocks[GetLocalBlockIndex(x, treeY + y, z)].SetIsLightSource(false);
-                                    }
 
-                                    int ringLevel = 0;
-                                    for (int leavesY = leavesBottomY + y; leavesY <= leavesTopY + y; leavesY++)
-                                    {
-                                        int leafRadius = leavesY == leavesTopY ? 2 : 1;
-                                        for (int leavesX = x - leafRadius; leavesX <= x + leafRadius; leavesX++)
-                                        {
-                                            for (int leavesZ = z - leafRadius; leavesZ <= z + leafRadius; leavesZ++)
-                                            {
-                                                if (leavesX < k_chunk_length && leavesX >= 0 && leavesZ < k_chunk_width && leavesZ >= 0)
-                                                {
-                                                    chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ)].block_id = 7;
-                                                    chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ)].SetBlendability(false);
-                                                    chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ)].SetTransparency(true);
-                                                    chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ)].SetIsLightSource(false);
-                                                }
-                                                else if (leavesX < 0)
-                                                {
-                                                    if (chunk->back_neighbor)
-                                                    {
-                                                        chunk->back_neighbor->local_blocks[GetLocalBlockIndex(k_chunk_length + leavesX, leavesY, leavesZ)].block_id = 7;
-                                                        chunk->local_blocks[GetLocalBlockIndex(k_chunk_length + leavesX, leavesY, leavesZ)].SetBlendability(false);
-                                                        chunk->local_blocks[GetLocalBlockIndex(k_chunk_length + leavesX, leavesY, leavesZ)].SetTransparency(true);
-                                                        chunk->local_blocks[GetLocalBlockIndex(k_chunk_length + leavesX, leavesY, leavesZ)].SetIsLightSource(false);
-                                                    }
-                                                }
-                                                else if (leavesX >= k_chunk_length)
-                                                {
-                                                    if (chunk->front_neighbor)
-                                                    {
-                                                        chunk->front_neighbor->local_blocks[GetLocalBlockIndex(leavesX - k_chunk_length, leavesY, leavesZ)].block_id = 7;
-                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX - k_chunk_length, leavesY, leavesZ)].SetBlendability(false);
-                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX - k_chunk_length, leavesY, leavesZ)].SetTransparency(true);
-                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX - k_chunk_length, leavesY, leavesZ)].SetIsLightSource(false);
-                                                    }
-                                                }
-                                                else if (leavesZ < 0)
-                                                {
-                                                    if (chunk->left_neighbor)
-                                                    {
-                                                        chunk->left_neighbor->local_blocks[GetLocalBlockIndex(leavesX, leavesY, k_chunk_width + leavesZ)].block_id = 7;
-                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, k_chunk_width + leavesZ)].SetBlendability(false);
-                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, k_chunk_width + leavesZ)].SetTransparency(true);
-                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, k_chunk_width + leavesZ)].SetIsLightSource(false);
-                                                    }
-                                                }
-                                                else if (leavesZ >= k_chunk_width)
-                                                {
-                                                    if (chunk->right_neighbor)
-                                                    {
-                                                        chunk->right_neighbor->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ - k_chunk_width)].block_id = 7;
-                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ - k_chunk_width)].SetBlendability(false);
-                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ - k_chunk_width)].SetTransparency(true);
-                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ - k_chunk_width)].SetIsLightSource(false);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        ringLevel++;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     void Chunk::GenerateRenderData() {
@@ -522,58 +505,4 @@ namespace SymoCraft
             }
         }
     }
-
-
-//    void Block::LoadBlockFace(
-//            Vertex* vertexData,
-//            const std::array<Vertex3D, 4> &block_face,
-//            CUBE_FACE face,
-//            bool colorFaceBasedOnBiome,
-//            glm::vec<4, uint8, glm::defaultp>& lightLevels,
-//            glm::vec<4, uint8, glm::defaultp>& skyLightLevels,
-//            const glm::ivec3& lightColor){
-//        UV_INDEX uv0 = UV_INDEX::BOTTOM_RIGHT;
-//        UV_INDEX uv1 = UV_INDEX::TOP_RIGHT;
-//        UV_INDEX uv2 = UV_INDEX::TOP_LEFT;
-//
-//        UV_INDEX uv3 = UV_INDEX::BOTTOM_RIGHT;
-//        UV_INDEX uv4 = UV_INDEX::TOP_LEFT;
-//        UV_INDEX uv5 = UV_INDEX::BOTTOM_LEFT;
-//
-//        switch (face)
-//        {
-//            case CUBE_FACE::BACK:
-//                uv0 = (UV_INDEX)(((int)uv0 + 2) % (int)UV_INDEX::SIZE);
-//                uv1 = (UV_INDEX)(((int)uv1 + 2) % (int)UV_INDEX::SIZE);
-//                uv2 = (UV_INDEX)(((int)uv2 + 2) % (int)UV_INDEX::SIZE);
-//                uv3 = (UV_INDEX)(((int)uv3 + 2) % (int)UV_INDEX::SIZE);
-//                uv4 = (UV_INDEX)(((int)uv4 + 2) % (int)UV_INDEX::SIZE);
-//                uv5 = (UV_INDEX)(((int)uv5 + 2) % (int)UV_INDEX::SIZE);
-//                break;
-//            case CUBE_FACE::RIGHT:
-//                uv0 = (UV_INDEX)(((int)uv0 + 3) % (int)UV_INDEX::SIZE);
-//                uv1 = (UV_INDEX)(((int)uv1 + 3) % (int)UV_INDEX::SIZE);
-//                uv2 = (UV_INDEX)(((int)uv2 + 3) % (int)UV_INDEX::SIZE);
-//                uv3 = (UV_INDEX)(((int)uv3 + 3) % (int)UV_INDEX::SIZE);
-//                uv4 = (UV_INDEX)(((int)uv4 + 3) % (int)UV_INDEX::SIZE);
-//                uv5 = (UV_INDEX)(((int)uv5 + 3) % (int)UV_INDEX::SIZE);
-//                break;
-//            case CUBE_FACE::LEFT:
-//                uv0 = (UV_INDEX)(((int)uv0 + 3) % (int)UV_INDEX::SIZE);
-//                uv1 = (UV_INDEX)(((int)uv1 + 3) % (int)UV_INDEX::SIZE);
-//                uv2 = (UV_INDEX)(((int)uv2 + 3) % (int)UV_INDEX::SIZE);
-//                uv3 = (UV_INDEX)(((int)uv3 + 3) % (int)UV_INDEX::SIZE);
-//                uv4 = (UV_INDEX)(((int)uv4 + 3) % (int)UV_INDEX::SIZE);
-//                uv5 = (UV_INDEX)(((int)uv5 + 3) % (int)UV_INDEX::SIZE);
-//                break;
-//        }
-//
-//        vertexData[0] = compress(vert1, texture, face, uv0, colorFaceBasedOnBiome, lightLevels[0], lightColor, skyLightLevels[0]);
-//        vertexData[1] = compress(vert2, texture, face, uv1, colorFaceBasedOnBiome, lightLevels[1], lightColor, skyLightLevels[1]);
-//        vertexData[2] = compress(vert3, texture, face, uv2, colorFaceBasedOnBiome, lightLevels[2], lightColor, skyLightLevels[2]);
-//
-//        vertexData[3] = compress(vert1, texture, face, uv3, colorFaceBasedOnBiome, lightLevels[0], lightColor, skyLightLevels[0]);
-//        vertexData[4] = compress(vert3, texture, face, uv4, colorFaceBasedOnBiome, lightLevels[2], lightColor, skyLightLevels[2]);
-//        vertexData[5] = compress(vert4, texture, face, uv5, colorFaceBasedOnBiome, lightLevels[3], lightColor, skyLightLevels[3]);
-//   }
 }

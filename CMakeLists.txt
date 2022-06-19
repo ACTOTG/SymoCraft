@@ -4,7 +4,6 @@ project(SymoCraft)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(FASTNOISE2_NOISETOOL OFF CACHE BOOL "Build Noise Tool" FORCE)
 
 set(MemoryAllocator include/MemoryAllocator/AmoBase.cpp)
 

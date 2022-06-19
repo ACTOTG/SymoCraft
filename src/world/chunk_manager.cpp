@@ -137,25 +137,6 @@ namespace SymoCraft{
                         //std::lock_guard lock(chunkMtx);
                         chunks[newChunk.m_chunk_coord] = newChunk;
                     }
-
-//                    FillChunkCommand cmd;
-//                    cmd.type = CommandType::GenerateTerrain;
-//                    cmd.chunk = &chunks[newChunk.chunkCoords];
-//                    cmd.subChunks = subChunks;
-//                    cmd.isRetesselating = false;
-//
-//                    // Queue the fill command
-//                    chunkWorker->queueCommand(cmd);
-//                    // Queue the tesselate command
-//                    cmd.type = CommandType::TesselateVertices;
-//                    chunkWorker->queueCommand(cmd);
-//
-//                    DebugStats::totalChunkRamUsed = DebugStats::totalChunkRamUsed + blockPool->poolSize() * sizeof(Block);
-//                }
-//                else
-//                {
-//                    // What do we do if there were no free blocks?
-//                    AmoLogger_Warning("No free pools for block data.");
                 }
             }
         }

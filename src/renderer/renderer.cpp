@@ -168,27 +168,5 @@ namespace SymoCraft{
             if (face_count % 10000 == 0)
                 AmoLogger_Log("%d vertices, %d faces in total loaded\n", vertex_count, face_count);
         }
-
-        // =========================================================
-        // Internal Functions
-        // =========================================================
-        // static void GLAPIENTRY
-        // messageCallback(GLenum source, GLenum type, GLuint id,
-        //                 GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
-        // {
-        //     if (type == GL_DEBUG_TYPE_ERROR)
-        //     {
-        //         std::cerr << "GL CALLBACK: " << (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "")
-        //                   << "type = 0x" << type
-        //                   << "severity = 0x" << severity
-        //                   << "message = " << message;
-        //
-        //         GLenum err;
-        //         while ((err = glGetError()) != GL_NO_ERROR)
-        //         {
-        //             std::cerr << "Error Code: " << err;
-        //         }
-        //     }
-        // }
     }
 }

@@ -38,16 +38,16 @@ stone:
   isTransparent: false
 oak_log:
   id: 6
-  side: 13
-  top: 21
-  bottom: 21
+  side: 12
+  top: 20
+  bottom: 20
   isSolid: true 
   isTransparent: false
 oak_leaves:
   id: 7
-  side: 29
-  top: 29
-  bottom: 29
+  side: 28
+  top: 28
+  bottom: 28
   isSolid: true
   isTransparent: true
   isBlendable: true

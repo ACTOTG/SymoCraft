@@ -28,10 +28,6 @@ namespace SymoCraft
         fov = 45.0f;
     }
 
-    void Camera::InsMouseMovementCallBack(GLFWwindow *window, double xpos_in, double ypos_in)
-    {
-        }
-
     void Camera::InsMouseScrollCallBack(GLFWwindow *window, double x_offset, double y_offset)
     {
         fov -= (float)y_offset;
