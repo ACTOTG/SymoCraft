@@ -1,7 +1,7 @@
 #include <fast_noise_lite/FastNoiseLite.h>
 #include <random>
-#include <algorithm>
 #include "world/chunk.h"
+#include "world/world.h"
 #include "renderer/renderer.h"
 #include "core/constants.h"
 #include "core/utils.h"
@@ -106,7 +106,6 @@ namespace SymoCraft
     }
 
     void InitializeNoise() {
-        std::mt19937 mt{ std::random_device{}() };
         seed = mt();
 
         for(auto& noise_generator : noise_generators)
@@ -115,7 +114,7 @@ namespace SymoCraft
             noise_generator.noise.SetFractalType(FastNoiseLite::FractalType_FBm);
             noise_generator.noise.SetFractalOctaves(5);
             noise_generator.noise.SetFractalLacunarity(1.6f);
-            noise_generator.noise.SetSeed(static_cast<int>(seed++));
+            noise_generator.noise.SetSeed(static_cast<int>(mt()));
         }
 
         noise_generators[0].noise.SetFrequency(0.003);
@@ -234,7 +233,136 @@ namespace SymoCraft
 
     }
 
-    void Chunk::generateRenderData() {
+    void Chunk::GenerateVegetation(const glm::ivec2& lastPlayerLoadPosChunkCoords, float seed)
+    {
+        for (int chunkZ = lastPlayerLoadPosChunkCoords.y - World::chunk_radius; chunkZ <= lastPlayerLoadPosChunkCoords.y + World::chunk_radius; chunkZ++)
+        {
+            for (int chunkX = lastPlayerLoadPosChunkCoords.x - World::chunk_radius; chunkX <= lastPlayerLoadPosChunkCoords.x + World::chunk_radius; chunkX++)
+            {
+                const int worldChunkX = chunkX * 16;
+                const int worldChunkZ = chunkZ * 16;
+
+                glm::ivec2 localChunkPos = glm::vec2(lastPlayerLoadPosChunkCoords.x - chunkX, lastPlayerLoadPosChunkCoords.y - chunkZ);
+                bool inRangeOfPlayer =
+                        (localChunkPos.x * localChunkPos.x) + (localChunkPos.y * localChunkPos.y) <=
+                        ((World::chunk_radius - 1) * (World::chunk_radius - 1));
+                if (!inRangeOfPlayer)
+                {
+                    // Skip over all chunks in range radius - 1
+                    continue;
+                }
+
+                Chunk* chunk = ChunkManager::getChunk(glm::vec3(worldChunkX, 128.0f, worldChunkZ));
+                if (!chunk)
+                {
+                    // TODO: Is this a problem...? It should only effect chunks on the edge of the border
+                    // g_logger_error("Bad chunk when generating terrain. Skipping chunk.");
+                    continue;
+                }
+
+                if (!chunk->needsToGenerateDecorations)
+                {
+                    continue;
+                }
+                chunk->needsToGenerateDecorations = false;
+
+                for (int x = 0; x < World::chunk_radius; x++)
+                {
+                    for (int z = 0; z < World::chunk_radius; z++)
+                    {
+                        // Generate some trees if needed
+                        int num = (rand() % 100);
+                        bool generateTree = num > 98;
+
+                        if (generateTree)
+                        {
+                            uint16 y = GetNoise(x + worldChunkX, z + worldChunkZ) + 1;
+
+                            if (y > oceanLevel + 2)
+                            {
+                                // Generate a tree
+                                int treeHeight = (mt() % 3) + 3;
+                                int leavesBottomY = glm::clamp(treeHeight - 3, 3, (int)k_chunk_height - 1);
+                                int leavesTopY = treeHeight + 1;
+                                if (generateTree && (y + 1 + leavesTopY < k_chunk_height))
+                                {
+                                    for (int treeY = 0; treeY <= treeHeight; treeY++)
+                                    {
+                                        chunk->local_blocks[GetLocalBlockIndex(x, treeY + y, z)].block_id = 6;
+                                        chunk->local_blocks[GetLocalBlockIndex(x, treeY + y, z)].SetBlendability(false);
+                                        chunk->local_blocks[GetLocalBlockIndex(x, treeY + y, z)].SetTransparency(false);
+                                        chunk->local_blocks[GetLocalBlockIndex(x, treeY + y, z)].SetIsLightSource(false);
+                                    }
+
+                                    int ringLevel = 0;
+                                    for (int leavesY = leavesBottomY + y; leavesY <= leavesTopY + y; leavesY++)
+                                    {
+                                        int leafRadius = leavesY == leavesTopY ? 2 : 1;
+                                        for (int leavesX = x - leafRadius; leavesX <= x + leafRadius; leavesX++)
+                                        {
+                                            for (int leavesZ = z - leafRadius; leavesZ <= z + leafRadius; leavesZ++)
+                                            {
+                                                if (leavesX < k_chunk_length && leavesX >= 0 && leavesZ < k_chunk_width && leavesZ >= 0)
+                                                {
+                                                    chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ)].block_id = 7;
+                                                    chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ)].SetBlendability(false);
+                                                    chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ)].SetTransparency(true);
+                                                    chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ)].SetIsLightSource(false);
+                                                }
+                                                else if (leavesX < 0)
+                                                {
+                                                    if (chunk->back_neighbor)
+                                                    {
+                                                        chunk->back_neighbor->local_blocks[GetLocalBlockIndex(k_chunk_length + leavesX, leavesY, leavesZ)].block_id = 7;
+                                                        chunk->local_blocks[GetLocalBlockIndex(k_chunk_length + leavesX, leavesY, leavesZ)].SetBlendability(false);
+                                                        chunk->local_blocks[GetLocalBlockIndex(k_chunk_length + leavesX, leavesY, leavesZ)].SetTransparency(true);
+                                                        chunk->local_blocks[GetLocalBlockIndex(k_chunk_length + leavesX, leavesY, leavesZ)].SetIsLightSource(false);
+                                                    }
+                                                }
+                                                else if (leavesX >= k_chunk_length)
+                                                {
+                                                    if (chunk->front_neighbor)
+                                                    {
+                                                        chunk->front_neighbor->local_blocks[GetLocalBlockIndex(leavesX - k_chunk_length, leavesY, leavesZ)].block_id = 7;
+                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX - k_chunk_length, leavesY, leavesZ)].SetBlendability(false);
+                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX - k_chunk_length, leavesY, leavesZ)].SetTransparency(true);
+                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX - k_chunk_length, leavesY, leavesZ)].SetIsLightSource(false);
+                                                    }
+                                                }
+                                                else if (leavesZ < 0)
+                                                {
+                                                    if (chunk->left_neighbor)
+                                                    {
+                                                        chunk->left_neighbor->local_blocks[GetLocalBlockIndex(leavesX, leavesY, k_chunk_width + leavesZ)].block_id = 7;
+                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, k_chunk_width + leavesZ)].SetBlendability(false);
+                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, k_chunk_width + leavesZ)].SetTransparency(true);
+                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, k_chunk_width + leavesZ)].SetIsLightSource(false);
+                                                    }
+                                                }
+                                                else if (leavesZ >= k_chunk_width)
+                                                {
+                                                    if (chunk->right_neighbor)
+                                                    {
+                                                        chunk->right_neighbor->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ - k_chunk_width)].block_id = 7;
+                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ - k_chunk_width)].SetBlendability(false);
+                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ - k_chunk_width)].SetTransparency(true);
+                                                        chunk->local_blocks[GetLocalBlockIndex(leavesX, leavesY, leavesZ - k_chunk_width)].SetIsLightSource(false);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        ringLevel++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void Chunk::GenerateRenderData() {
         SubChunk *solidSubChunk = nullptr;
         SubChunk *blendableSubChunk = nullptr;
 

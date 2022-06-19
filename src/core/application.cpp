@@ -74,7 +74,7 @@ namespace SymoCraft
             // We only need to calculate the vertices once, since we can't remove or add blocks now
             for(int x = -2; x <= 2; x++)
                 for(int z = -2; z <= 2; z++)
-                    ChunkManager::getAllChunks().find({x,z})->second.generateRenderData();
+                    ChunkManager::getAllChunks().find({x, z})->second.GenerateRenderData();
 
             block_batch.ReloadData();
             Report();

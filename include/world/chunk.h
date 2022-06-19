@@ -37,6 +37,7 @@ namespace SymoCraft {
     static uint32 seed;
     static float weight_sum;
     static std::array<NoiseGenerator, 3> noise_generators{};
+    static std::mt19937 mt{ std::random_device{}() };
 
     static std::array<std::array<float, k_chunk_width>, k_chunk_length> height_map;
     void InitializeNoise();
@@ -85,7 +86,8 @@ namespace SymoCraft {
         float GetNoise(int x, int z);
 
         void GenerateTerrain();
-        void generateRenderData();
+        void GenerateVegetation(const glm::ivec2 &lastPlayerLoadPosChunkCoords, float seed);
+        void GenerateRenderData();
 
     private:
         enum class CUBE_FACE : uint32
@@ -114,7 +116,6 @@ namespace SymoCraft {
 
 //        SubChunk* getSubChunk(SubChunk* subChunks, SubChunk* currentSubChunk, int currentLevel, const glm::ivec2& chunkCoordinates, bool isBlendableSubChunk);
 
-        //void generateDecorations(const glm::ivec2 &lastPlayerLoadPosChunkCoords, float seed);
 
         // Must guarantee at least 16 sub-chunks located at this address
 
