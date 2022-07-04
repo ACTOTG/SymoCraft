@@ -131,6 +131,27 @@ namespace SymoCraft::ECS
                     component_set[i].Remove(entity);
         }
 
+        RawMemory Registry::Serialize()
+        {
+            /*
+             * uint32 number of entities
+             * Begin looping entities
+             * uint64 entity id
+             * uint16 number of components
+             * Begin looping components
+             * int32 component id
+             * Copy component into this entity id or create this entity if it does not exist
+            */
+
+            RawMemory memory;
+            size_t entity_id_data_size = sizeof(uint32) + (sizeof(uint16) * entities.size());
+            memory.Init(entity_id_data_size);
+
+            auto num_of_entities = (uint32)entities.size();
+            memory.Write<uint32>(&num_of_entities);
+
+        }
+
         // ----------------------------------------------------------------------
         // Iterator implementation
         Iterator::Iterator(Registry &reg, EntityIndex index, std::bitset<Internal::kMaxNumComponents> com_need,

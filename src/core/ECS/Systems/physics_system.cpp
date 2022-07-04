@@ -9,7 +9,7 @@
 #include "world/chunk.h"
 #include "input/input.h"
 #include "renderer/renderer.h"
-
+#include "core/constants.h"
 
 namespace SymoCraft
 {
@@ -114,28 +114,168 @@ namespace SymoCraft
             }
         }
 
+
         // TODO: RayCast implementation
-/*
         static bool DoRaycast(const glm::vec3& origin, const glm::vec3& normal_direction,
                               float max_distance, bool draw,
-                              const glm::vec3& block_center, const glm::vec3& step, RaycastStaticResult* out);
+                              const glm::vec3& block_center, const glm::vec3& step, RaycastStaticResult* out)
+        {
+            int blockId = ChunkManager::GetBlock(block_center).block_id;
+            BlockFormat block = get_block(blockId);
+            if (blockId != BlockConstants::NULL_BLOCK.block_id && blockId != BlockConstants::AIR_BLOCK.block_id)
+            {
+                HitBox currentBox;
+                currentBox.offset = glm::vec3();
+                currentBox.size = glm::vec3(1.0f, 1.0f, 1.0f);
+                Transform currentTransform;
+                currentTransform.position = block_center;
+
+                Block block = ChunkManager::GetBlock(currentTransform.position);
+                BlockFormat blockFormat = get_block(block.block_id);
+
+                if (blockFormat.m_is_solid)
+                {
+                    glm::vec3 min = currentTransform.position - (currentBox.size * 0.5f) + currentBox.offset;
+                    glm::vec3 max = currentTransform.position + (currentBox.size * 0.5f) + currentBox.offset;
+                    float t1 = (min.x - origin.x) / (compare(normal_direction.x, 0.0f) ? 0.00001f : normal_direction.x);
+                    float t2 = (max.x - origin.x) / (compare(normal_direction.x, 0.0f) ? 0.00001f : normal_direction.x);
+                    float t3 = (min.y - origin.y) / (compare(normal_direction.y, 0.0f) ? 0.00001f : normal_direction.y);
+                    float t4 = (max.y - origin.y) / (compare(normal_direction.y, 0.0f) ? 0.00001f : normal_direction.y);
+                    float t5 = (min.z - origin.z) / (compare(normal_direction.z, 0.0f) ? 0.00001f : normal_direction.z);
+                    float t6 = (max.z - origin.z) / (compare(normal_direction.z, 0.0f) ? 0.00001f : normal_direction.z);
+
+                    float tmin = glm::max(glm::max(glm::min(t1, t2), glm::min(t3, t4)), glm::min(t5, t6));
+                    float tmax = glm::min(glm::min(glm::max(t1, t2), glm::max(t3, t4)), glm::max(t5, t6));
+                    if (tmax < 0 || tmin > tmax)
+                    {
+                        // No intersection
+                        return false;
+                    }
+
+                    float depth = 0.0f;
+                    if (tmin < 0.0f)
+                    {
+                        // The ray's origin is inside the AABB
+                        depth = tmax;
+                    }
+                    else
+                    {
+                        depth = tmin;
+                    }
+
+                    out->point = origin + normal_direction * depth;
+                    out->hit = true;
+                    out->block_center = currentTransform.position + currentBox.offset;
+                    out->block_size = currentBox.size;
+                    out->hit_normal = out->point - out->block_center;
+                    float maxComponent = glm::max(glm::abs(out->hit_normal.x), glm::max(glm::abs(out->hit_normal.y), glm::abs(out->hit_normal.z)));
+                    out->hit_normal = glm::abs(out->hit_normal.x) == maxComponent
+                                      ? glm::vec3(1, 0, 0) * glm::sign(out->hit_normal.x)
+                                      : glm::abs(out->hit_normal.y) == maxComponent
+                                        ? glm::vec3(0, 1, 0) * glm::sign(out->hit_normal.y)
+                                        : glm::vec3(0, 0, 1) * glm::sign(out->hit_normal.z);
+                    return true;
+                }
+            }
+
+            return false;
+        }
         // Raycast for player on the block
+
+
         RaycastStaticResult RaycastStatic(const glm::vec3 &origin, const glm::vec3 &normal_direction
                 , float max_distance, bool draw)
         {
             RaycastStaticResult result;
             result.hit = false;
 
-            if (compare(normal_direction, glm::vec3(0.0, 0.0, 0.0)))
-                return result;
-
-            if (draw)
+            if (compare(normal_direction, glm::vec3(0, 0, 0)))
             {
-                // TODO: draw a line here
-                // from origin to origin + normal_direction * max_distance
+                return result;
             }
+
+            /*
+			if (draw)
+			{
+				Renderer::drawLine(origin, origin + normal_direction * max_distance,);
+			}
+                */
+            // NOTE: the reference paper: http://www.cse.yorku.ca/~amana/research/grid.pdf
+            glm::vec3 rayEnd = origin + normal_direction * max_distance;
+            // Do some fancy math to figure out which voxel is the next voxel
+            glm::vec3 blockCenter = glm::ceil(origin);
+            glm::vec3 step = glm::sign(normal_direction);
+            // Max amount we can step in any direction of the ray, and remain in the voxel
+            glm::vec3 blockCenterToOriginSign = glm::sign(blockCenter - origin);
+            glm::vec3 goodNormalDirection = glm::vec3(
+                    normal_direction.x == 0.0f ? 1e-10 * blockCenterToOriginSign.x : normal_direction.x,
+                    normal_direction.y == 0.0f ? 1e-10 * blockCenterToOriginSign.y : normal_direction.y,
+                    normal_direction.z == 0.0f ? 1e-10 * blockCenterToOriginSign.z : normal_direction.z);
+            glm::vec3 tDelta = ((blockCenter + step) - origin) / goodNormalDirection;
+            // If any number is 0, then we max the delta so we don't get a false positive
+            if (tDelta.x == 0.0f) tDelta.x = 1e10;
+            if (tDelta.y == 0.0f) tDelta.y = 1e10;
+            if (tDelta.z == 0.0f) tDelta.z = 1e10;
+            glm::vec3 tMax = tDelta;
+            float minTValue;
+            do
+            {
+                // TODO: This shouldn't have to be calculated every step
+                tDelta = (blockCenter - origin) / goodNormalDirection;
+                tMax = tDelta;
+                minTValue = FLT_MAX;
+                if (tMax.x < tMax.y)
+                {
+                    if (tMax.x < tMax.z)
+                    {
+                        blockCenter.x += step.x;
+                        // Check if we actually hit the block
+                        if (DoRaycast(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
+                        {
+                            return result;
+                        }
+                        //tMax.x += tDelta.x;
+                        minTValue = tMax.x;
+                    }
+                    else
+                    {
+                        blockCenter.z += step.z;
+                        if (DoRaycast(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
+                        {
+                            return result;
+                        }
+                        //tMax.z += tDelta.z;
+                        minTValue = tMax.z;
+                    }
+                }
+                else
+                {
+                    if (tMax.y < tMax.z)
+                    {
+                        blockCenter.y += step.y;
+                        if (DoRaycast(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
+                        {
+                            return result;
+                        }
+                        //tMax.y += tDelta.y;
+                        minTValue = tMax.y;
+                    }
+                    else
+                    {
+                        blockCenter.z += step.z;
+                        if (DoRaycast(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
+                        {
+                            return result;
+                        }
+                        //tMax.z += tDelta.z;
+                        minTValue = tMax.z;
+                    }
+                }
+            } while (minTValue < max_distance);
+
+            return result;
         }
-*/
+
         // ----------------------------------------------------------------------------------------------------------
         // Functions Implementation
 

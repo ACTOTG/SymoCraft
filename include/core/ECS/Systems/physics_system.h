@@ -28,8 +28,8 @@ namespace SymoCraft
         void Update(ECS::Registry& registry);
 
         // Raycast for player on the block
-        //RaycastStaticResult RaycastStatic(const glm::vec3 &origin, const glm::vec3 &normal_direction
-         //                                  , float max_distance, bool draw = false);
+        RaycastStaticResult RaycastStatic(const glm::vec3 &origin, const glm::vec3 &normal_direction
+                                           , float max_distance, bool draw = false);
     }
 }
 

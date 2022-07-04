@@ -179,6 +179,8 @@ namespace SymoCraft
                 return RegistryViewer<Components...>(*this);
             }
 
+            RawMemory Serialize();
+
         public:
             std::vector<EntityId> entities;
 

@@ -25,6 +25,9 @@ namespace SymoCraft
 
     namespace Application
     {
+
+        static float blockPlaceDebounceTime = 0.2f;
+        static float blockPlaceDebounce = 0.0f;
         float delta_time = 0.016f;
 
         // Internal variables
@@ -112,6 +115,7 @@ namespace SymoCraft
 
                 // Temporary Input Process Function
                 processInput((GLFWwindow*)GetWindow().window_ptr);
+                DoRayCast();
 
                 //::Registry &registry = GetRegistry();
 
@@ -191,8 +195,6 @@ namespace SymoCraft
             last_x = xpos;
             last_y = ypos;
 
-            std::cout << xoffset << ' ' << yoffset << std::endl;
-
             const float sensitivity = 0.05f;
             xoffset *= sensitivity;
             yoffset *= sensitivity;
@@ -268,6 +270,62 @@ namespace SymoCraft
             }
 
         }
+
+
+        void DoRayCast()
+        {
+            ECS::Registry &registry = GetRegistry();
+            Window &window = GetWindow();
+
+            Character::CharacterComponent controller = registry.GetComponent<Character::CharacterComponent>(World::GetPlayer());
+            Character::PlayerComponent player_com = registry.GetComponent<Character::PlayerComponent>(World::GetPlayer());
+            Transform &transform = registry.GetComponent<Transform>(World::GetPlayer());
+
+            RaycastStaticResult res = Physics::RaycastStatic(transform.position + player_com.camera_offset, transform.front, 5.0f);
+            if (res.hit)
+            {
+                glm::vec3 blockLookingAtPos = res.point - (res.hit_normal * 0.1f);
+                Block blockLookingAt = ChunkManager::GetBlock(blockLookingAtPos);
+                Block airBlockLookingAt = ChunkManager::GetBlock(res.point + (res.hit_normal * 0.1f));
+
+                //Renderer::drawBox(res.blockCenter, res.blockSize + glm::vec3(0.005f, 0.005f, 0.005f), blockHighlight);
+/*
+                if (glfwGetKey( &window, GLFW_MOUSE_BUTTON_RIGHT) && blockPlaceDebounce <= 0)
+                {
+                    static Block newBlock{
+                            0, 0, 0, 0
+                    };
+                    //newBlock.block_id = inventory.hotbar[inventory.currentHotbarSlot].blockId;
+
+                    if (newBlock != BlockMap::NULL_BLOCK && newBlock != BlockMap::AIR_BLOCK && !newBlock.isItemOnly())
+                    {
+                        glm::vec3 worldPos = res.point + (res.hit_normal * 0.1f);
+                        ChunkManager::setBlock(worldPos, newBlock);
+                        // If the network is enabled also send this across the network
+                        if (Network::isNetworkEnabled())
+                        {
+                            SizedMemory sizedMemory = pack<glm::vec3, Block>(worldPos, newBlock);
+                            Network::sendClientCommand(ClientCommandType::SetBlock, sizedMemory);
+                            g_memory_free(sizedMemory.memory);
+                        }
+                        blockPlaceDebounce = blockPlaceDebounceTime;
+                    }
+                }
+                else */
+                //if (glfwGetKey((GLFWwindow*)window.window_ptr, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+                //   std::cout << "true" << std::endl;
+
+                if (glfwGetKey((GLFWwindow*)window.window_ptr , GLFW_KEY_G)  == GLFW_PRESS && blockPlaceDebounce <= 0)
+                {
+                    std::cout << "block removed" << std::endl;
+                    glm::vec3 worldPos = res.point - (res.hit_normal * 0.1f);
+                    ChunkManager::RemoveBLock(worldPos);
+                    // If the network is enabled also send this across the network
+                    blockPlaceDebounce = blockPlaceDebounceTime;
+                }
+            }
+        }
+
     }
 
 }
