@@ -93,7 +93,7 @@ namespace SymoCraft
         // Replace the block with an air block
         int index = SymoCraft::Chunk::GetLocalBlockIndex(x, y, z);
         m_local_blocks[index].block_id = BlockConstants::AIR_BLOCK.block_id;
-        m_local_blocks[index].SetLightColor(glm::ivec3(255, 255, 255));
+//        m_local_blocks[index].SetLightColor(glm::ivec3(255, 255, 255));
         m_local_blocks[index].SetTransparency(true);
         m_local_blocks[index].SetIsLightSource(false);
 
@@ -340,8 +340,8 @@ namespace SymoCraft
 
     void Chunk::GenerateRenderData()
     {
-        AmoMemory_ReAlloc(m_vertex_data, sizeof(Vertex3D) * World::max_vertices_per_chunk);
-        AmoBase::AmoMemory_ZeroMem(m_vertex_data, sizeof(Vertex3D) * World::max_vertices_per_chunk);
+        m_vertex_count = 0;
+        m_vertex_data = (Vertex3D *) AmoMemory_Allocate(sizeof(Vertex3D) * World::max_vertices_per_chunk);
         state = ChunkState::Updated;
         if(m_is_fringe_chunk)
             return;
@@ -424,9 +424,9 @@ namespace SymoCraft
         AmoMemory_ReAlloc(m_vertex_data, sizeof(Vertex3D) * m_vertex_count);
     }
 
-    void Chunk::UpdateChunkLocalBlocks(const glm::vec3& block_world_coord)
+    void Chunk::UpdateChunkLocalBlocks(const glm::vec3& block_local_coord)
     {
-        glm::ivec3 block_local_coord = glm::floor(block_world_coord - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
+//        glm::ivec3 block_local_coord = glm::floor(block_world_coord - glm::vec3(m_chunk_coord.x * 16.0f, 0.0f, m_chunk_coord.y * 16.0f));
 
         state = ChunkState::ToBeUpdated;
 
