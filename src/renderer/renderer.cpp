@@ -6,8 +6,6 @@
 
 namespace SymoCraft{
     Batch<Vertex3D> block_batch;
-    uint16 vertex_count;
-    uint16 face_count;
 
     namespace Renderer {
 
@@ -45,8 +43,8 @@ namespace SymoCraft{
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glDepthFunc(GL_LESS);
+            glDepthMask(GL_TRUE);
 
             // Initialize shaders
             block_shader.CompileAndLink("../assets/shaders/vs_BlockShader.glsl",
@@ -57,6 +55,9 @@ namespace SymoCraft{
                                      {0, 3,   GL_INT, offsetof(Vertex3D, pos_coord)},
                                      {1, 3, GL_FLOAT, offsetof(Vertex3D, tex_coord)},
                                      {2, 1, GL_FLOAT, offsetof(Vertex3D, normal   )}});
+
+
+            // Initialize command buffers
 
             loadBlocks("../assets/configs/blockFormats.yaml");
 
@@ -105,7 +106,6 @@ namespace SymoCraft{
             block_batch.Draw();
 
             block_shader.Unbind();
-            // DebugStats::numDrawCalls += 2;
         }
 
         void FlushBatches3D(const glm::mat4 &projection_mat, const glm::mat4 &view_mat) {

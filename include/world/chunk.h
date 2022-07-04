@@ -39,16 +39,21 @@ namespace SymoCraft {
 
     class Chunk {
     public:
-        Block *local_blocks;
+        Block* m_local_blocks;
+        Vertex3D* m_vertex_data;
+        uint16 m_vertex_count;
         glm::ivec2 m_chunk_coord;
+        DrawArraysIndirectCommand m_draw_command;
+        uint16 m_draw_command_index;
         ChunkState state;
-        bool needsToGenerateDecorations;
-        bool needsToCalculateLighting;
 
         Chunk* front_neighbor;
         Chunk* back_neighbor;
         Chunk* left_neighbor;
         Chunk* right_neighbor;
+
+        bool m_is_fringe_chunk{false};
+
 
         inline bool operator==(const Chunk &other) const {
             return m_chunk_coord == other.m_chunk_coord;

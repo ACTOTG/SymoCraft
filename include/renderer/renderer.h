@@ -6,17 +6,10 @@
 
 namespace SymoCraft{
     struct Framebuffer;
-    struct DrawArraysIndirectCommand
-    {
-        uint32 count;
-        uint32 instanceCount;
-        uint32 first;
-        uint32 baseInstance;
-    };
 
     extern Batch<Vertex3D> block_batch;
-    extern uint16 vertex_count;
-    extern uint16 face_count;
+    static uint16 vertex_count;
+    static uint16 face_count;
 
     namespace Renderer
     {

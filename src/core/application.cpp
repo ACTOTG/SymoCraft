@@ -80,26 +80,25 @@ namespace SymoCraft
             InitializeNoise();
             for(int x = -World::chunk_radius; x <= World::chunk_radius; x++)
                 for(int z = -World::chunk_radius; z <= World::chunk_radius; z++)
-                    ChunkManager::queueCreateChunk({x,z});
+                    ChunkManager::CreateChunk({x, z});
 
-            for( auto chunk : ChunkManager::getAllChunks() )
+            for( auto chunk : ChunkManager::GetAllChunks() )
             {
                 chunk.second.GenerateTerrain();
                 chunk.second.GenerateVegetation();
             }
 
-            ChunkManager::RearrangeChunkPointers();
+            ChunkManager::RearrangeChunkNeighborPointers();
 
-            // We only need to calculate the vertices once, since we can't remove or add blocks now
-            for(int x = -World::chunk_radius + 1; x <= World::chunk_radius - 1; x++)
-                for(int z = -World::chunk_radius + 1; z <= World::chunk_radius - 1; z++)
-                    ChunkManager::getAllChunks().find({x, z})->second.GenerateRenderData();
-
-            block_batch.ReloadData();
             Report();
 
+            for(auto& pair : ChunkManager::GetAllChunks())
+                if( pair.second.state == ChunkState::Updated)
+                    AmoLogger_Log("Chunk (%d, %d) is skipped\n", pair.first.x, pair.first.y);
+
             ECS::Registry &registry = GetRegistry();
-            glm::vec3 start_pos{-30.0f, 140.0f, -30.0f};
+            // glm::vec3 start_pos{-30.0f, 140.0f, -30.0f};
+            glm::vec3 start_pos{0.0f, 140.0f, 0.0f};
             Transform &transform = registry.GetComponent<Transform>(World::GetPlayer());
             transform.position = start_pos;
             Renderer::ReportStatus();
@@ -119,10 +118,11 @@ namespace SymoCraft
                 TransformSystem::Update(GetRegistry());
                 Physics::Update(GetRegistry());
                 Character::Player::Update(GetRegistry());
+                ChunkManager::UpdateAllChunks();
+                ChunkManager::LoadAllChunks();
 
                 glBindTextureUnit(0, texture_array.m_texture_Id);
                 Renderer::Render();
-                Renderer::ReportStatus();
 
                 window.SwapBuffers();
                 window.PollInt();

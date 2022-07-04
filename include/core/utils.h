@@ -32,11 +32,11 @@ namespace SymoCraft{
         {
             if (input < output_min)
             {
-                return static_cast<T>(0);
+                return 0;
             }
             else
             {
-                return static_cast<T>(1);
+                return 1;
             }
         }
 

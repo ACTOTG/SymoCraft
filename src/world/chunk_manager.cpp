@@ -1,10 +1,10 @@
 #include "world/chunk_manager.h"
 #include "world/chunk.h"
 #include "core/constants.h"
+#include "renderer/renderer.h"
 
 namespace SymoCraft{
 
-    static std::mutex chunkMtx;
     static robin_hood::unordered_node_map<glm::ivec2, Chunk> chunks;
     static uint32 chunkPosInstancedBuffer;
     static uint32 globalVao;
@@ -12,11 +12,7 @@ namespace SymoCraft{
     // TODO: Make this better
     static uint32 solidDrawCommandVbo;
     static uint32 blendableDrawCommandVbo;
-    static Shader compositeShader;
 
-//        static ChunkThreadWorker* chunkWorker = nullptr;
-//        static Pool<SubChunk>* subChunks = nullptr;
-//        static Pool<Block>* blockPool = nullptr;
 //        static CommandBufferContainer* solidCommandBuffer = nullptr;
 //        static CommandBufferContainer* blendableCommandBuffer = nullptr;
 
@@ -64,7 +60,6 @@ namespace SymoCraft{
             chunk->RemoveWorldBlock(worldPosition);
         }
 
-
         Chunk *GetChunk(const glm::vec3 &worldPosition)
         {
             glm::ivec2 chunkCoords = World::toChunkCoords(worldPosition);
@@ -73,60 +68,45 @@ namespace SymoCraft{
 
         Chunk* GetChunk(const glm::ivec2& chunkCoords)
         {
-            Chunk* chunk = nullptr;
-
             const robin_hood::unordered_map<glm::ivec2, Chunk>::iterator& iter = chunks.find(chunkCoords);
             if (iter != chunks.end())
-            {
-                chunk = &iter->second;
-            }
-
-            return chunk;
+                return &iter->second;
+            else
+                return nullptr;
         }
 
-        robin_hood::unordered_node_map<glm::ivec2, Chunk> &getAllChunks() {
+        robin_hood::unordered_node_map<glm::ivec2, Chunk>& GetAllChunks()
+        {
             return chunks;
         }
 
-        void patchChunkPointers() {
-            for (auto &pair: chunks) {
-                Chunk &chunk = pair.second;
-                auto iter1 = chunks.find(chunk.m_chunk_coord + INormals2::Front);
-                chunk.front_neighbor = iter1 == chunks.end() ? nullptr : &iter1->second;
-                auto iter2 = chunks.find(chunk.m_chunk_coord + INormals2::Back);
-                chunk.back_neighbor = iter2 == chunks.end() ? nullptr : &iter2->second;
-                auto iter3 = chunks.find(chunk.m_chunk_coord + INormals2::Left);
-                chunk.left_neighbor = iter3 == chunks.end() ? nullptr : &iter3->second;
-                auto iter4 = chunks.find(chunk.m_chunk_coord + INormals2::Right);
-                chunk.right_neighbor = iter4 == chunks.end() ? nullptr : &iter4->second;
-            }
-        }
-
-        void queueCreateChunk(const glm::ivec2 &chunkCoordinates) {
-            // Only upload if we need to
-            Chunk *chunk = GetChunk(chunkCoordinates);
+        void CreateChunk(const glm::ivec2 &chunk_coord)
+        {
+            static uint16 chunk_index;
+            Chunk *chunk = GetChunk(chunk_coord);
+            //If the chunk hasn't been instantiated, create the chunk
             if (!chunk)
             {
-
-                Chunk newChunk;
-                newChunk.local_blocks = (Block *) AmoMemory_Allocate(
+                Chunk new_chunk{};
+                new_chunk.m_local_blocks = (Block *)AmoMemory_Allocate(
                         sizeof(Block) * k_chunk_length * k_chunk_width * k_chunk_height);
-                newChunk.m_chunk_coord = chunkCoordinates;
-                newChunk.front_neighbor = GetChunk(chunkCoordinates + INormals2::Front);
-                newChunk.back_neighbor = GetChunk(chunkCoordinates + INormals2::Back);
-                newChunk.left_neighbor = GetChunk(chunkCoordinates + INormals2::Left);
-                newChunk.right_neighbor = GetChunk(chunkCoordinates + INormals2::Right);
-                newChunk.state = ChunkState::Loaded;
+                new_chunk.m_chunk_coord = chunk_coord;
+                new_chunk.m_vertex_data = (Vertex3D *) AmoMemory_Allocate(sizeof(Vertex3D) * World::max_vertices_per_chunk);
+                new_chunk.m_vertex_count = 0;
+                new_chunk.m_draw_command.first = chunk_index++ * sizeof(Vertex3D) * World::max_vertices_per_chunk;
+                new_chunk.m_draw_command.baseInstance = 0;
+                new_chunk.m_draw_command.instanceCount = 1;
+                new_chunk.front_neighbor = GetChunk(chunk_coord + INormals2::Front);
+                new_chunk.back_neighbor = GetChunk(chunk_coord + INormals2::Back);
+                new_chunk.left_neighbor = GetChunk(chunk_coord + INormals2::Left);
+                new_chunk.right_neighbor = GetChunk(chunk_coord + INormals2::Right);
+                new_chunk.state = ChunkState::ToBeUpdated;
 
-                {
-                    // TODO: Ensure this is only ever accessed from the main thread
-                    //std::lock_guard lock(chunkMtx);
-                    chunks[newChunk.m_chunk_coord] = newChunk;
-                }
+                chunks[new_chunk.m_chunk_coord] = new_chunk;
             }
         }
 
-        void RearrangeChunkPointers()
+        void RearrangeChunkNeighborPointers()
         {
             for (auto& pair : chunks)
             {
@@ -139,7 +119,31 @@ namespace SymoCraft{
                 chunk.left_neighbor = iter3 == chunks.end() ? nullptr : &iter3->second;
                 auto iter4 = chunks.find(chunk.m_chunk_coord + INormals2::Right);
                 chunk.right_neighbor = iter4 == chunks.end() ? nullptr : &iter4->second;
+
+                if(chunk.front_neighbor == nullptr || chunk.back_neighbor == nullptr ||
+                   chunk.left_neighbor == nullptr || chunk.right_neighbor == nullptr)
+                    chunk.m_is_fringe_chunk = true;
             }
+        }
+
+        void UpdateAllChunks()
+        {
+            for(auto &pair : chunks)
+                if (pair.second.state == ChunkState::Updated || pair.second.m_is_fringe_chunk)
+                    continue;
+                else if(pair.second.state == ChunkState::ToBeUpdated)
+                    pair.second.GenerateRenderData();
+                else
+                    AmoLogger_Info("Unknown state of chunk updated\n");
+        }
+
+        void LoadAllChunks()
+        {
+            for(auto &pair : chunks)
+                if(pair.second.m_vertex_count == 0 || pair.second.m_is_fringe_chunk)
+                    continue;
+                else
+                    block_batch.AddVertex(pair.second.m_vertex_data, pair.second.m_vertex_count);
         }
     }
 }

@@ -17,16 +17,9 @@ namespace SymoCraft{
     static constexpr uint16 k_chunk_width = 16;
     static constexpr uint16 k_chunk_height = 256;
 
-    static constexpr int maxBiomeHeight = 145;
-    static constexpr int minBiomeHeight = 55;
-    static constexpr int oceanLevel = 85;
-
-    struct Vertex
-    {
-        uint32 data1;
-        uint32 data2;
-    };
-
+    static constexpr int max_biome_height = 145;
+    static constexpr int min_biome_height = 55;
+    static constexpr int sea_level = 85;
 
     namespace ChunkManager
     {
@@ -35,7 +28,7 @@ namespace SymoCraft{
         void serialize();
         void serializeSynchronous();
 
-        robin_hood::unordered_node_map<glm::ivec2, Chunk>& getAllChunks();
+        robin_hood::unordered_node_map<glm::ivec2, Chunk>& GetAllChunks();
 
         Block GetBlock(const glm::vec3& worldPosition);
         void SetBlock(const glm::vec3& worldPosition, Block newBlock);
@@ -44,7 +37,7 @@ namespace SymoCraft{
         Chunk* GetChunk(const glm::vec3& worldPosition);
         Chunk* GetChunk(const glm::ivec2& chunkCoords);
 
-        void RearrangeChunkPointers();
+        void RearrangeChunkNeighborPointers();
         void UpdateChunkLocalBlocks();
         void SetPlayerChunkCoord(const glm::ivec2& player_chunk_coord);
 
@@ -52,8 +45,9 @@ namespace SymoCraft{
         void checkChunkRadius(const glm::vec3& playerPosition, bool isClient=false);
 
         void queueGenerateDecorations(const glm::ivec2& lastPlayerLoadChunkPos);
-        void queueCreateChunk(const glm::ivec2& chunkCoordinates);
-        void queueUpdateChunk(const glm::ivec2& chunkCoordinates, Chunk* chunk = nullptr);
+        void CreateChunk(const glm::ivec2& chunk_coord);
+        void UpdateAllChunks();
+        void LoadAllChunks();
     }
 }
 #endif //SYMOCRAFT_CHUNK_MANAGER_H
