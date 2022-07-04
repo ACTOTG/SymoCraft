@@ -12,7 +12,7 @@ namespace SymoCraft
 {
     //enum class TagType : uint8;
 
-    // TODO: *Rebuild* the whole entity component system!!
+    // TODO: *Rebuild* the whole entity component system
     namespace ECS
     {
         typedef uint32 EntityIndex;
@@ -139,6 +139,8 @@ namespace SymoCraft
                 //  should we return a null component?
                 return *component_set[component_type].template Get<T>(Internal::GetEntityIndex(entity));
             }
+
+            uint8 *AddOrGetComponentByType(EntityId entity, int32 component_id);
 
             // Remove Component
             // Parameters: entity id
