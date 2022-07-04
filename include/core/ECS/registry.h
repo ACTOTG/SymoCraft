@@ -71,9 +71,9 @@ namespace SymoCraft
             {
                 int32 com_type = ECS::Internal::GetComponentType<T>();
                 EntityIndex index = 0;
-                AmoLogger_Notice(com_type == component_set.size(), "Tried to register component '%s' twice", debug_name);
+                AmoLogger_Assert(com_type == component_set.size(), "Tried to register component '%s' twice", debug_name);
                 component_set.template emplace_back(Internal::ComponentContainer::DefaultComponentContainer<T>(index));
-                AmoLogger_Notice(com_type < Internal::kMaxNumComponents, "Exceeded the maximum number of components.");
+                AmoLogger_Assert(com_type < Internal::kMaxNumComponents, "Exceeded the maximum number of components.");
                 debug_component_names.template emplace_back(std::string(debug_name));
             }
 
@@ -86,7 +86,7 @@ namespace SymoCraft
                 int32 component_type = ECS::Internal::GetComponentType<T>();
                 const EntityIndex index = Internal::GetEntityIndex(entity);
 
-                AmoLogger_Notice(component_type < component_set.size(),
+                AmoLogger_Assert(component_type < component_set.size(),
                                  "You need to register all components in the same order *everywhere*. "
                                  "Component '%s' was not registered.", typeid(T).name());
 
@@ -133,7 +133,7 @@ namespace SymoCraft
                     , component_type, component_type);
                 }
 
-                AmoLogger_Notice(HasComponent<T>(entity), "Entity '%d' does not have component '%d'"
+                AmoLogger_Assert(HasComponent<T>(entity), "Entity '%d' does not have component '%d'"
                                  , entity, component_type);
                 // TODO: This will crash if the component is null,
                 //  should we return a null component?
@@ -180,6 +180,7 @@ namespace SymoCraft
             }
 
             RawMemory Serialize();
+            void Deserialize(RawMemory &memory);
 
         public:
             std::vector<EntityId> entities;

@@ -1,5 +1,4 @@
 #include "AmoBase.h"
-#include <memory>
 #include <vector>
 #include <mutex>
 #include <stdio.h>
@@ -7,9 +6,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <chrono>
-#include <thread>
 #include <array>
-#include <algorithm>
 #include <cstring>
 
 #include <windows.h>
@@ -425,9 +422,9 @@ void AmoBase::_AmoLogger_Error(const char *filename, int line, const char *var_f
     }
 }
 
-void AmoBase::_AmoLogger_Notice(const char *filename, int line, int condition, const char *var_format, ...)
+void AmoBase::_AmoLogger_Assert(const char *filename, int line, int condition, const char *var_format, ...)
 {
-    if (AmoLogger_GetLevel() <= LogLevel::Notice)
+    if (AmoLogger_GetLevel() <= LogLevel::Assert)
     {
         if (!condition)
         {

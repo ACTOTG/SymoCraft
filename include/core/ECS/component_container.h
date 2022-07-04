@@ -54,7 +54,7 @@ namespace SymoCraft
                 template<typename T>
                 void Init(EntityIndex entity_index)
                 {
-                    AmoLogger_Notice(std::is_standard_layout<T>() && std::is_trivial<T>()
+                    AmoLogger_Assert(std::is_standard_layout<T>() && std::is_trivial<T>()
                     , "Component must be POD. Component %s is not POD.", typeid(T).name());
                     component_size = sizeof(T);
 
@@ -95,7 +95,7 @@ namespace SymoCraft
 
                     auto dense_array_component_index =
                             (ComponentIndex)pool->component_index_in_data[index - pool->start_entity_index];
-                    AmoLogger_Notice((dense_array_component_index < num_components && dense_array_component_index >=0)
+                    AmoLogger_Assert((dense_array_component_index < num_components && dense_array_component_index >=0)
                     , "Invalid dense array index");
                     return (T*)(data + dense_array_component_index * component_size);
                 }
@@ -112,7 +112,7 @@ namespace SymoCraft
 
                     auto dense_array_component_index =
                             (ComponentIndex)pool->component_index_in_data[index - pool->start_entity_index];
-                    AmoLogger_Notice((dense_array_component_index < num_components && dense_array_component_index >=0)
+                    AmoLogger_Assert((dense_array_component_index < num_components && dense_array_component_index >=0)
                     , "Invalid dense array index");
                     return (uint8*)(data + dense_array_component_index * component_size);
                 }
@@ -208,7 +208,11 @@ namespace SymoCraft
                 // Parameters: entity id
                 void Remove(EntityId entity);
 
-                // Get
+                // Get component size
+                inline size_t GetComponentSize() const
+                {
+                    return component_size;
+                }
             private:
                 int component_type;
                 uint32 max_num_components;

@@ -38,13 +38,13 @@ namespace SymoCraft
 
         bool IsKeyPressed( int key)
         {
-            AmoLogger_Notice( key >= 0 && key < GLFW_KEY_LAST, "Invalid key. ");
+            AmoLogger_Assert( key >= 0 && key < GLFW_KEY_LAST, "Invalid key. ");
             return key_pressed[key];
         }
 
         bool IsKeyBeginPressed( int key)
         {
-            AmoLogger_Notice( key >= 0 && key < GLFW_KEY_LAST, "Invalid key. ");
+            AmoLogger_Assert( key >= 0 && key < GLFW_KEY_LAST, "Invalid key. ");
             return key_begin_pressed[key];
         }
     }

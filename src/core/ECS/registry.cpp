@@ -159,9 +159,27 @@ namespace SymoCraft::ECS
                     if (HasComponentByType(entity, i))
                     {
                         memory.Write<int32>(&i);
-                        //wdwdwsdawd size_t component_size = component_set[i];
+                        size_t component_size = component_set[i].GetComponentSize();
+                        uint8* component_data = component_set[i].Get(Internal::GetEntityIndex(entity));
+                        memory.WriteDangerous(component_data, component_size);
                     }
                 }
+            }
+
+            memory.ShrinkToFit();
+            return memory;
+        }
+
+        void Registry::Deserialize(RawMemory &memory)
+        {
+            memory.ResetReadWriteCursor();
+
+            uint32 num_entities;
+            memory.Read<uint32>(&num_entities);
+            entities.resize(num_entities);
+            for (uint32 entity_counter = 0; entity_counter < num_entities; entity_counter++)
+            {
+
             }
         }
 

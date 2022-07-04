@@ -147,7 +147,7 @@ namespace SymoCraft::ECS
                     EntityIndex last_entity = entities[ num_components - 1];
                     SparseSetPool* pool_to_swap = GetPool(last_entity);
 
-                    AmoLogger_Notice( pool_to_swap != nullptr, "Invalid entity was somehow stored in the dense array.");
+                    AmoLogger_Assert( pool_to_swap != nullptr, "Invalid entity was somehow stored in the dense array.");
 
                     pool_to_swap -> component_index_in_data[ last_entity - pool_to_swap -> start_entity_index]
                         = dense_array_component_index;
