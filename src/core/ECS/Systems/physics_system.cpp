@@ -68,6 +68,10 @@ namespace SymoCraft
         static bool IsColliding(const HitBox &hb1, const Transform &tr1
                                 , const HitBox &hb2, const Transform &tr2);
 
+        static float PenetrationAmount(const glm::vec3 &hb1_negative, const glm::vec3 &hb1_positive
+                                       ,const glm::vec3 &hb2_negative, const glm::vec3 &hb2_positive
+                                       , const glm::vec3 &axis);
+
         static Interval GetInterval(const HitBox &box, const Transform &transform, const glm::vec3 &axis);
         static void GetQuadrantResult(const Transform &tr1, const Transform &tr2, const HitBox &hb2_expanded
                                       , CollisionInfo* res ,Direction x_face, Direction y_face, Direction z_face);
@@ -373,7 +377,8 @@ namespace SymoCraft
             glm::vec3 hb2_positive = tr2.position + (hb2.size * 0.5f);
 
             // check each face if there is an overlapping
-            for (int i = 0; i < 3; i++)
+
+            /*for (int i = 0; i < 3; i++)
             {
                 float f1_positive = glm::dot(hb1_positive, test_axes[i]);
                 float f2_negative = glm::dot(hb2_negative, test_axes[i]);
@@ -386,7 +391,52 @@ namespace SymoCraft
                     return true;
             }
             return false;
+            */
+
+            for (int i = 0; i < 3; i++)
+            {
+                float penetration = PenetrationAmount(hb1_negative, hb1_positive
+                                                      , hb2_negative, hb2_positive
+                                                      , test_axes[i]);
+                if (glm::abs(penetration) <= 0.001f)
+                    return false;
+            }
+            return true;
         }
+
+        static float PenetrationAmount(const glm::vec3 &hb1_negative, const glm::vec3 &hb1_positive
+                                    ,const glm::vec3 &hb2_negative, const glm::vec3 &hb2_positive
+                                    , const glm::vec3 &axis)
+        {
+            if (axis == glm::vec3(1, 0, 0))
+            {
+                if ((hb2_negative.x <= hb1_positive.x) && (hb1_negative.x <= hb2_positive.x))
+                {
+                    // We have penetration
+                    return hb2_negative.x - hb1_positive.x;
+                }
+            }
+            else if (axis == glm::vec3(0, 1, 0))
+            {
+                if ((hb2_negative.y <= hb1_positive.y) && (hb1_negative.y <= hb2_positive.y))
+                {
+                    // We have penetration
+                    return hb2_positive.y - hb1_negative.y;
+                }
+            }
+            else if (axis == glm::vec3(0, 0, 1))
+            {
+                if ((hb2_negative.z <= hb1_positive.z) && (hb1_negative.z <= hb2_positive.z))
+                {
+                    // We have penetration
+                    return hb2_negative.z - hb1_positive.z;
+                }
+            }
+
+            return 0.0f;
+        }
+
+
 
         static CollisionInfo StaticCollisionInformation(const RigidBody& rb1, const HitBox &hb1, const Transform& tr1
                 , const HitBox &hb2, const Transform& tr2)
