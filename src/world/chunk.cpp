@@ -340,8 +340,13 @@ namespace SymoCraft
 
     void Chunk::GenerateRenderData()
     {
+        //Clear old data
         m_vertex_count = 0;
+        AmoMemory_Free(m_vertex_data);
+
+        //Initialization
         m_vertex_data = (Vertex3D *) AmoMemory_Allocate(sizeof(Vertex3D) * World::max_vertices_per_chunk);
+
         state = ChunkState::Updated;
         if(m_is_fringe_chunk)
             return;
