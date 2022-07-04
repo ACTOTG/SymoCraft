@@ -113,6 +113,8 @@ namespace SymoCraft
                 double current_frame_time = glfwGetTime();
                 delta_time = (float)(current_frame_time - previous_frame_time);
 
+                blockPlaceDebounce -= delta_time;
+
                 // Temporary Input Process Function
                 processInput((GLFWwindow*)GetWindow().window_ptr);
                 DoRayCast();
@@ -287,33 +289,6 @@ namespace SymoCraft
                 glm::vec3 blockLookingAtPos = res.point - (res.hit_normal * 0.1f);
                 Block blockLookingAt = ChunkManager::GetBlock(blockLookingAtPos);
                 Block airBlockLookingAt = ChunkManager::GetBlock(res.point + (res.hit_normal * 0.1f));
-
-                //Renderer::drawBox(res.blockCenter, res.blockSize + glm::vec3(0.005f, 0.005f, 0.005f), blockHighlight);
-/*
-                if (glfwGetKey( &window, GLFW_MOUSE_BUTTON_RIGHT) && blockPlaceDebounce <= 0)
-                {
-                    static Block newBlock{
-                            0, 0, 0, 0
-                    };
-                    //newBlock.block_id = inventory.hotbar[inventory.currentHotbarSlot].blockId;
-
-                    if (newBlock != BlockMap::NULL_BLOCK && newBlock != BlockMap::AIR_BLOCK && !newBlock.isItemOnly())
-                    {
-                        glm::vec3 worldPos = res.point + (res.hit_normal * 0.1f);
-                        ChunkManager::setBlock(worldPos, newBlock);
-                        // If the network is enabled also send this across the network
-                        if (Network::isNetworkEnabled())
-                        {
-                            SizedMemory sizedMemory = pack<glm::vec3, Block>(worldPos, newBlock);
-                            Network::sendClientCommand(ClientCommandType::SetBlock, sizedMemory);
-                            g_memory_free(sizedMemory.memory);
-                        }
-                        blockPlaceDebounce = blockPlaceDebounceTime;
-                    }
-                }
-                else */
-                //if (glfwGetKey((GLFWwindow*)window.window_ptr, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-                //   std::cout << "true" << std::endl;
 
                 if (glfwGetKey((GLFWwindow*)window.window_ptr , GLFW_KEY_G)  == GLFW_PRESS && blockPlaceDebounce <= 0)
                 {

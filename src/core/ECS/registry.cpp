@@ -137,7 +137,7 @@ namespace SymoCraft::ECS
              * uint32 number of entities
              * Begin looping entities
              * uint64 entity id
-             * uint16 number of components
+             * int32 number of components
              * Begin looping components
              * int32 component id
              * Copy component into this entity id or create this entity if it does not exist
@@ -149,7 +149,20 @@ namespace SymoCraft::ECS
 
             auto num_of_entities = (uint32)entities.size();
             memory.Write<uint32>(&num_of_entities);
-
+            for (ECS::EntityId entity : entities)
+            {
+                memory.Write<EntityId>(&entity);
+                int32 num_components = this->NumComponents(entity);
+                memory.Write<int32>(&num_components);
+                for (int i = 0; i <  component_set.size(); i++)
+                {
+                    if (HasComponentByType(entity, i))
+                    {
+                        memory.Write<int32>(&i);
+                        //wdwdwsdawd size_t component_size = component_set[i];
+                    }
+                }
+            }
         }
 
         // ----------------------------------------------------------------------

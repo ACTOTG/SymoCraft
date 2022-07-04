@@ -207,6 +207,8 @@ namespace SymoCraft
                 // Remove a component of an entity
                 // Parameters: entity id
                 void Remove(EntityId entity);
+
+                // Get
             private:
                 int component_type;
                 uint32 max_num_components;
