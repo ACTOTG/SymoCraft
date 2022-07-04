@@ -25,8 +25,8 @@ file(GLOB SOURCE_FILE
         "src/renderer/*.cpp"
         "src/world/*.cpp"
         "src/camera/camera.cpp"
-        "src/input/*.cpp"
-        "src/event/*.cpp")
+        "src/input/*.cpp" )
+        #"src/event/*.cpp")
 
 add_executable(SymoCraft src/main.cpp
                          vendor/glad/glad.c

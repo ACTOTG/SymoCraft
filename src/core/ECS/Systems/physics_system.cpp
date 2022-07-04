@@ -58,7 +58,7 @@ namespace SymoCraft
         // some useful uniform variables in physics system
         static glm::vec3 uniform_gravity = glm::vec3(0.0, 20.0, 0.0);
         static glm::vec3 terminal_velocity = glm::vec3(50.0f, 50.0f, 50.0f);
-        static const float kPhysicsUpdateRate = 1.0f / 120.0f; // 120Hz
+        static const float kPhysicsUpdateRate = 1.0f / 60.0f; // 120Hz
 
         // ----------------------------------------------------------------------------------------------------------
         // some useful uniform function in physics system

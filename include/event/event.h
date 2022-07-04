@@ -10,7 +10,7 @@
 namespace SymoCraft::EventSystem
 {
 
-    const std::string recordpath_test = "../assets/record"
+    const std::string recordpath_test = "../assets/record";
 
     namespace ECS
     {
