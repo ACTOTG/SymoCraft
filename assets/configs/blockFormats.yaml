@@ -58,3 +58,10 @@ oak_planks:
   bottom: 5
   isSolid: true 
   isTransparent: false
+water_still:
+  id: 9
+  side: 11
+  top: 10
+  bottom: 10
+  isSolid: false
+  isTransparent: true

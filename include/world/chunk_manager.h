@@ -31,7 +31,7 @@ namespace SymoCraft{
         robin_hood::unordered_node_map<glm::ivec2, Chunk>& GetAllChunks();
 
         Block GetBlock(const glm::vec3& worldPosition);
-        void SetBlock(const glm::vec3& worldPosition, Block newBlock);
+        void SetBlock(const glm::vec3& worldPosition, uint16 block_id);
         void RemoveBLock(const glm::vec3& worldPosition);
 
         Chunk* GetChunk(const glm::vec3& worldPosition);
@@ -42,9 +42,7 @@ namespace SymoCraft{
         void SetPlayerChunkCoord(const glm::ivec2& player_chunk_coord);
 
         void render(const glm::vec3& playerPosition, const glm::ivec2& playerPositionInChunkCoords, Shader& opaqueShader, Shader& transparentShader, const Frustum& cameraFrustum);
-        void checkChunkRadius(const glm::vec3& playerPosition, bool isClient=false);
 
-        void queueGenerateDecorations(const glm::ivec2& lastPlayerLoadChunkPos);
         void CreateChunk(const glm::ivec2& chunk_coord);
         void UpdateAllChunks();
         void LoadAllChunks();

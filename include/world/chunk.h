@@ -9,15 +9,11 @@
 
 namespace SymoCraft {
 
-    enum class ChunkState : uint8 {
+    enum class ChunkState : uint8
+    {
         None,
-        Unloaded,
-        Unloading,
         ToBeUpdated,
         Updated,
-        Saving,
-        Loading,
-        Loaded
     };
 
     struct NoiseGenerator
@@ -26,8 +22,8 @@ namespace SymoCraft {
         float weight;
     };
 
-    static uint16 maxHeight;
-    static uint16 stoneHeight;
+    static uint16 max_height;
+    static uint16 stone_height;
     static uint32 seed;
     static float weight_sum;
     static std::array<NoiseGenerator, 3> noise_generators{};
@@ -79,7 +75,7 @@ namespace SymoCraft {
         };
 
         Block GetWorldBlock(const glm::vec3 &world_coord);
-        bool SetWorldBlock(const glm::vec3 &world_coord, Block new_block);
+        bool SetWorldBlock(const glm::vec3 &world_coord, uint16 block_id);
         bool RemoveWorldBlock(const glm::vec3 &world_coord);
 
         float GetNoise(int x, int z);
@@ -91,7 +87,7 @@ namespace SymoCraft {
 
     private:
         Block GetLocalBlock(int x, int y, int z);
-        bool SetLocalBlock(int x, int y, int z, Block newBlock);
+        bool SetLocalBlock(int x, int y, int z, uint16 block_id);
         bool RemoveLocalBlock(int x, int y, int z);
 
         // Must guarantee at least 16 sub-chunks located at this address
@@ -107,7 +103,8 @@ namespace SymoCraft {
 
         // void info();
 
-        inline int GetLocalBlockIndex(int x, int y ,int z){
+        inline int GetLocalBlockIndex(int x, int y ,int z)
+        {
             return x * k_chunk_length + y * k_chunk_height + z;
         }
 

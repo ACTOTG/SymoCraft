@@ -6,10 +6,8 @@
 namespace SymoCraft{
 
     static robin_hood::unordered_node_map<glm::ivec2, Chunk> chunks;
-    static uint32 chunkPosInstancedBuffer;
     static uint32 globalVao;
     static uint32 globalRenderVbo;
-    // TODO: Make this better
     static uint32 solidDrawCommandVbo;
     static uint32 blendableDrawCommandVbo;
 
@@ -20,16 +18,13 @@ namespace SymoCraft{
         Block GetBlock(const glm::vec3 &worldPosition) {
             Chunk *chunk = GetChunk(worldPosition);
 
-            if (!chunk) {
-                // Assume it's a chunk that's out of bounds
-                // TODO: Make this only return null block if it's far far away from the player
+            if (!chunk)
                 return BlockConstants::NULL_BLOCK;
-            }
 
             return chunk->GetWorldBlock(worldPosition);
         }
 
-        void SetBlock(const glm::vec3 &worldPosition, Block newBlock) {
+        void SetBlock(const glm::vec3 &worldPosition, uint16 block_id) {
             glm::ivec2 chunkCoords = World::toChunkCoords(worldPosition);
             Chunk *chunk = GetChunk(worldPosition);
 
@@ -42,7 +37,7 @@ namespace SymoCraft{
                 return;
             }
 
-            chunk->SetWorldBlock(worldPosition, newBlock);
+            chunk->SetWorldBlock(worldPosition, block_id);
         }
 
         void RemoveBLock(const glm::vec3 &worldPosition) {
