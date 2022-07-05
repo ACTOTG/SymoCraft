@@ -103,7 +103,6 @@ namespace SymoCraft
                     AmoLogger_Log("Chunk (%d, %d) is skipped\n", pair.first.x, pair.first.y);
 
             ECS::Registry &registry = GetRegistry();
-            // glm::vec3 start_pos{-30.0f, 140.0f, -30.0f};
             glm::vec3 start_pos{0.0f, 140.0f, 0.0f};
             Transform &transform = registry.GetComponent<Transform>(World::GetPlayer());
             transform.position = start_pos;

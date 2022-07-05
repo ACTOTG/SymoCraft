@@ -106,9 +106,9 @@ namespace SymoCraft::Physics
         }
 
 
-        static bool DoRayTracing(const glm::vec3& origin, const glm::vec3& normal_direction,
+        static bool DoRayTracing(const glm::vec3 &origin, const glm::vec3 &normal_direction,
                               float max_distance, bool draw,
-                              const glm::vec3& block_corner, const glm::vec3& step, RaycastStaticResult* out)
+                              const glm::vec3 &block_corner, const glm::vec3& step, RaycastStaticResult* out)
         {
             glm::vec3 block_center = block_corner - (glm::vec3(0.5f) * step);
             int block_id = ChunkManager::GetBlock(block_center).block_id;
@@ -143,26 +143,22 @@ namespace SymoCraft::Physics
                         return false;
                     }
 
+                    // intersection exists
                     float depth = 0.0f;
                     if (tmin < 0.0f)
-                    {
-                        // The ray's origin is inside the AABB
                         depth = tmax;
-                    }
                     else
-                    {
                         depth = tmin;
-                    }
 
                     out->point = origin + normal_direction * depth;
                     out->hit = true;
                     out->block_center = currentTransform.position + current_box.offset;
                     out->block_size = current_box.size;
                     out->hit_normal = out->point - out->block_center;
-                    float maxComponent = glm::max(glm::abs(out->hit_normal.x), glm::max(glm::abs(out->hit_normal.y), glm::abs(out->hit_normal.z)));
-                    out->hit_normal = glm::abs(out->hit_normal.x) == maxComponent
+                    float max_component = glm::max(glm::abs(out->hit_normal.x), glm::max(glm::abs(out->hit_normal.y), glm::abs(out->hit_normal.z)));
+                    out->hit_normal = glm::abs(out->hit_normal.x) == max_component
                                       ? glm::vec3(1, 0, 0) * glm::sign(out->hit_normal.x)
-                                      : glm::abs(out->hit_normal.y) == maxComponent
+                                      : glm::abs(out->hit_normal.y) == max_component
                                         ? glm::vec3(0, 1, 0) * glm::sign(out->hit_normal.y)
                                         : glm::vec3(0, 0, 1) * glm::sign(out->hit_normal.z);
                     return true;

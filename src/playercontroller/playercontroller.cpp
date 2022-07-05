@@ -13,13 +13,9 @@
 
 void SymoCraft::PlayerController::DoRayCast( ECS::Registry &registry, Window &window)
 {
-    Character::CharacterComponent controller = registry.GetComponent<Character::CharacterComponent>(World::GetPlayer());
-    Character::PlayerComponent player_com = registry.GetComponent<Character::PlayerComponent>(World::GetPlayer());
-    Transform &transform = registry.GetComponent<Transform>(World::GetPlayer());
-
-    if (glfwGetKey((GLFWwindow*)window.window_ptr, GLFW_KEY_P) == GLFW_PRESS)  // just for debug
-        printf("transform front is (%f, %f, %f)\n", transform.front.x, transform.front.y, transform.front.z);
-
+    auto controller = registry.GetComponent<Character::CharacterComponent>(World::GetPlayer());
+    auto player_com = registry.GetComponent<Character::PlayerComponent>(World::GetPlayer());
+    auto &transform = registry.GetComponent<Transform>(World::GetPlayer());
 
     RaycastStaticResult res = Physics::RayCastStatic(transform.position + player_com.camera_offset, transform.front, 3.0f);
     if (res.hit)
