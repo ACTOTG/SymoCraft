@@ -31,7 +31,7 @@ namespace SymoCraft::EventSystem
         EventType type;
         size_t size;
         void *data;
-        //bool free_data;
+        bool is_free; // if the event is used, free the memory
     };
 
     class EventListener
@@ -64,7 +64,7 @@ namespace SymoCraft::EventSystem
         bool serialize_events;
         bool play_from_eventfile;
         std::queue<Event> events;
-        static FILE* serialized_eventfile;
+        FILE* serialized_eventfile;
         ECS::Registry *registry;
     };
 }

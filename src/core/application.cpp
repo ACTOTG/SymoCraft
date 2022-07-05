@@ -70,15 +70,10 @@ namespace SymoCraft
             TextureArray texture_array;
             texture_array = texture_array.CreateAtlasSlice("../assets/textures/texture_atlas.png", true);
 
-            AmoLogger_Log("Temporary CAMERA class is waiting to be replaced");
-            AmoLogger_Warning("Temporary Input Process Function is waiting to be replaced");
-            // need to be replaced
-
             glfwSetScrollCallback( (GLFWwindow *) window.window_ptr, MouseScrollCallBack);
             glfwSetCursorPosCallback((GLFWwindow *) window.window_ptr, MouseMovementCallBack);
             glfwSetInputMode((GLFWwindow*)window.window_ptr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-            // 出生在区块里，开局往天上飞，不然看不见XD
             // Manual chunk generation for testing
             InitializeNoise();
             for(int x = -World::chunk_radius; x <= World::chunk_radius; x++)
@@ -225,26 +220,6 @@ namespace SymoCraft
             // --------------------------------------------------------------------------------------------
             // process input for camera moving
 
-            /*
-            float camera_displacement = 0;
-            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-                camera_displacement = 5.0f * delta_time;        // 5.0 unit per second (actual displacement)
-            else
-                camera_displacement = 2.5f * delta_time;         // 2.5 unit per second (actual displacement)
-
-            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-                GetCamera()->CameraMoveBy(FORWARD, camera_displacement);
-            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-                GetCamera()->CameraMoveBy(BACKWARD, camera_displacement);
-            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-                GetCamera()->CameraMoveBy(RIGHT, camera_displacement);
-            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-                GetCamera()->CameraMoveBy(LEFT, camera_displacement);
-            if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-                GetCamera()->CameraMoveBy(UPWARD, camera_displacement);
-            if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-                GetCamera()->CameraMoveBy(DOWNWARD, camera_displacement);
-                */
 
             player_com.is_running = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 
@@ -283,19 +258,33 @@ namespace SymoCraft
             Character::PlayerComponent player_com = registry.GetComponent<Character::PlayerComponent>(World::GetPlayer());
             Transform &transform = registry.GetComponent<Transform>(World::GetPlayer());
 
-            RaycastStaticResult res = Physics::RaycastStatic(transform.position + player_com.camera_offset, transform.front, 5.0f);
+            if (glfwGetKey((GLFWwindow*)window.window_ptr, GLFW_KEY_P) == GLFW_PRESS)  // just for debug
+                printf("transform front is (%f, %f, %f)\n", transform.front.x, transform.front.y, transform.front.z);
+
+
+            RaycastStaticResult res = Physics::RaycastStatic(transform.position + player_com.camera_offset, transform.front, 3.0f);
             if (res.hit)
             {
-                glm::vec3 blockLookingAtPos = res.point - (res.hit_normal * 0.1f);
-                Block blockLookingAt = ChunkManager::GetBlock(blockLookingAtPos);
-                Block airBlockLookingAt = ChunkManager::GetBlock(res.point + (res.hit_normal * 0.1f));
+                //printf("ray hitted\n");
+                glm::vec3 block_looking_atpos = res.point - (res.hit_normal * 0.1f);
 
-                if (glfwGetKey((GLFWwindow*)window.window_ptr , GLFW_KEY_G)  == GLFW_PRESS && blockPlaceDebounce <= 0)
+                if (glfwGetKey((GLFWwindow*)window.window_ptr, GLFW_KEY_O) == GLFW_PRESS)  // just for debug
                 {
-                    std::cout << "block removed" << std::endl;
+                    AmoLogger_Info("-------------------------------------------");
+                    printf("block looking at position is (%f, %f, %f)\n", block_looking_atpos.x, block_looking_atpos.y, block_looking_atpos.z);
+                    printf("Player's position is (%f, %f, %f)\n", transform.position.x, transform.position.y, transform.position.z);
+                }
+                //Block blockLookingAt = ChunkManager::GetBlock(block_looking_atpos);
+                //Block airBlockLookingAt = ChunkManager::GetBlock(res.point + (res.hit_normal * 0.1f));
+
+
+                if (glfwGetMouseButton((GLFWwindow*)window.window_ptr , GLFW_MOUSE_BUTTON_LEFT)  == GLFW_PRESS && blockPlaceDebounce <= 0)
+                {
+                    static int num_delete;
                     glm::vec3 worldPos = res.point - (res.hit_normal * 0.1f);
                     ChunkManager::RemoveBLock(worldPos);
-                    // If the network is enabled also send this across the network
+                    num_delete++;
+                    std::cout << "block removed " << num_delete  << std::endl;
                     blockPlaceDebounce = blockPlaceDebounceTime;
                 }
             }

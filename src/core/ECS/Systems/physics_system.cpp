@@ -58,7 +58,7 @@ namespace SymoCraft
         // some useful uniform variables in physics system
         static glm::vec3 uniform_gravity = glm::vec3(0.0, 20.0, 0.0);
         static glm::vec3 terminal_velocity = glm::vec3(50.0f, 50.0f, 50.0f);
-        static const float kPhysicsUpdateRate = 1.0f / 60.0f; // 120Hz
+        static const float kPhysicsUpdateRate = 1.0f / 120.0f; // 120Hz
 
         // ----------------------------------------------------------------------------------------------------------
         // some useful uniform function in physics system
@@ -72,11 +72,11 @@ namespace SymoCraft
                                        ,const glm::vec3 &hb2_negative, const glm::vec3 &hb2_positive
                                        , const glm::vec3 &axis);
 
-        static Interval GetInterval(const HitBox &box, const Transform &transform, const glm::vec3 &axis);
+        //static Interval GetInterval(const HitBox &box, const Transform &transform, const glm::vec3 &axis);
         static void GetQuadrantResult(const Transform &tr1, const Transform &tr2, const HitBox &hb2_expanded
                                       , CollisionInfo* res ,Direction x_face, Direction y_face, Direction z_face);
-        static glm::vec3 ClosetPointOnRay(const glm::vec3 ray_origin, const glm::vec3 ray_direction
-                                          , float ray_max_distance, glm::vec3 &point);
+        //static glm::vec3 ClosetPointOnRay(const glm::vec3 ray_origin, const glm::vec3 ray_direction
+         //                                 , float ray_max_distance, glm::vec3 &point);
 
 
         // ----------------------------------------------------------------------------------------------------------
@@ -119,18 +119,18 @@ namespace SymoCraft
         }
 
 
-        // TODO: RayCast implementation
-        static bool DoRaycast(const glm::vec3& origin, const glm::vec3& normal_direction,
+        static bool DoRayTracing(const glm::vec3& origin, const glm::vec3& normal_direction,
                               float max_distance, bool draw,
-                              const glm::vec3& block_center, const glm::vec3& step, RaycastStaticResult* out)
+                              const glm::vec3& block_corner, const glm::vec3& step, RaycastStaticResult* out)
         {
+            glm::vec3 block_center = block_corner - (glm::vec3(0.5f) * step);
             int blockId = ChunkManager::GetBlock(block_center).block_id;
-            BlockFormat block = get_block(blockId);
+            //BlockFormat block = get_block(blockId);
             if (blockId != BlockConstants::NULL_BLOCK.block_id && blockId != BlockConstants::AIR_BLOCK.block_id)
             {
-                HitBox currentBox;
-                currentBox.offset = glm::vec3();
-                currentBox.size = glm::vec3(1.0f, 1.0f, 1.0f);
+                HitBox current_box;
+                current_box.offset = glm::vec3();
+                current_box.size = glm::vec3(1.0f, 1.0f, 1.0f);
                 Transform currentTransform;
                 currentTransform.position = block_center;
 
@@ -139,8 +139,8 @@ namespace SymoCraft
 
                 if (blockFormat.m_is_solid)
                 {
-                    glm::vec3 min = currentTransform.position - (currentBox.size * 0.5f) + currentBox.offset;
-                    glm::vec3 max = currentTransform.position + (currentBox.size * 0.5f) + currentBox.offset;
+                    glm::vec3 min = currentTransform.position - (current_box.size * 0.5f) + current_box.offset;
+                    glm::vec3 max = currentTransform.position + (current_box.size * 0.5f) + current_box.offset;
                     float t1 = (min.x - origin.x) / (compare(normal_direction.x, 0.0f) ? 0.00001f : normal_direction.x);
                     float t2 = (max.x - origin.x) / (compare(normal_direction.x, 0.0f) ? 0.00001f : normal_direction.x);
                     float t3 = (min.y - origin.y) / (compare(normal_direction.y, 0.0f) ? 0.00001f : normal_direction.y);
@@ -169,8 +169,8 @@ namespace SymoCraft
 
                     out->point = origin + normal_direction * depth;
                     out->hit = true;
-                    out->block_center = currentTransform.position + currentBox.offset;
-                    out->block_size = currentBox.size;
+                    out->block_center = currentTransform.position + current_box.offset;
+                    out->block_size = current_box.size;
                     out->hit_normal = out->point - out->block_center;
                     float maxComponent = glm::max(glm::abs(out->hit_normal.x), glm::max(glm::abs(out->hit_normal.y), glm::abs(out->hit_normal.z)));
                     out->hit_normal = glm::abs(out->hit_normal.x) == maxComponent
@@ -210,11 +210,11 @@ namespace SymoCraft
             glm::vec3 blockCenter = glm::ceil(origin);
             glm::vec3 step = glm::sign(normal_direction);
             // Max amount we can step in any direction of the ray, and remain in the voxel
-            glm::vec3 blockCenterToOriginSign = glm::sign(blockCenter - origin);
+            glm::vec3 block_center_to_origin_sign = glm::sign(blockCenter - origin);
             glm::vec3 goodNormalDirection = glm::vec3(
-                    normal_direction.x == 0.0f ? 1e-10 * blockCenterToOriginSign.x : normal_direction.x,
-                    normal_direction.y == 0.0f ? 1e-10 * blockCenterToOriginSign.y : normal_direction.y,
-                    normal_direction.z == 0.0f ? 1e-10 * blockCenterToOriginSign.z : normal_direction.z);
+                    normal_direction.x == 0.0f ? 1e-10 * block_center_to_origin_sign.x : normal_direction.x,
+                    normal_direction.y == 0.0f ? 1e-10 * block_center_to_origin_sign.y : normal_direction.y,
+                    normal_direction.z == 0.0f ? 1e-10 * block_center_to_origin_sign.z : normal_direction.z);
             glm::vec3 tDelta = ((blockCenter + step) - origin) / goodNormalDirection;
             // If any number is 0, then we max the delta so we don't get a false positive
             if (tDelta.x == 0.0f) tDelta.x = 1e10;
@@ -234,7 +234,7 @@ namespace SymoCraft
                     {
                         blockCenter.x += step.x;
                         // Check if we actually hit the block
-                        if (DoRaycast(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
+                        if (DoRayTracing(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
                         {
                             return result;
                         }
@@ -244,7 +244,7 @@ namespace SymoCraft
                     else
                     {
                         blockCenter.z += step.z;
-                        if (DoRaycast(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
+                        if (DoRayTracing(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
                         {
                             return result;
                         }
@@ -257,7 +257,7 @@ namespace SymoCraft
                     if (tMax.y < tMax.z)
                     {
                         blockCenter.y += step.y;
-                        if (DoRaycast(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
+                        if (DoRayTracing(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
                         {
                             return result;
                         }
@@ -267,7 +267,7 @@ namespace SymoCraft
                     else
                     {
                         blockCenter.z += step.z;
-                        if (DoRaycast(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
+                        if (DoRayTracing(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
                         {
                             return result;
                         }
@@ -288,6 +288,7 @@ namespace SymoCraft
         static void ResolveStaticCollision(ECS::EntityId entity, RigidBody &rb, Transform &transform, HitBox &hit_box)
         {
             // Get all face coordinate of the hit box
+            // ceil : return the nearest integer >= expression
             auto right_x = (int32) glm::ceil(transform.position.x + hit_box.size.x * 0.5f);
             auto left_x = (int32) glm::ceil(transform.position.x - hit_box.size.x * 0.5f);
             auto front_z = (int32) glm::ceil(transform.position.z + hit_box.size.z * 0.5f);
@@ -554,7 +555,7 @@ namespace SymoCraft
                 res->force = z_face;
             }
         }
-
+/*
         static Interval GetInterval(const HitBox& box, const Transform& transform, const glm::vec3& axis)
         {
             glm::vec3 vertices[8];
@@ -587,9 +588,10 @@ namespace SymoCraft
             glm::vec3 origin_to_point = point - ray_origin;
             glm::vec3 ray_segment = ray_direction * ray_max_distance;
 
-            float rayMagnitudeSquared = ray_max_distance * ray_max_distance;
+            // ray_ms = ray_max_distance .2
+            float ray_magnitude_squared = ray_max_distance * ray_max_distance;
             float dot_product = glm::dot(origin_to_point, ray_segment);
-            float distance = dot_product / rayMagnitudeSquared; //The normalized "distance" from a(point) to your closest point
+            float distance = dot_product / ray_magnitude_squared; //The normalized "distance" from a(point) to your closest point
 
             if (distance < 0)     //Check if P projection is over vectorAB
             {
@@ -603,7 +605,7 @@ namespace SymoCraft
             return ray_origin + ray_direction * distance * ray_max_distance;
         }
 
-
+*/
     }
 
 }

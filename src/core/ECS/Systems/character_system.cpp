@@ -66,20 +66,6 @@ namespace SymoCraft
                         rigid_body.velocity.z *= denominator * speed;
                     }
 
-                    // TODO: Here create a mouse movement call back
-
-
-
-                    /*
-                    if (transform.yaw > 360.0f)
-                    {
-                        transform.yaw = 360.0f - transform.yaw;
-                    }
-                    else if (transform.yaw < 0)
-                    {
-                        transform.yaw = 360.0f + transform.yaw;
-                    }
-                    */
 
                     if (character_com.apply_jump_force)
                     {
