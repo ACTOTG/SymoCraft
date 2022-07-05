@@ -18,10 +18,14 @@ namespace SymoCraft{
     //   2. Draw vertices
     //   3. Clear the batch
 
-    struct Vertex3D{
+    struct BlockVertex3D{
         glm::ivec3 pos_coord;
         glm::vec3 tex_coord;
         float normal;
+    };
+
+    struct FrameVertex3D{
+        glm::ivec3 pos_coord;
     };
 
     struct VertexAttribute{
@@ -39,28 +43,25 @@ namespace SymoCraft{
         uint16  baseInstance;
     };
 
-    inline constexpr uint32 kMaxBatchSize = 10000000;
-
     template<typename T>
     class Batch
     {
     public:
         void init(std::initializer_list<VertexAttribute> vertex_attributes)
         {
-            m_data_size = sizeof(T) * kMaxBatchSize;
+            m_data_size = sizeof(T) * m_batch_size;
             data = (T*)AmoMemory_Allocate(m_data_size);
             m_vertex_count = 0;
-            zIndex = 0;
 
             // Create buffers
             glCreateBuffers(1, &m_vertex_data_vbo);
-            glCreateBuffers(1, &m_draw_command_vbo);
+//            glCreateBuffers(1, &m_draw_command_vbo);
             glCreateVertexArrays(1, &m_vao);
 
             // Allocate memory for the VBO, and bind the buffers
             glNamedBufferStorage(m_vertex_data_vbo, m_data_size, nullptr, GL_DYNAMIC_STORAGE_BIT);
-            glNamedBufferStorage(m_draw_command_vbo, World::chunk_radius * World::chunk_radius, nullptr, GL_DYNAMIC_DRAW);
-            glVertexArrayVertexBuffer(m_vao, 0, m_vertex_data_vbo, 0, sizeof(Vertex3D));
+//            glNamedBufferStorage(m_draw_command_vbo, World::chunk_radius * World::chunk_radius, nullptr, GL_DYNAMIC_DRAW);
+            glVertexArrayVertexBuffer(m_vao, 0, m_vertex_data_vbo, 0, sizeof(BlockVertex3D));
 
 
             // Configure vertex attributes
@@ -79,9 +80,9 @@ namespace SymoCraft{
         {
             if(!data)
                 AmoLogger_Error("Invalid batch.\n");
-            if (!hasRoom())
+            if (!has_room())
             {
-                AmoLogger_Error("Batch ran out of room. I have %d/%d vertices.\n", m_vertex_count, kMaxBatchSize);
+                AmoLogger_Error("Batch ran out of room. I have %d/%d vertices.\n", m_vertex_count, m_batch_size);
                 return;
             }
             if (m_vertex_count < 0)
@@ -98,9 +99,9 @@ namespace SymoCraft{
         {
             if(!data)
                 AmoLogger_Error("Invalid batch.\n");
-            if (!hasRoom())
+            if (!has_room())
             {
-                AmoLogger_Error("Batch ran out of room. I have %d/%d vertices.\n", m_vertex_count, kMaxBatchSize);
+                AmoLogger_Error("Batch ran out of room. I have %d/%d vertices.\n", m_vertex_count, m_batch_size);
                 return;
             }
             if (m_vertex_count < 0)
@@ -109,7 +110,7 @@ namespace SymoCraft{
                 return;
             }
 
-            glNamedBufferSubData(m_vertex_data_vbo, m_vertex_count * sizeof(Vertex3D), vertex_amount * sizeof(Vertex3D), vertex);
+            glNamedBufferSubData(m_vertex_data_vbo, m_vertex_count * sizeof(BlockVertex3D), vertex_amount * sizeof(BlockVertex3D), vertex);
             m_vertex_count += vertex_amount;
         }
 
@@ -122,7 +123,7 @@ namespace SymoCraft{
             }
 
             glBindVertexArray(m_vao);
-            glDrawArrays(GL_TRIANGLES, 0, m_vertex_count);
+            glDrawArrays(m_primitive_type, 0, m_vertex_count);
             glBindVertexArray(0);
 
             Clear();
@@ -148,9 +149,14 @@ namespace SymoCraft{
             }
         }
 
-        inline bool operator<(const Batch& batch) const
+        inline void SetPrimitiveType(const GLenum primitive_type)
         {
-            return (zIndex < batch.zIndex);
+            m_primitive_type = primitive_type;
+        }
+
+        inline void SetBatchSize(const uint32 new_batch_size)
+        {
+            m_batch_size = new_batch_size;
         }
 
     private:
@@ -159,12 +165,13 @@ namespace SymoCraft{
         uint32 m_draw_command_vbo;
         uint32 m_data_size;
         uint32 m_vertex_count;
-        int32 zIndex;
+        uint32 m_batch_size{10000000};
+        GLenum m_primitive_type{GL_TRIANGLES};
         T* data;
 
-        inline bool hasRoom() const
+        inline bool has_room() const
         {
-            return m_vertex_count <= kMaxBatchSize;
+            return m_vertex_count <= m_batch_size;
         }
     };
 

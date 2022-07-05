@@ -7,7 +7,7 @@
 namespace SymoCraft{
     struct Framebuffer;
 
-    extern Batch<Vertex3D> block_batch;
+    extern Batch<BlockVertex3D> chunk_batch;
     static uint16 vertex_count;
     static uint16 face_count;
 
@@ -44,7 +44,7 @@ namespace SymoCraft{
         // void draw3DModel(const glm::vec3& position, const glm::vec3& scale, float rotation, const VoxelVertex* vertices, int verticesLength);
         // void drawLine(const glm::vec3& start, const glm::vec3& end, const Style& style);
         // void drawBox(const glm::vec3& block_center_coord, const glm::vec3& size, const Style& style);
-        void AddBlocksToBatch(const glm::ivec3 &block_center_coord, const uint16 &side_tex, const uint16 &top_tex, const uint16 &bottom_tex);
+        void GenerateBlockFrameData(const glm::ivec3 &block_center_coord);
 
         void ReportStatus();
 
