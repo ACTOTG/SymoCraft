@@ -10,23 +10,17 @@
 #include "core/application.h"
 #include "camera/camera.h"
 
-namespace SymoCraft
-{
-    namespace Character
-    {
-        namespace Player
+namespace SymoCraft::Character::Player
         {
-            static ECS::EntityId camera_entity = ECS::null_entity;
 
             void Update(ECS::Registry &registry)
             {
                 for (ECS::EntityId entity : registry.View<Transform, CharacterComponent
-                                                , PlayerComponent, Physics::RigidBody>())
+                                                ,  Physics::RigidBody>())
                 {
-                    Transform &transform = registry.GetComponent<Transform>(entity);
-                    CharacterComponent &character_com = registry.GetComponent<CharacterComponent>(entity);
-                    Physics::RigidBody &rigid_body = registry.GetComponent<Physics::RigidBody>(entity);
-                    PlayerComponent &player_com = registry.GetComponent<PlayerComponent>(entity);
+                    auto &transform = registry.GetComponent<Transform>(entity);
+                    auto &character_com = registry.GetComponent<CharacterComponent>(entity);
+                    auto &rigid_body = registry.GetComponent<Physics::RigidBody>(entity);
 
                     float speed = (character_com.is_running) ? character_com.run_speed : character_com.base_speed;
                     rigid_body.velocity.x = 0;
@@ -81,23 +75,23 @@ namespace SymoCraft
                         character_com.is_jumping = false;
                     }
 
-
-                    if (camera_entity == ECS::null_entity)
-                        camera_entity = Application::GetCamera()->entity_id;
-
-                    if (camera_entity != ECS::null_entity && registry.HasComponent<Transform>(camera_entity))
+                    if (registry.HasComponent<PlayerComponent>(entity))
                     {
-                        Transform& camera_transform = registry.GetComponent<Transform>(camera_entity);
-                        camera_transform.position = transform.position + player_com.camera_offset;
-                        camera_transform.yaw = transform.yaw;
-                        camera_transform.pitch = transform.pitch;
-                    }
-                    else
-                    {
-                        AmoLogger_Warning("Camera is Null!");
+                        auto &player_com = registry.GetComponent<PlayerComponent>(entity);
+                        auto camera_entity = Application::GetCamera()->entity_id;
+
+                        if (camera_entity != ECS::null_entity && registry.HasComponent<Transform>(camera_entity))
+                        {
+                            auto& camera_transform = registry.GetComponent<Transform>(camera_entity);
+                            camera_transform.position = transform.position + player_com.camera_offset;
+                            camera_transform.yaw = transform.yaw;
+                            camera_transform.pitch = transform.pitch;
+                        }
+                        else
+                        {
+                            AmoLogger_Warning("Camera is Null!");
+                        }
                     }
                 }
             }
         }
-    }
-}

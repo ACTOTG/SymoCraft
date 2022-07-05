@@ -29,9 +29,6 @@ namespace SymoCraft
         // Free application
         void Free();
 
-        // do ray cast
-        void DoRayCast();
-
         // Get Window Reference
         Window& GetWindow();
         //

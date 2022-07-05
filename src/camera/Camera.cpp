@@ -77,7 +77,7 @@ namespace SymoCraft
     glm::mat4 Camera::GetCameraProjMat() const
     {
         Window& window = Application::GetWindow();
-        return glm::perspective( glm::radians( fov), window.GetAspectRatio() , 0.1f, 100.0f);
+        return glm::perspective( glm::radians( fov), window.GetAspectRatio() , 0.1f, 2000.0f);
     }
 
 

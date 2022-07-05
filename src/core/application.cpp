@@ -6,7 +6,6 @@
 #include "core/application.h"
 #include "core.h"
 #include "core/window.h"
-#include "core/global_thread_pool.h"
 #include "renderer/texture.h"
 #include "renderer/renderer.h"
 #include "world/chunk.h"
@@ -16,19 +15,29 @@
 #include "core/ECS/Systems/physics_system.h"
 #include "core/ECS/component.h"
 #include "world/world.h"
+#include "playercontroller/playercontroller.h"
 
 namespace SymoCraft
 {
 
-    static bool first_enter = true;  // is first enter of cursor? initialized by true
 
+    static bool first_enter = true;  // is first enter of cursor? initialized by true
 
     namespace Application
     {
+        // Block VAR
+        uint16 new_block_id = 2;
+        const uint16 kNumBlocks = 9;
+        std::string block_name[kNumBlocks + 3] = {"", "", "Grass", "Sand", "Dirt", "Stone", "Oak Log", "Oak Leaves"
+                , "Oak Planks", "Water Still"};
+        const float kBlockPlaceDebounceTime = 0.2f;
+        float block_place_debounce = 0.0f;
 
-        static float blockPlaceDebounceTime = 0.2f;
-        static float blockPlaceDebounce = 0.0f;
+        // Time variables
+        const float kBlockChangeDebounceTime = 0.2f;
+        float block_change_debounce = 0.0f;
         float delta_time = 0.016f;
+
 
         // Internal variables
         // static GlobalThreadPool* global_thread_pool;
@@ -45,7 +54,6 @@ namespace SymoCraft
             }
 
             // Initialize all other subsystems.
-            // global_thread_pool = new GlobalThreadPool(std::thread::hardware_concurrency());
             ECS::Registry &registry = GetRegistry();
             registry.RegisterComponent<Transform>("Transform");
             registry.RegisterComponent<Physics::RigidBody>("RigidBody");
@@ -108,11 +116,12 @@ namespace SymoCraft
                 double current_frame_time = glfwGetTime();
                 delta_time = (float)(current_frame_time - previous_frame_time);
 
-                blockPlaceDebounce -= delta_time;
+                block_place_debounce -= delta_time;
+                block_change_debounce -= delta_time;
 
                 // Temporary Input Process Function
                 processInput((GLFWwindow*)GetWindow().window_ptr);
-                DoRayCast();
+                PlayerController::DoRayCast(registry, window);
 
                 //::Registry &registry = GetRegistry();
 
@@ -208,6 +217,13 @@ namespace SymoCraft
         {
             GetCamera()->InsMouseScrollCallBack(window, x_pos_in, y_pos_in);
         }
+
+        void DisplayNewBlockName(uint16 block_id)
+        {
+            std::cout << "Current new block is " << block_name[block_id] << std::endl;
+        }
+
+
         void processInput(GLFWwindow* window)
         {
             if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -223,6 +239,20 @@ namespace SymoCraft
 
             player_com.is_running = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 
+            if (glfwGetKey(window, GLFW_KEY_CAPS_LOCK) == GLFW_PRESS)
+            {
+                rigid_body.is_sensor = true;
+                rigid_body.use_gravity = false;
+                player_com.movement_axis.y =
+                        glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS
+                        ? -1.0f
+                        : 0.0f;
+            }
+            else
+            {
+                rigid_body.is_sensor =false;
+                rigid_body.use_gravity = true;
+            }
 
             player_com.movement_axis.x =
                     glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS
@@ -246,48 +276,24 @@ namespace SymoCraft
                 }
             }
 
-        }
-
-
-        void DoRayCast()
-        {
-            ECS::Registry &registry = GetRegistry();
-            Window &window = GetWindow();
-
-            Character::CharacterComponent controller = registry.GetComponent<Character::CharacterComponent>(World::GetPlayer());
-            Character::PlayerComponent player_com = registry.GetComponent<Character::PlayerComponent>(World::GetPlayer());
-            Transform &transform = registry.GetComponent<Transform>(World::GetPlayer());
-
-            if (glfwGetKey((GLFWwindow*)window.window_ptr, GLFW_KEY_P) == GLFW_PRESS)  // just for debug
-                printf("transform front is (%f, %f, %f)\n", transform.front.x, transform.front.y, transform.front.z);
-
-
-            RaycastStaticResult res = Physics::RayCastStatic(transform.position + player_com.camera_offset, transform.front, 3.0f);
-            if (res.hit)
+            if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS && block_change_debounce <= 0.0f)
             {
-                //printf("ray hitted\n");
-                glm::vec3 block_looking_atpos = res.point - (res.hit_normal * 0.1f);
-
-                if (glfwGetKey((GLFWwindow*)window.window_ptr, GLFW_KEY_O) == GLFW_PRESS)  // just for debug
-                {
-                    AmoLogger_Info("-------------------------------------------");
-                    printf("block looking at position is (%f, %f, %f)\n", block_looking_atpos.x, block_looking_atpos.y, block_looking_atpos.z);
-                    printf("Player's position is (%f, %f, %f)\n", transform.position.x, transform.position.y, transform.position.z);
-                }
-                //Block blockLookingAt = ChunkManager::GetBlock(block_looking_atpos);
-                //Block airBlockLookingAt = ChunkManager::GetBlock(res.point + (res.hit_normal * 0.1f));
-
-
-                if (glfwGetMouseButton((GLFWwindow*)window.window_ptr , GLFW_MOUSE_BUTTON_LEFT)  == GLFW_PRESS && blockPlaceDebounce <= 0)
-                {
-                    static int num_delete;
-                    glm::vec3 worldPos = res.point - (res.hit_normal * 0.1f);
-                    ChunkManager::RemoveBLock(worldPos);
-                    num_delete++;
-                    std::cout << "block removed " << num_delete  << std::endl;
-                    blockPlaceDebounce = blockPlaceDebounceTime;
-                }
+                new_block_id++;
+                if (new_block_id > kNumBlocks)
+                    new_block_id = 2;
+                block_change_debounce = kBlockChangeDebounceTime;
+                DisplayNewBlockName(new_block_id);
             }
+
+            if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS && block_change_debounce <= 0.0f)
+            {
+                new_block_id--;
+                if (new_block_id <= 1)
+                    new_block_id = kNumBlocks;
+                block_change_debounce = kBlockChangeDebounceTime;
+                DisplayNewBlockName(new_block_id);
+            }
+
         }
 
     }

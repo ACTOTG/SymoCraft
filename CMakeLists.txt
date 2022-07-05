@@ -26,6 +26,7 @@ file(GLOB SOURCE_FILE
         "src/world/*.cpp"
         "src/camera/camera.cpp"
         "src/input/*.cpp"
+        "src/playercontroller/playercontroller.cpp"
         "src/event/*.cpp")
 
 add_executable(SymoCraft src/main.cpp

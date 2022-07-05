@@ -5,24 +5,11 @@
 #include "core/ECS/component.h"
 #include "core/ECS/registry.h"
 #include "core/application.h"
-#include "world/world.h"
 #include "world/chunk.h"
-#include "input/input.h"
 #include "renderer/renderer.h"
 #include "core/constants.h"
 
-namespace SymoCraft
-{
-    struct Interval
-    {
-        float _min;
-        float _max;
-    };
-
-
-    /* TODO: The Physics system does not perfect enough. It should be rebuilt afterwards.
-    */
-    namespace Physics
+namespace SymoCraft::Physics
     {
         // The main component of our physics system is collision
         // The remaining part of it is to deal with collision
@@ -94,9 +81,9 @@ namespace SymoCraft
                 for (ECS::EntityId entity : registry.View<Transform, RigidBody, HitBox>())
                 {
 
-                    RigidBody& rb = registry.GetComponent<RigidBody>(entity);
-                    Transform& transform = registry.GetComponent<Transform>(entity);
-                    HitBox& hit_box = registry.GetComponent<HitBox>(entity);
+                    auto &rb = registry.GetComponent<RigidBody>(entity);
+                    auto &transform = registry.GetComponent<Transform>(entity);
+                    auto &hit_box = registry.GetComponent<HitBox>(entity);
 
                     transform.position += rb.velocity * kPhysicsUpdateRate;
                     rb.velocity += rb.acceleration * kPhysicsUpdateRate;
@@ -124,14 +111,14 @@ namespace SymoCraft
                               const glm::vec3& block_corner, const glm::vec3& step, RaycastStaticResult* out)
         {
             glm::vec3 block_center = block_corner - (glm::vec3(0.5f) * step);
-            int blockId = ChunkManager::GetBlock(block_center).block_id;
-            //BlockFormat block = get_block(blockId);
-            if (blockId != BlockConstants::NULL_BLOCK.block_id && blockId != BlockConstants::AIR_BLOCK.block_id)
+            int block_id = ChunkManager::GetBlock(block_center).block_id;
+
+            if (block_id != BlockConstants::NULL_BLOCK.block_id && block_id != BlockConstants::AIR_BLOCK.block_id)
             {
-                HitBox current_box;
+                HitBox current_box{};
                 current_box.offset = glm::vec3();
                 current_box.size = glm::vec3(1.0f, 1.0f, 1.0f);
-                Transform currentTransform;
+                Transform currentTransform{};
                 currentTransform.position = block_center;
 
                 Block block = ChunkManager::GetBlock(currentTransform.position);
@@ -184,17 +171,18 @@ namespace SymoCraft
 
             return false;
         }
-        // Raycast for player on the block
+        // Ray casting from player on the block
 
 
         RaycastStaticResult RayCastStatic(const glm::vec3 &origin, const glm::vec3 &normal_direction
                 , float max_distance, bool draw)
         {
-            RaycastStaticResult result;
+            RaycastStaticResult result{};
             result.hit = false;
 
             if (compare(normal_direction, glm::vec3(0, 0, 0)))
             {
+                // invalid normal direction, return null result
                 return result;
             }
 
@@ -203,79 +191,68 @@ namespace SymoCraft
 			{
 				Renderer::drawLine(origin, origin + normal_direction * max_distance,);
 			}
-                */
+            */
             // NOTE: the reference paper: http://www.cse.yorku.ca/~amana/research/grid.pdf
             glm::vec3 rayEnd = origin + normal_direction * max_distance;
+
             // Do some fancy math to figure out which voxel is the next voxel
-            glm::vec3 blockCenter = glm::ceil(origin);
+            glm::vec3 block_center = glm::ceil(origin);
+            // step is the sign of normal direction
             glm::vec3 step = glm::sign(normal_direction);
             // Max amount we can step in any direction of the ray, and remain in the voxel
-            glm::vec3 block_center_to_origin_sign = glm::sign(blockCenter - origin);
-            glm::vec3 goodNormalDirection = glm::vec3(
+            glm::vec3 block_center_to_origin_sign = glm::sign(block_center - origin);
+            glm::vec3 revised_normal_direction = glm::vec3(
                     normal_direction.x == 0.0f ? 1e-10 * block_center_to_origin_sign.x : normal_direction.x,
                     normal_direction.y == 0.0f ? 1e-10 * block_center_to_origin_sign.y : normal_direction.y,
                     normal_direction.z == 0.0f ? 1e-10 * block_center_to_origin_sign.z : normal_direction.z);
-            glm::vec3 tDelta = ((blockCenter + step) - origin) / goodNormalDirection;
-            // If any number is 0, then we max the delta so we don't get a false positive
-            if (tDelta.x == 0.0f) tDelta.x = 1e10;
-            if (tDelta.y == 0.0f) tDelta.y = 1e10;
-            if (tDelta.z == 0.0f) tDelta.z = 1e10;
-            glm::vec3 tMax = tDelta;
-            float minTValue;
+            glm::vec3 t_delta = ((block_center + step) - origin) / revised_normal_direction;
+            // If any number is 0, then we max the delta so that we don't get a false positive
+            if (t_delta.x == 0.0f) t_delta.x = 1e10;
+            if (t_delta.y == 0.0f) t_delta.y = 1e10;
+            if (t_delta.z == 0.0f) t_delta.z = 1e10;
+            glm::vec3 t_max = t_delta;
+            float min_t_value;
             do
             {
-                // TODO: This shouldn't have to be calculated every step
-                tDelta = (blockCenter - origin) / goodNormalDirection;
-                tMax = tDelta;
-                minTValue = FLT_MAX;
-                if (tMax.x < tMax.y)
+                t_delta = (block_center - origin) / revised_normal_direction;
+                t_max = t_delta;
+                min_t_value = FLT_MAX;
+                if (t_max.x < t_max.y)
                 {
-                    if (tMax.x < tMax.z)
+                    if (t_max.x < t_max.z)
                     {
-                        blockCenter.x += step.x;
+                        block_center.x += step.x;
                         // Check if we actually hit the block
-                        if (DoRayTracing(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
-                        {
+                        if (DoRayTracing(origin, normal_direction, max_distance, draw, block_center, step, &result))
                             return result;
-                        }
-                        //tMax.x += tDelta.x;
-                        minTValue = tMax.x;
+                        min_t_value = t_max.x;
                     }
                     else
                     {
-                        blockCenter.z += step.z;
-                        if (DoRayTracing(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
-                        {
+                        block_center.z += step.z;
+                        if (DoRayTracing(origin, normal_direction, max_distance, draw, block_center, step, &result))
                             return result;
-                        }
-                        //tMax.z += tDelta.z;
-                        minTValue = tMax.z;
+                        min_t_value = t_max.z;
                     }
                 }
                 else
                 {
-                    if (tMax.y < tMax.z)
+                    if (t_max.y < t_max.z)
                     {
-                        blockCenter.y += step.y;
-                        if (DoRayTracing(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
-                        {
+                        block_center.y += step.y;
+                        if (DoRayTracing(origin, normal_direction, max_distance, draw, block_center, step, &result))
                             return result;
-                        }
-                        //tMax.y += tDelta.y;
-                        minTValue = tMax.y;
+                        min_t_value = t_max.y;
                     }
                     else
                     {
-                        blockCenter.z += step.z;
-                        if (DoRayTracing(origin, normal_direction, max_distance, draw, blockCenter, step, &result))
-                        {
+                        block_center.z += step.z;
+                        if (DoRayTracing(origin, normal_direction, max_distance, draw, block_center, step, &result))
                             return result;
-                        }
-                        //tMax.z += tDelta.z;
-                        minTValue = tMax.z;
+                        min_t_value = t_max.z;
                     }
                 }
-            } while (minTValue < max_distance);
+            } while (min_t_value < max_distance);
 
             return result;
         }
@@ -394,11 +371,11 @@ namespace SymoCraft
             return false;
             */
 
-            for (int i = 0; i < 3; i++)
+            for (auto test_axe : test_axes)
             {
                 float penetration = PenetrationAmount(hb1_negative, hb1_positive
                                                       , hb2_negative, hb2_positive
-                                                      , test_axes[i]);
+                                                      , test_axe);
                 if (glm::abs(penetration) <= 0.001f)
                     return false;
             }
@@ -442,7 +419,7 @@ namespace SymoCraft
         static CollisionInfo StaticCollisionInformation(const RigidBody& rb1, const HitBox &hb1, const Transform& tr1
                 , const HitBox &hb2, const Transform& tr2)
         {
-            CollisionInfo res;
+            CollisionInfo res{};
             res.did_collision = true;
             HitBox hb2_expanded = hb2;
             hb2_expanded.size += hb1.size;
@@ -607,5 +584,3 @@ namespace SymoCraft
 
 */
     }
-
-}
