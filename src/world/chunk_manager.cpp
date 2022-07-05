@@ -86,9 +86,9 @@ namespace SymoCraft{
                 new_chunk.m_local_blocks = (Block *)AmoMemory_Allocate(
                         sizeof(Block) * k_chunk_length * k_chunk_width * k_chunk_height);
                 new_chunk.m_chunk_coord = chunk_coord;
-                new_chunk.m_vertex_data = (Vertex3D *) AmoMemory_Allocate(sizeof(Vertex3D) * World::max_vertices_per_chunk);
+                new_chunk.m_vertex_data = (BlockVertex3D *) AmoMemory_Allocate(sizeof(BlockVertex3D) * World::max_vertices_per_chunk);
                 new_chunk.m_vertex_count = 0;
-                new_chunk.m_draw_command.first = chunk_index++ * sizeof(Vertex3D) * World::max_vertices_per_chunk;
+                new_chunk.m_draw_command.first = chunk_index++ * sizeof(BlockVertex3D) * World::max_vertices_per_chunk;
                 new_chunk.m_draw_command.baseInstance = 0;
                 new_chunk.m_draw_command.instanceCount = 1;
                 new_chunk.front_neighbor = GetChunk(chunk_coord + INormals2::Front);
@@ -138,7 +138,7 @@ namespace SymoCraft{
                 if(pair.second.m_vertex_count == 0 || pair.second.m_is_fringe_chunk)
                     continue;
                 else
-                    block_batch.AddVertex(pair.second.m_vertex_data, pair.second.m_vertex_count);
+                    chunk_batch.AddVertex(pair.second.m_vertex_data, pair.second.m_vertex_count);
         }
     }
 }

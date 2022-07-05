@@ -5,11 +5,13 @@
 #include "core/constants.h"
 
 namespace SymoCraft{
-    Batch<Vertex3D> block_batch;
+    Batch<BlockVertex3D> chunk_batch;
+    Batch<FrameVertex3D> block_frame_batch;
 
     namespace Renderer {
 
         static ShaderProgram block_shader;
+        static ShaderProgram block_frame_shader;
         static Camera *camera;
 
         static glm::mat4 g_projection_mat;
@@ -46,26 +48,32 @@ namespace SymoCraft{
             glDepthFunc(GL_LESS);
             glDepthMask(GL_TRUE);
 
+
+            block_frame_batch.SetPrimitiveType(GL_LINES);
+            block_frame_batch.SetBatchSize(100);
             // Initialize shaders
             block_shader.CompileAndLink("../assets/shaders/vs_BlockShader.glsl",
                                         "../assets/shaders/fs_BlockShader.glsl");
 
+            block_frame_shader.CompileAndLink("../assets/shaders/vs_FrameShader.glsl",
+                                              "../assets/shaders/fs_FrameShader.glsl");
+
             // Initialize batches
-            block_batch.init({
-                                     {0, 3,   GL_INT, offsetof(Vertex3D, pos_coord)},
-                                     {1, 3, GL_FLOAT, offsetof(Vertex3D, tex_coord)},
-                                     {2, 1, GL_FLOAT, offsetof(Vertex3D, normal   )}});
+            chunk_batch.init({
+                                     {0, 3,   GL_INT, offsetof(BlockVertex3D, pos_coord)},
+                                     {1, 3, GL_FLOAT, offsetof(BlockVertex3D, tex_coord)},
+                                     {2, 1, GL_FLOAT, offsetof(BlockVertex3D, normal   )}});
+
+            block_frame_batch.init( {
+                                    {0, 3,   GL_INT, offsetof(BlockVertex3D, pos_coord)}});
 
 
-            // Initialize command buffers
-
-            loadBlocks("../assets/configs/blockFormats.yaml");
-
-            AmoLogger_Log("Querying grass block id %d\n", get_block_id("grass_block"));
+            LoadBlocks("../assets/configs/blockFormats.yaml");
         }
 
         void Free() {
-            block_batch.Free();
+            chunk_batch.Free();
+            block_frame_batch.Free();
             block_shader.Destroy();
 
             // shader2D.destroy();
@@ -103,7 +111,7 @@ namespace SymoCraft{
             g_combo_mat = g_projection_mat * g_view_mat;
 
             block_shader.UploadMat4("u_combo_mat", g_combo_mat);
-            block_batch.Draw();
+            chunk_batch.Draw();
 
             block_shader.Unbind();
         }
@@ -113,7 +121,7 @@ namespace SymoCraft{
 
             g_combo_mat = projection_mat * view_mat;
             block_shader.UploadMat4("u_combo_mat", g_combo_mat);
-            block_batch.Draw();
+            chunk_batch.Draw();
 
             block_shader.Unbind();
         }
@@ -132,35 +140,29 @@ namespace SymoCraft{
         // Draw 3D Functions
         // =========================================================
 
-        static std::array<std::array<Vertex3D, 4>, 6> block_faces{}; // Each block contains 6 faces, which contains 4 vertices
+        static std::array<std::array<BlockVertex3D, 4>, 6> block_faces{}; // Each block contains 6 faces, which contains 4 vertices
 
         static uint16 index;
 
-        void AddBlocksToBatch(const glm::ivec3 &block_center_coord, const uint16 &side_tex, const uint16 &top_tex,
-                              const uint16 &bottom_tex) {
+        void GenerateBlockFrameData(const glm::ivec3 &block_center_coord) {
             // Let Amo decide what value should the normal have...
             // glm::vec3 normal = glm::vec3(offset.x, offset.y, offset.z);
 
             for (index = 0; auto &face: block_faces) {
                 for (auto &vertex: face) {
                     vertex.pos_coord = (block_center_coord + BlockConstants::pos_coords[BlockConstants::vertex_indices[index]]);
-                    vertex.tex_coord = {BlockConstants::tex_coords[index % 4], // Set uv coords
-                                        (index >= 16) ? // Set layer index, sides first, the top second, the bottom last
-                                        ((index >= 20) ? bottom_tex : top_tex) // if 16 <= index < 20, assign top_tex
-                                                      : side_tex}; // if index < 16, assign side_tex
-                    vertex.normal = g_normal;
                     index++;
                 }
 
                 // Add the block's top left triangle
-                block_batch.AddVertex(face[0]);
-                block_batch.AddVertex(face[1]);
-                block_batch.AddVertex(face[2]);
+                chunk_batch.AddVertex(face[0]);
+                chunk_batch.AddVertex(face[1]);
+                chunk_batch.AddVertex(face[2]);
 
                 // Add the block's bottom right triangle
-                block_batch.AddVertex(face[0]);
-                block_batch.AddVertex(face[2]);
-                block_batch.AddVertex(face[3]);
+                chunk_batch.AddVertex(face[0]);
+                chunk_batch.AddVertex(face[2]);
+                chunk_batch.AddVertex(face[3]);
             }
         }
 

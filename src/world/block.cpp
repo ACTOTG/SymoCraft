@@ -30,7 +30,7 @@ namespace SymoCraft{
         return block_format_map[blockId];
     }
 
-    void loadBlocks(std::string_view block_format_config)
+    void LoadBlocks(std::string_view block_format_config)
     {
         YAML::Node block_formats = YAML::LoadFile(block_format_config.data());
 

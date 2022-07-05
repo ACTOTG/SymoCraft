@@ -10,7 +10,7 @@
 namespace SymoCraft
 {
     static float g_normal;
-    static std::array<std::array<Vertex3D, 4>, 6> block_faces{}; // Each block contains 6 faces, which contains 4 vertices
+    static std::array<std::array<BlockVertex3D, 4>, 6> block_faces{}; // Each block contains 6 faces, which contains 4 vertices
 
     Block Chunk::GetLocalBlock(int x, int y, int z) {
         if (x >= k_chunk_length || x < 0 || z >= k_chunk_width || z < 0) {
@@ -265,16 +265,12 @@ namespace SymoCraft
                            // Start generating
                            if (y + 1 + top_ring_y < k_chunk_height) {
                                // Generate trunks
-                               for (int trunk_y = 0; trunk_y <= top_trunk_y; trunk_y++) {
-                                   m_local_blocks[GetLocalBlockIndex(x, trunk_y + y, z)].block_id = 6;
-                                   m_local_blocks[GetLocalBlockIndex(x, trunk_y + y, z)].SetBlendability(false);
-                                   m_local_blocks[GetLocalBlockIndex(x, trunk_y + y, z)].SetTransparency(false);
-                                   m_local_blocks[GetLocalBlockIndex(x, trunk_y + y, z)].SetIsLightSource(false);
-                               }
+                               for (int trunk_y = 0; trunk_y <= top_trunk_y; trunk_y++)
+                                   SetLocalBlock(x, trunk_y + y, z, 6);
+
 
                                int leaf_y = bottom_ring_y + y;
                                int leaf_radius = 2;
-
                                // Generate the bottom two rings
                                for (int loop_count = 1; loop_count <= 2; loop_count++)
                                {
@@ -346,7 +342,7 @@ namespace SymoCraft
         AmoMemory_Free(m_vertex_data);
 
         //Initialization
-        m_vertex_data = (Vertex3D *) AmoMemory_Allocate(sizeof(Vertex3D) * World::max_vertices_per_chunk);
+        m_vertex_data = (BlockVertex3D *) AmoMemory_Allocate(sizeof(BlockVertex3D) * World::max_vertices_per_chunk);
 
         state = ChunkState::Updated;
         if(m_is_fringe_chunk)
@@ -427,7 +423,7 @@ namespace SymoCraft
             }
         }
 
-        AmoMemory_ReAlloc(m_vertex_data, sizeof(Vertex3D) * m_vertex_count);
+        AmoMemory_ReAlloc(m_vertex_data, sizeof(BlockVertex3D) * m_vertex_count);
     }
 
     void Chunk::UpdateChunkLocalBlocks(const glm::vec3& block_local_coord)

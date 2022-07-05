@@ -36,7 +36,7 @@ namespace SymoCraft {
     class Chunk {
     public:
         Block* m_local_blocks;
-        Vertex3D* m_vertex_data;
+        BlockVertex3D* m_vertex_data;
         uint16 m_vertex_count;
         glm::ivec2 m_chunk_coord;
         DrawArraysIndirectCommand m_draw_command;

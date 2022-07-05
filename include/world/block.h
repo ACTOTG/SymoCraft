@@ -15,7 +15,7 @@ namespace SymoCraft
         int16 m_light_level;
     };
 
-    void loadBlocks(std::string_view block_format_config);
+    void LoadBlocks(std::string_view block_format_config);
     uint16 get_block_id(std::string_view block_name);
     const BlockFormat& get_block(int block_id);
     const BlockFormat& get_block(std::string_view name);
