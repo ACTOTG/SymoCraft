@@ -6,12 +6,12 @@
 
 namespace SymoCraft{
     Batch<BlockVertex3D> chunk_batch;
-    Batch<FrameVertex3D> block_frame_batch;
+    Batch<LineVertex3D> line_batch;
 
     namespace Renderer {
 
         static ShaderProgram block_shader;
-        static ShaderProgram block_frame_shader;
+        static ShaderProgram line3D_shader;
         static Camera *camera;
 
         static glm::mat4 g_projection_mat;
@@ -49,14 +49,14 @@ namespace SymoCraft{
             glDepthMask(GL_TRUE);
 
 
-            block_frame_batch.SetPrimitiveType(GL_LINES);
-            block_frame_batch.SetBatchSize(100);
+            line_batch.SetPrimitiveType(GL_LINES);
+            line_batch.SetBatchSize(100);
             // Initialize shaders
             block_shader.CompileAndLink("../assets/shaders/vs_BlockShader.glsl",
                                         "../assets/shaders/fs_BlockShader.glsl");
 
-            block_frame_shader.CompileAndLink("../assets/shaders/vs_FrameShader.glsl",
-                                              "../assets/shaders/fs_FrameShader.glsl");
+            line3D_shader.CompileAndLink("../assets/shaders/vs_FrameShader.glsl",
+                                         "../assets/shaders/fs_FrameShader.glsl");
 
             // Initialize batches
             chunk_batch.init({
@@ -64,7 +64,7 @@ namespace SymoCraft{
                                      {1, 3, GL_FLOAT, offsetof(BlockVertex3D, tex_coord)},
                                      {2, 1, GL_FLOAT, offsetof(BlockVertex3D, normal   )}});
 
-            block_frame_batch.init( {
+            line_batch.init({
                                     {0, 3,   GL_INT, offsetof(BlockVertex3D, pos_coord)}});
 
 
@@ -73,7 +73,7 @@ namespace SymoCraft{
 
         void Free() {
             chunk_batch.Free();
-            block_frame_batch.Free();
+            line_batch.Free();
             block_shader.Destroy();
 
             // shader2D.destroy();
@@ -86,34 +86,33 @@ namespace SymoCraft{
             ClearBuffers();
 
             DrawBatches3D();
-            // flushBatches2D();
-            // flushVoxelBatches();
         }
 
         void ReloadShaders() {
-            // shader2D.destroy();
-            // line3DShader.destroy();
             block_shader.Destroy();
-            // batch3DVoxelsShader.destroy();
+            line3D_shader.Destroy();
 
-            // shader2D.compile("assets/shaders/DebugShader2D.glsl");
-            // line3DShader.compile("assets/shaders/DebugShader3D.glsl");
             block_shader.CompileAndLink("assets/shaders/vs_BlockShader.glsl",
                                         "assets/shaders/fs_BlockShader.glsl");
-            // batch3DVoxelsShader.compile("assets/shaders/VoxelShader.glsl");
+            line3D_shader.CompileAndLink("../assets/shaders/vs_FrameShader.glsl",
+                                         "../assets/shaders/fs_FrameShader.glsl");
         }
 
         void DrawBatches3D() {
-            block_shader.Bind();
-
             g_projection_mat = camera->GetCameraProjMat();
             g_view_mat = camera->GetCameraViewMat();
             g_combo_mat = g_projection_mat * g_view_mat;
 
+            block_shader.Bind();
             block_shader.UploadMat4("u_combo_mat", g_combo_mat);
             chunk_batch.Draw();
-
             block_shader.Unbind();
+
+            line3D_shader.Bind();
+            line3D_shader.UploadMat4("u_combo_mat", g_combo_mat);
+            line_batch.ReloadData();
+            line_batch.Draw();
+            line3D_shader.Unbind();
         }
 
         void FlushBatches3D(const glm::mat4 &projection_mat, const glm::mat4 &view_mat) {
@@ -140,29 +139,17 @@ namespace SymoCraft{
         // Draw 3D Functions
         // =========================================================
 
-        static std::array<std::array<BlockVertex3D, 4>, 6> block_faces{}; // Each block contains 6 faces, which contains 4 vertices
-
+        static std::array<LineVertex3D, 24> frame_vertices{}; // Each block contains 6 faces, which contains 4 vertices
         static uint16 index;
+        static glm::mat4 scale_mat = glm::scale(scale_mat, glm::vec3(1.2, 1.2, 1.2));
 
-        void GenerateBlockFrameData(const glm::ivec3 &block_center_coord) {
-            // Let Amo decide what value should the normal have...
-            // glm::vec3 normal = glm::vec3(offset.x, offset.y, offset.z);
-
-            for (index = 0; auto &face: block_faces) {
-                for (auto &vertex: face) {
-                    vertex.pos_coord = (block_center_coord + BlockConstants::pos_coords[BlockConstants::vertex_indices[index]]);
-                    index++;
-                }
-
-                // Add the block's top left triangle
-                chunk_batch.AddVertex(face[0]);
-                chunk_batch.AddVertex(face[1]);
-                chunk_batch.AddVertex(face[2]);
-
-                // Add the block's bottom right triangle
-                chunk_batch.AddVertex(face[0]);
-                chunk_batch.AddVertex(face[2]);
-                chunk_batch.AddVertex(face[3]);
+        // Generate render data for the ray cast block
+        void GenerateBlockFrameData(const glm::vec3 &block_center_coord) {
+            glm::ivec3 adjusted_coord = glm::floor(block_center_coord);
+            for (index = 0; auto &vertex: frame_vertices) {
+                vertex.pos_coord = scale_mat * glm::vec4(adjusted_coord + BlockConstants::pos_coords[BlockConstants::frame_indices[index]], 1.0f);
+                line_batch.AddVertex(vertex);
+                index++;
             }
         }
 

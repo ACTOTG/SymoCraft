@@ -24,7 +24,7 @@ namespace SymoCraft{
         float normal;
     };
 
-    struct FrameVertex3D{
+    struct LineVertex3D{
         glm::ivec3 pos_coord;
     };
 
@@ -116,11 +116,11 @@ namespace SymoCraft{
 
         void Draw()  //Draw vertices
         {
-            if (m_vertex_count <= 0)
-            {
-                std::cerr << "No vertices to draw.\n";
-                return;
-            }
+//            if (m_vertex_count <= 0)
+//            {
+//                std::cerr << "No vertices to draw.\n";
+//                return;
+//            }
 
             glBindVertexArray(m_vao);
             glDrawArrays(m_primitive_type, 0, m_vertex_count);

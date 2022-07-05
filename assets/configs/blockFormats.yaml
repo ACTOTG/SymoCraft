@@ -53,9 +53,9 @@ oak_leaves:
   isBlendable: true
 oak_planks:
   id: 8
-  side: 5
-  top: 5
-  bottom: 5
+  side: 4
+  top: 4
+  bottom: 4
   isSolid: true 
   isTransparent: false
 water_still:
@@ -65,3 +65,17 @@ water_still:
   bottom: 10
   isSolid: false
   isTransparent: true
+birch_planks:
+  id: 10
+  side: 5
+  top: 5
+  bottom: 5
+  isSolid: true
+  isTransparent: false
+cobblestone:
+  id: 11
+  side: 3
+  top: 3
+  bottom: 3
+  isSolid: true
+  isTransparent: false

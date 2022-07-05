@@ -10,6 +10,7 @@
 #include "core/ECS/Systems/physics_system.h"
 #include "world/world.h"
 #include "world/chunk_manager.h"
+#include "renderer/renderer.h"
 
 void SymoCraft::PlayerController::DoRayCast( ECS::Registry &registry, Window &window)
 {
@@ -22,6 +23,7 @@ void SymoCraft::PlayerController::DoRayCast( ECS::Registry &registry, Window &wi
     {
         //printf("ray hitted\n");
         glm::vec3 block_looking_atpos = res.point - (res.hit_normal * 0.1f);
+        Renderer::GenerateBlockFrameData(block_looking_atpos);
 
         if (glfwGetMouseButton((GLFWwindow*)window.window_ptr, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS
             && Application::block_place_debounce <=0)

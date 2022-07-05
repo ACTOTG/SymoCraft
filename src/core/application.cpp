@@ -127,6 +127,7 @@ namespace SymoCraft
                 TransformSystem::Update(GetRegistry());
                 Physics::Update(GetRegistry());
                 Character::Player::Update(GetRegistry());
+
                 ChunkManager::UpdateAllChunks();
                 ChunkManager::LoadAllChunks();
 

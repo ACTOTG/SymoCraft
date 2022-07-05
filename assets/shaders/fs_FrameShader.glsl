@@ -6,5 +6,5 @@ out vec4 o_frag_color;
 
 void main()
 {
-    o_frag_color = vec4(1.0f, 0.98f, 0.98f, 1.0f);
+    o_frag_color = vec4(0.863f, 0.078f, 0.235f, 1.0f);
 }

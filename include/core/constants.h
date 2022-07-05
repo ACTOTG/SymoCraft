@@ -60,6 +60,12 @@ namespace SymoCraft
                 2, 1, 0, 3  // Bottom face
         };
 
+        inline constexpr std::array<uint16, 24> frame_indices = {
+                7, 6,  6, 2,  2, 3,  3, 7,
+                7, 4,  6, 5,  2, 1,  3, 0,
+                5, 4,  4, 0,  0, 1,  1, 5
+        };
+
         inline constexpr Block NULL_BLOCK{0, 255, 255, 255};
         inline constexpr Block AIR_BLOCK{1, 255, 255, 255};
     }
