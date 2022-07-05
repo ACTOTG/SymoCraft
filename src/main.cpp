@@ -14,4 +14,5 @@ int main()
     SymoCraft::Application::Free();
 
     AmoBase::AmoMemory_MemoryLeaksDetected();
+    return 0;
 }

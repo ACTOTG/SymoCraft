@@ -31,7 +31,7 @@ namespace SymoCraft
         float delta_time = 0.016f;
 
         // Internal variables
-        static GlobalThreadPool* global_thread_pool;
+        // static GlobalThreadPool* global_thread_pool;
         static Camera* camera;
 
         void Init()
@@ -137,8 +137,8 @@ namespace SymoCraft
             // Free assets
 
             // Free resources
-            global_thread_pool->Free();
-            delete global_thread_pool;
+            // global_thread_pool->Free();
+            // delete global_thread_pool;
 
             Window& window = GetWindow();
             window.Destroy();
@@ -163,12 +163,12 @@ namespace SymoCraft
             static ECS::Registry* registry = new ECS::Registry;
             return *registry;
         }
-
+/*
         GlobalThreadPool& GetGlobalThreadPool()
         {
             return *global_thread_pool;
         }
-
+*/
         void MouseMovementCallBack(GLFWwindow* window, double xpos_in, double ypos_in)
         {
             static float last_x = 0;       // last x position of cursor
@@ -262,7 +262,7 @@ namespace SymoCraft
                 printf("transform front is (%f, %f, %f)\n", transform.front.x, transform.front.y, transform.front.z);
 
 
-            RaycastStaticResult res = Physics::RaycastStatic(transform.position + player_com.camera_offset, transform.front, 3.0f);
+            RaycastStaticResult res = Physics::RayCastStatic(transform.position + player_com.camera_offset, transform.front, 3.0f);
             if (res.hit)
             {
                 //printf("ray hitted\n");

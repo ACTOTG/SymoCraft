@@ -187,7 +187,7 @@ namespace SymoCraft
         // Raycast for player on the block
 
 
-        RaycastStaticResult RaycastStatic(const glm::vec3 &origin, const glm::vec3 &normal_direction
+        RaycastStaticResult RayCastStatic(const glm::vec3 &origin, const glm::vec3 &normal_direction
                 , float max_distance, bool draw)
         {
             RaycastStaticResult result;

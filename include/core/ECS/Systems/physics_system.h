@@ -27,8 +27,8 @@ namespace SymoCraft
         // physic update function
         void Update(ECS::Registry& registry);
 
-        // Raycast for player on the block
-        RaycastStaticResult RaycastStatic(const glm::vec3 &origin, const glm::vec3 &normal_direction
+        // Ray Casting for player on the block
+        RaycastStaticResult RayCastStatic(const glm::vec3 &origin, const glm::vec3 &normal_direction
                                            , float max_distance, bool draw = false);
     }
 }
