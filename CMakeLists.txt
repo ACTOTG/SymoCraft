@@ -26,18 +26,32 @@ file(GLOB SOURCE_FILE
         "src/world/*.cpp"
         "src/camera/camera.cpp"
         "src/input/*.cpp"
-        "src/playercontroller/playercontroller.cpp"
+        "src/playercontroller/*.cpp"
         "src/event/*.cpp")
 
+
+link_directories(${PROJECT_SOURCE_DIR}/lib/irrKlang)
+
+include_directories(vendor include vendor/glfw/include/)
+
 add_executable(SymoCraft src/main.cpp
-                         vendor/glad/glad.c
-                         ${SOURCE_FILE}
-                         ${MemoryAllocator}
-                         ${Core}
-                         ${ECS})
+        vendor/glad/glad.c
+        ${SOURCE_FILE}
+        ${MemoryAllocator}
+        ${Core}
+        ${ECS})
+
+
+# Copying of all necessary dll files on which the executable depends
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${PROJECT_SOURCE_DIR}/lib/irrKlang"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/glfw)
-target_link_libraries(${PROJECT_NAME} glfw)
 
-include_directories(vendor include vendor/glfw/include/)
+target_link_libraries(${PROJECT_NAME}
+        glfw
+        irrKlang)
+

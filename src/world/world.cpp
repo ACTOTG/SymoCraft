@@ -14,7 +14,7 @@ namespace SymoCraft::World{
         CreatePlayer();
     }
 
-    glm::ivec2 toChunkCoords(const glm::vec3& worldCoordinates)
+    glm::ivec2 ToChunkCoords(const glm::vec3& worldCoordinates)
     {
         return {
             glm::floor(worldCoordinates.x / 16.0f),

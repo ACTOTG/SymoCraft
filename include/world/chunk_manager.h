@@ -23,11 +23,6 @@ namespace SymoCraft{
 
     namespace ChunkManager
     {
-        void init();
-        void free();
-        void serialize();
-        void serializeSynchronous();
-
         robin_hood::unordered_node_map<glm::ivec2, Chunk>& GetAllChunks();
 
         Block GetBlock(const glm::vec3& worldPosition);
@@ -38,10 +33,6 @@ namespace SymoCraft{
         Chunk* GetChunk(const glm::ivec2& chunkCoords);
 
         void RearrangeChunkNeighborPointers();
-        void UpdateChunkLocalBlocks();
-        void SetPlayerChunkCoord(const glm::ivec2& player_chunk_coord);
-
-        void render(const glm::vec3& playerPosition, const glm::ivec2& playerPositionInChunkCoords, Shader& opaqueShader, Shader& transparentShader, const Frustum& cameraFrustum);
 
         void CreateChunk(const glm::ivec2& chunk_coord);
         void UpdateAllChunks();

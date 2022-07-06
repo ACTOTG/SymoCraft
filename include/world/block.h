@@ -22,13 +22,6 @@ namespace SymoCraft
 
     class Block {
     public:
-        // Gabe's reference note
-        // 64 bits per block
-        // 16 bits integer id 2^16
-        //  4 bits light level 0-15
-        //  4 bits rotation direction
-        //  8 bits block type
-        // 32 bits extra stuff
         uint16 block_id;
         uint16 lightLevel;
         int16 lightColor;
@@ -84,7 +77,7 @@ namespace SymoCraft
             bitwise_compressed_data |= is_blendable ? (1 << 1) : 0;
         }
 
-        inline void SetIsLightSource(bool is_lightSource)
+        inline void SetLightSource(bool is_lightSource)
         {
             // Clear the bit
             bitwise_compressed_data &= ~(1 << 2);

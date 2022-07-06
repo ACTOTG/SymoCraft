@@ -3,6 +3,7 @@
 //
 
 #define STB_IMAGE_IMPLEMENTATION
+
 #include "core/application.h"
 #include "core.h"
 #include "core/window.h"
@@ -25,11 +26,11 @@ namespace SymoCraft
 
     namespace Application
     {
+        //irrklang::ISoundEngine *SoundEngine = irrklang::createIrrKlangDevice();
+
         // Block VAR
-        uint16 new_block_id = 2;
-        const uint16 kNumBlocks = 9;
-        std::string block_name[kNumBlocks + 3] = {"", "", "Grass", "Sand", "Dirt", "Stone", "Oak Log", "Oak Leaves"
-                , "Oak Planks", "Water Still"};
+        int new_block_id = 0;
+        const int kNumBlocks = 7;
         const float kBlockPlaceDebounceTime = 0.2f;
         float block_place_debounce = 0.0f;
 
@@ -104,7 +105,7 @@ namespace SymoCraft
 
             ECS::Registry &registry = GetRegistry();
             glm::vec3 start_pos{0.0f, 140.0f, 0.0f};
-            Transform &transform = registry.GetComponent<Transform>(World::GetPlayer());
+            auto &transform = registry.GetComponent<Transform>(World::GetPlayer());
             transform.position = start_pos;
             Renderer::ReportStatus();
 
@@ -163,13 +164,13 @@ namespace SymoCraft
 
         Camera* GetCamera()
         {
-            static Camera* camera = new Camera(GetWindow().width, GetWindow().height);
+            static auto* camera = new Camera((float)GetWindow().width, (float)GetWindow().height);
             return camera;
         }
 
         ECS::Registry &GetRegistry()
         {
-            static ECS::Registry* registry = new ECS::Registry;
+            static auto* registry = new ECS::Registry;
             return *registry;
         }
 /*
@@ -184,8 +185,8 @@ namespace SymoCraft
             static float last_y = 0;       // last y position of cursor
             ECS::Registry &registry = Application::GetRegistry();
             //Transform &transform = registry.GetComponent<Transform>(camera->entity_id);
-            Transform &transform = registry.GetComponent<Transform>(World::GetPlayer());
-            Character::PlayerComponent &player_com = registry.GetComponent<Character::PlayerComponent>(World::GetPlayer());
+            auto &transform = registry.GetComponent<Transform>(World::GetPlayer());
+            auto &player_com = registry.GetComponent<Character::PlayerComponent>(World::GetPlayer());
             auto xpos = static_cast<float>(xpos_in);
             auto ypos = static_cast<float>(ypos_in);
 
@@ -218,20 +219,14 @@ namespace SymoCraft
             GetCamera()->InsMouseScrollCallBack(window, x_pos_in, y_pos_in);
         }
 
-        void DisplayNewBlockName(uint16 block_id)
-        {
-            std::cout << "Current new block is " << block_name[block_id] << std::endl;
-        }
-
-
         void processInput(GLFWwindow* window)
         {
             if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
                 glfwSetWindowShouldClose(window, true);
 
             ECS::Registry &registry = GetRegistry();
-            Character::CharacterComponent &player_com = registry.GetComponent<Character::CharacterComponent>(World::GetPlayer());
-            Physics::RigidBody &rigid_body = registry.GetComponent<Physics::RigidBody>(World::GetPlayer());
+            auto &player_com = registry.GetComponent<Character::CharacterComponent>(World::GetPlayer());
+            auto &rigid_body = registry.GetComponent<Physics::RigidBody>(World::GetPlayer());
 
             // --------------------------------------------------------------------------------------------
             // process input for camera moving
@@ -280,18 +275,18 @@ namespace SymoCraft
             {
                 new_block_id++;
                 if (new_block_id > kNumBlocks)
-                    new_block_id = 2;
+                    new_block_id = 0;
                 block_change_debounce = kBlockChangeDebounceTime;
-                DisplayNewBlockName(new_block_id);
+                PlayerController::DisplayCurrentBlockName();
             }
 
             if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS && block_change_debounce <= 0.0f)
             {
                 new_block_id--;
-                if (new_block_id <= 1)
+                if (new_block_id < 0)
                     new_block_id = kNumBlocks;
                 block_change_debounce = kBlockChangeDebounceTime;
-                DisplayNewBlockName(new_block_id);
+                PlayerController::DisplayCurrentBlockName();
             }
 
         }

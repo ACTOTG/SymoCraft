@@ -65,7 +65,7 @@ namespace SymoCraft
         BlockFormat blockFormat = get_block(block_id);
         m_local_blocks[index].block_id = block_id;
         m_local_blocks[index].SetTransparency(blockFormat.m_is_transparent);
-        m_local_blocks[index].SetIsLightSource(blockFormat.m_is_lightSource);
+        m_local_blocks[index].SetLightSource(blockFormat.m_is_lightSource);
 
         UpdateChunkLocalBlocks({x, y, z});
         return true;
@@ -98,7 +98,7 @@ namespace SymoCraft
         int index = SymoCraft::Chunk::GetLocalBlockIndex(x, y, z);
         m_local_blocks[index].block_id = BlockConstants::AIR_BLOCK.block_id;
         m_local_blocks[index].SetTransparency(true);
-        m_local_blocks[index].SetIsLightSource(false);
+        m_local_blocks[index].SetLightSource(false);
 
         UpdateChunkLocalBlocks({x, y, z});
         return true;
@@ -175,7 +175,7 @@ namespace SymoCraft
                         m_local_blocks[block_index].block_id = BlockConstants::AIR_BLOCK.block_id;
                         m_local_blocks[block_index].SetTransparency(true);
                         m_local_blocks[block_index].SetBlendability(false);
-                        m_local_blocks[block_index].SetIsLightSource(false);
+                        m_local_blocks[block_index].SetLightSource(false);
                         m_local_blocks[block_index].SetLightColor(glm::ivec3(255, 255, 255));
                         continue;
                     };
@@ -187,44 +187,44 @@ namespace SymoCraft
                             // this is not a transparent block
                             m_local_blocks[block_index].SetTransparency(false);
                             m_local_blocks[block_index].SetBlendability(false);
-                            m_local_blocks[block_index].SetIsLightSource(false);
+                            m_local_blocks[block_index].SetLightSource(false);
                         } else if (y < stone_height) {
                             // Stone
                             m_local_blocks[block_index].block_id = 5;
                             m_local_blocks[block_index].SetTransparency(false);
                             m_local_blocks[block_index].SetBlendability(false);
-                            m_local_blocks[block_index].SetIsLightSource(false);
+                            m_local_blocks[block_index].SetLightSource(false);
                         } else if (y < max_height) {
                             // Dirt
                             m_local_blocks[block_index].block_id = 4;
                             m_local_blocks[block_index].SetTransparency(false);
                             m_local_blocks[block_index].SetBlendability(false);
-                            m_local_blocks[block_index].SetIsLightSource(false);
+                            m_local_blocks[block_index].SetLightSource(false);
                         } else if (y == max_height ) {
                             if (max_height < sea_level + 2) {
                                 // Sand
                                 m_local_blocks[block_index].block_id = 3;
                                 m_local_blocks[block_index].SetTransparency(false);
                                 m_local_blocks[block_index].SetBlendability(false);
-                                m_local_blocks[block_index].SetIsLightSource(false);
+                                m_local_blocks[block_index].SetLightSource(false);
                             } else {
                                 // Grass
                                 m_local_blocks[block_index].block_id = 2;
                                 m_local_blocks[block_index].SetTransparency(false);
                                 m_local_blocks[block_index].SetBlendability(false);
-                                m_local_blocks[block_index].SetIsLightSource(false);
+                                m_local_blocks[block_index].SetLightSource(false);
                             }
                         } else if (y >= min_biome_height && y < sea_level) {
                             // Water
                             m_local_blocks[block_index].block_id = 9;
                             m_local_blocks[block_index].SetTransparency(false);
                             m_local_blocks[block_index].SetBlendability(true);
-                            m_local_blocks[block_index].SetIsLightSource(false);
+                            m_local_blocks[block_index].SetLightSource(false);
                         } else if (!m_local_blocks[block_index].block_id) {
                             m_local_blocks[block_index].block_id = BlockConstants::AIR_BLOCK.block_id;
                             m_local_blocks[block_index].SetTransparency(true);
                             m_local_blocks[block_index].SetBlendability(false);
-                            m_local_blocks[block_index].SetIsLightSource(false);
+                            m_local_blocks[block_index].SetLightSource(false);
                         }
                 }
             }

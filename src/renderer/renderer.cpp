@@ -125,9 +125,6 @@ namespace SymoCraft{
             block_shader.Unbind();
         }
 
-        void setCamera(const Camera &cameraRef) {
-            *camera = cameraRef;
-        }
 
         void ClearBuffers() {
             glClearNamedFramebufferfv(0, GL_COLOR, 0, clear_color.data());

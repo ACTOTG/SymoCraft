@@ -90,19 +90,6 @@ namespace SymoCraft {
         bool SetLocalBlock(int x, int y, int z, uint16 block_id);
         bool RemoveLocalBlock(int x, int y, int z);
 
-        // Must guarantee at least 16 sub-chunks located at this address
-
-        //void calculateLighting(const glm::ivec2 &lastPlayerLoadPosChunkCoords);
-        //void calculateLightingUpdate(Chunk *chunk, const glm::ivec2 &chunkCoordinates, const glm::vec3 &blockPosition,
-        //                            bool removedLightSource,
-        //                            robin_hood::unordered_flat_set<Chunk *> &chunksToRetesselate);
-
-        // void serialize(const std::string &worldSavePath, const Chunk &chunk);
-        // void deserialize(Chunk &blockData, const std::string &worldSavePath);
-        // bool exists(const std::string &worldSavePath, const glm::ivec2 &chunkCoordinates);
-
-        // void info();
-
         inline int GetLocalBlockIndex(int x, int y ,int z)
         {
             return x * k_chunk_length + y * k_chunk_height + z;

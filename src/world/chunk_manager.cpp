@@ -6,13 +6,6 @@
 namespace SymoCraft{
 
     static robin_hood::unordered_node_map<glm::ivec2, Chunk> chunks;
-    static uint32 globalVao;
-    static uint32 globalRenderVbo;
-    static uint32 solidDrawCommandVbo;
-    static uint32 blendableDrawCommandVbo;
-
-//        static CommandBufferContainer* solidCommandBuffer = nullptr;
-//        static CommandBufferContainer* blendableCommandBuffer = nullptr;
 
     namespace ChunkManager {
         Block GetBlock(const glm::vec3 &worldPosition) {
@@ -25,7 +18,7 @@ namespace SymoCraft{
         }
 
         void SetBlock(const glm::vec3 &worldPosition, uint16 block_id) {
-            glm::ivec2 chunkCoords = World::toChunkCoords(worldPosition);
+            glm::ivec2 chunkCoords = World::ToChunkCoords(worldPosition);
             Chunk *chunk = GetChunk(worldPosition);
 
             if (!chunk) {
@@ -57,7 +50,7 @@ namespace SymoCraft{
 
         Chunk *GetChunk(const glm::vec3 &worldPosition)
         {
-            glm::ivec2 chunkCoords = World::toChunkCoords(worldPosition);
+            glm::ivec2 chunkCoords = World::ToChunkCoords(worldPosition);
             return GetChunk(chunkCoords);
         }
 
