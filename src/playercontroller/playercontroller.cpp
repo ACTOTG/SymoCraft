@@ -12,42 +12,58 @@
 #include "world/chunk_manager.h"
 #include "renderer/renderer.h"
 
-void SymoCraft::PlayerController::DoRayCast( ECS::Registry &registry, Window &window)
+namespace SymoCraft
 {
-    auto controller = registry.GetComponent<Character::CharacterComponent>(World::GetPlayer());
-    auto player_com = registry.GetComponent<Character::PlayerComponent>(World::GetPlayer());
-    auto &transform = registry.GetComponent<Transform>(World::GetPlayer());
-
-    RaycastStaticResult res = Physics::RayCastStatic(transform.position + player_com.camera_offset, transform.front, 3.0f);
-    if (res.hit)
+    namespace PlayerController
     {
-        //printf("ray hitted\n");
-        glm::vec3 block_looking_atpos = res.point - (res.hit_normal * 0.1f);
-        Renderer::GenerateBlockFrameData(block_looking_atpos);
-
-        if (glfwGetMouseButton((GLFWwindow*)window.window_ptr, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS
-            && Application::block_place_debounce <=0)
+        void DoRayCast( ECS::Registry &registry, Window &window)
         {
-            Block new_block = { 0, 0, 0, 0};
-            new_block.block_id = Application::new_block_id;
+            auto controller = registry.GetComponent<Character::CharacterComponent>(World::GetPlayer());
+            auto player_com = registry.GetComponent<Character::PlayerComponent>(World::GetPlayer());
+            auto &transform = registry.GetComponent<Transform>(World::GetPlayer());
 
-            if (new_block != BlockConstants::NULL_BLOCK && new_block != BlockConstants::AIR_BLOCK)
+            RaycastStaticResult res = Physics::RayCastStatic(transform.position + player_com.camera_offset, transform.front, 3.0f);
+            if (res.hit)
             {
-                glm::vec3 world_pos = res.point + (res.hit_normal * 0.1f);
-                ChunkManager::SetBlock(world_pos, new_block.block_id);
+                //printf("ray hitted\n");
+                glm::vec3 block_looking_atpos = res.point - (res.hit_normal * 0.1f);
+                Renderer::GenerateBlockFrameData(block_looking_atpos);
+
+                if (glfwGetMouseButton((GLFWwindow*)window.window_ptr, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS
+                    && Application::block_place_debounce <=0)
+                {
+                    Block new_block = { 0, 0, 0, 0};
+                    new_block.block_id = kBlockInventor[Application::new_block_id];
+
+                    if (new_block != BlockConstants::NULL_BLOCK && new_block != BlockConstants::AIR_BLOCK)
+                    {
+                        glm::vec3 world_pos = res.point + (res.hit_normal * 0.1f);
+                        ChunkManager::SetBlock(world_pos, new_block.block_id);
+                    }
+                    Application::block_place_debounce = Application::kBlockPlaceDebounceTime;
+                }
+                else
+                if (glfwGetMouseButton((GLFWwindow*)window.window_ptr , GLFW_MOUSE_BUTTON_LEFT)  == GLFW_PRESS
+                    && Application::block_place_debounce <= 0)
+                {
+                    static int num_delete;
+                    glm::vec3 worldPos = res.point - (res.hit_normal * 0.1f);
+                    ChunkManager::RemoveBLock(worldPos);
+                    num_delete++;
+                    std::cout << "block removed " << num_delete  << std::endl;
+                    Application::block_place_debounce = Application::kBlockPlaceDebounceTime;
+                }
             }
-            Application::block_place_debounce = Application::kBlockPlaceDebounceTime;
         }
-        else
-        if (glfwGetMouseButton((GLFWwindow*)window.window_ptr , GLFW_MOUSE_BUTTON_LEFT)  == GLFW_PRESS
-            && Application::block_place_debounce <= 0)
+
+        void DisplayCurrentBlockName()
         {
-            static int num_delete;
-            glm::vec3 worldPos = res.point - (res.hit_normal * 0.1f);
-            ChunkManager::RemoveBLock(worldPos);
-            num_delete++;
-            std::cout << "block removed " << num_delete  << std::endl;
-            Application::block_place_debounce = Application::kBlockPlaceDebounceTime;
+            static std::string kBlockName[12] = {"", "Air Block", "Grass", "Sand", "Dirt", "Stone", "Oak Log", "Oak Leaves"
+                                                , "Oak Planks", "Water Still", "Birch Plank", "Cobble Stone"};
+
+            std::cout << "Current block is " << kBlockName[kBlockInventor[Application::new_block_id]] << std::endl;
+
         }
+
     }
 }
