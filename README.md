@@ -13,6 +13,6 @@ An undergradute C++ curricular practice project
 - Entity Component System
 
 # References
-1. OpenGL guide https://learnopengl.com/ and =OpenGL SuperBible=
+1. OpenGL guide https://learnopengl.com/ and *OpenGL SuperBible*
 2. Procedural generation tutorial https://www.youtube.com/watch?v=wbpMiKiSKm8
 3. Face culling algorithm https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
