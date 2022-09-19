@@ -3,7 +3,7 @@ An undergradute C++ curricular practice project
 
 # Requirements
 - GPU with OpenGL 4.6 support, 2GB VRAM(4GB or higher recommended)
-- 2GB RAM(4GB or higher recommended)
+- 4GB DRAM(8GB or higher recommended)
 
 # Technical Features
 - Full Direct-State-Acess(DSA) approach
