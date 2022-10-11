@@ -1,4 +1,4 @@
-# Symocraft - an OpenGl Minecraft clone
+# Symocraft - an OpenGL Minecraft clone
 An undergradute C++ curricular practice project
 
 # Requirements
