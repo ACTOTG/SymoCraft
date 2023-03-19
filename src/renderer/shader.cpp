@@ -1,6 +1,6 @@
 #include "renderer/shader.h"
 
-bool Shader::compile(ShaderType type, std::string_view shaderFilepath)
+bool Shader::Compile(ShaderType type, std::string_view shaderFilepath)
 {
 	// Report compilation
     AmoLogger_Log("Compiling shader: %s", shaderFilepath.data());
@@ -28,7 +28,7 @@ bool Shader::compile(ShaderType type, std::string_view shaderFilepath)
 	// Create an empty shader handle
 	shaderId = glCreateShader(shaderType);
 
-	// Send the shader source code to GL, and compile the shader
+	// Send the shader source code to GL, and Compile the shader
 	const char* source_c_str = shader_source_code.c_str();
 	glShaderSource(shaderId, 1, &source_c_str, nullptr);
 	glCompileShader(shaderId);
@@ -59,7 +59,7 @@ bool Shader::compile(ShaderType type, std::string_view shaderFilepath)
 	return true;
 }
 
-void Shader::destroy()
+void Shader::Destroy()
 {
 	if (shaderId != UINT32_MAX)
 	{

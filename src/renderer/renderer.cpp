@@ -59,12 +59,12 @@ namespace SymoCraft{
                                          "../assets/shaders/fs_FrameShader.glsl");
 
             // Initialize batches
-            chunk_batch.init({
+            chunk_batch.Init({
                                      {0, 3,   GL_INT, offsetof(BlockVertex3D, pos_coord)},
                                      {1, 3, GL_FLOAT, offsetof(BlockVertex3D, tex_coord)},
                                      {2, 1, GL_FLOAT, offsetof(BlockVertex3D, normal   )}});
 
-            line_batch.init({
+            line_batch.Init({
                                     {0, 3,   GL_INT, offsetof(BlockVertex3D, pos_coord)}});
 
 
@@ -75,11 +75,6 @@ namespace SymoCraft{
             chunk_batch.Free();
             line_batch.Free();
             block_shader.Destroy();
-
-            // shader2D.destroy();
-            // line3DShader.destroy();
-            // regular3DShader.destroy();
-            // batch3DVoxelsShader.destroy();
         }
 
         void Render() {

@@ -168,7 +168,6 @@ namespace SymoCraft
                 stone_height = max_height - 6;
 
                 for (int y = 0; y < k_chunk_height; y++) {
-                    // bool isCave = TerrainGenerator::getIsCave(x + worldChunkX, y, z + worldChunkZ, max_height);
                     const int block_index = GetLocalBlockIndex(x , y, z);
                     if(abs(m_chunk_coord.x) > World::chunk_radius - 1|| abs(m_chunk_coord.y) > World::chunk_radius - 1)
                     {
@@ -235,16 +234,6 @@ namespace SymoCraft
     {
            const int worldChunkX = m_chunk_coord.x * 16;
            const int worldChunkZ = m_chunk_coord.y * 16;
-
-//           glm::ivec2 localChunkPos = glm::vec2(lastPlayerLoadPosChunkCoords.x - chunkX, lastPlayerLoadPosChunkCoords.y - chunkZ);
-//           bool inRangeOfPlayer =
-//                   (localChunkPos.x * localChunkPos.x) + (localChunkPos.y * localChunkPos.y) <=
-//                   ((World::chunk_radius - 1) * (World::chunk_radius - 1));
-//           if (!inRangeOfPlayer)
-//           {
-//               // Skip over all chunks in range radius - 1
-//               continue;
-//           }
 
            for (int x = 0; x < World::chunk_radius; x++)
            {

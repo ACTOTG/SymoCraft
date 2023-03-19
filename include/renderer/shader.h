@@ -15,8 +15,8 @@ struct Shader
 	uint32 shaderId;
 	ShaderType m_type;
 
-	bool compile(ShaderType type, std::string_view shaderFilepath);
-	void destroy();
+	bool Compile(ShaderType type, std::string_view shaderFilepath);
+	void Destroy();
 
 	static GLenum toGlShaderType(ShaderType type);
 };

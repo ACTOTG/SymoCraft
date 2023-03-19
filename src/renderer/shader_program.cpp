@@ -37,17 +37,17 @@ bool ShaderProgram::CompileAndLink(std::string_view vertexShaderFile, std::strin
 
 	// Delete the shader if compilation fails( no sense to keep it )
 	Shader vertexShader{};
-	if (!vertexShader.compile(ShaderType::Vertex, vertexShaderFile))
+	if (!vertexShader.Compile(ShaderType::Vertex, vertexShaderFile))
 	{
-		vertexShader.destroy();
+        vertexShader.Destroy();
 		AmoLogger_Error("Failed to compile vertex shader.");
 		return false;
 	}
 
 	Shader fragmentShader{};
-	if (!fragmentShader.compile(ShaderType::Fragment, fragmentShaderFile))
+	if (!fragmentShader.Compile(ShaderType::Fragment, fragmentShaderFile))
 	{
-		fragmentShader.destroy();
+        fragmentShader.Destroy();
         AmoLogger_Error("Failed to compile fragment shader.");
 		return false;
 	}
@@ -73,8 +73,8 @@ bool ShaderProgram::CompileAndLink(std::string_view vertexShaderFile, std::strin
 
 		// We don't need the program anymore if linking failed
 		glDeleteProgram(program);
-		vertexShader.destroy();
-		fragmentShader.destroy();
+        vertexShader.Destroy();
+        fragmentShader.Destroy();
 
         AmoLogger_Error("Shader linking failed:\n%s", infoLog.data());
 		programId = UINT32_MAX;
@@ -84,8 +84,8 @@ bool ShaderProgram::CompileAndLink(std::string_view vertexShaderFile, std::strin
 	// Always detach shaders after a successful link and destroy them since we don't need them anymore
 	glDetachShader(program, vertexShader.shaderId);
 	glDetachShader(program, fragmentShader.shaderId);
-	vertexShader.destroy();
-	fragmentShader.destroy();
+    vertexShader.Destroy();
+    fragmentShader.Destroy();
 
 	// If linking succeeded, get all the active uniforms and store them in our map of uniform variable locations
 	int numUniforms;

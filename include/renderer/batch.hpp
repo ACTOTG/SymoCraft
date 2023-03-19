@@ -47,7 +47,7 @@ namespace SymoCraft{
     class Batch
     {
     public:
-        void init(std::initializer_list<VertexAttribute> vertex_attributes)
+        void Init(std::initializer_list<VertexAttribute> vertex_attributes)
         {
             m_data_size = sizeof(T) * m_batch_size;
             data = (T*)AmoMemory_Allocate(m_data_size);
@@ -80,7 +80,7 @@ namespace SymoCraft{
         {
             if(!data)
                 AmoLogger_Error("Invalid batch.\n");
-            if (!has_room())
+            if (!HasRoom())
             {
                 AmoLogger_Error("Batch ran out of room. I have %d/%d vertices.\n", m_vertex_count, m_batch_size);
                 return;
@@ -99,7 +99,7 @@ namespace SymoCraft{
         {
             if(!data)
                 AmoLogger_Error("Invalid batch.\n");
-            if (!has_room())
+            if (!HasRoom())
             {
                 AmoLogger_Error("Batch ran out of room. I have %d/%d vertices.\n", m_vertex_count, m_batch_size);
                 return;
@@ -169,7 +169,7 @@ namespace SymoCraft{
         GLenum m_primitive_type{GL_TRIANGLES};
         T* data;
 
-        inline bool has_room() const
+        inline bool HasRoom() const
         {
             return m_vertex_count <= m_batch_size;
         }
