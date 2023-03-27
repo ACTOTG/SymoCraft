@@ -1,5 +1,13 @@
 # Symocraft - an OpenGL Minecraft clone
-An undergradute C++ curricular practice project
+An undergradute C++ course exercise project
+
+# Control
+| Keys                  | Description                                            |
+|-----------------------|--------------------------------------------------------|
+| W A S D               | Move character in the corresponding direction          |
+| Left click            | Remove a block from the game world                     |
+| Right click           | Place a block in the game world                        |
+| Q and E               |  Toggle between different types of blocks available    |
 
 # Requirements
 - GPU with OpenGL 4.6 support, 2GB VRAM(4GB or higher recommended)
