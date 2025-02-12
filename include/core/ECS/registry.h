@@ -72,9 +72,9 @@ namespace SymoCraft
                 int32 com_type = ECS::Internal::GetComponentType<T>();
                 EntityIndex index = 0;
                 AmoLogger_Assert(com_type == component_set.size(), "Tried to register component '%s' twice", debug_name);
-                component_set.template emplace_back(Internal::ComponentContainer::DefaultComponentContainer<T>(index));
+                component_set.emplace_back(Internal::ComponentContainer::DefaultComponentContainer<T>(index));
                 AmoLogger_Assert(com_type < Internal::kMaxNumComponents, "Exceeded the maximum number of components.");
-                debug_component_names.template emplace_back(std::string(debug_name));
+                debug_component_names.emplace_back(std::string(debug_name));
             }
 
             // Add a Component to an entity

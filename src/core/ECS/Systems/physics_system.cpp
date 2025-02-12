@@ -487,9 +487,9 @@ namespace SymoCraft::Physics
                     return -1;
                 case Direction::BOTTOM:
                     return 1;
+                case Direction::NONE:
+                    AmoLogger_Error("Could not get direction from face!");
             }
-
-            AmoLogger_Error("Could not get direction from face!");
             return 0.0001f;
         }
 
